@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import com.maikeapp.maikewatch.R;
 
+/**
+ * 关于我们
+ */
 public class AboutUsActivity extends AppCompatActivity {
 
     private ImageView mIvCommonBack;//返回
