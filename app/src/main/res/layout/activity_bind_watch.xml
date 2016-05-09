@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_bg_color"
+    android:orientation="vertical"
+    tools:context="com.maikeapp.maikewatch.activity.PsGlobalActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_topbar_height"
+        android:background="@color/common_white_color"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/iv_bind_watch_back"
+            android:layout_width="@dimen/common_topbar_back_img_width"
+            android:layout_height="match_parent"
+            android:padding="14dp"
+            android:src="@drawable/left_move" />
+
+        <TextView
+            android:id="@+id/tv_bind_watch_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="标题"
+            android:textColor="@color/common_topbar_font_color"
+            android:textSize="@dimen/common_topbar_text_font_size" />
+
+        <ImageView
+            android:id="@+id/iv_bind_watch_question"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/bind_watch_question"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/common_topbar_op_padding_right"
+            android:paddingRight="@dimen/common_topbar_op_padding_right"
+             />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/common_bg_line_border" />
+
+    <LinearLayout
+        android:id="@+id/line_bind_watch_binded"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_content_margin_top"
+        android:background="@color/common_white_color"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/common_bg_line_border" />
+
+
+        <ImageView
+            android:layout_width="@dimen/iv_bind_watch_binding_width_or_height"
+            android:layout_height="@dimen/iv_bind_watch_binding_width_or_height"
+            android:background="@drawable/bind_watch_bangding"
+            android:layout_marginTop="@dimen/bind_watch_binding_margin_top"
+            android:layout_marginBottom="@dimen/bind_watch_binding_margin_bottom"
+            />
+
+        <TextView
+            android:id="@+id/tv_bind_watch_mac_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="绑定 00:00:00:00:00:00"
+            android:textColor="@color/common_content_dark_text_font_color"
+            android:textSize="@dimen/common_content_text_font_size"
+            android:layout_marginBottom="@dimen/bind_watch_binding_margin_top"
+            />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/common_bg_line_border" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/line_bind_watch_unbind"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_content_margin_top"
+        android:background="@color/common_white_color"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/common_bg_line_border" />
+
+        <ListView
+            android:id="@+id/lv_bind_watch_maclist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            ></ListView>
+
+    </LinearLayout>
+
+</LinearLayout>

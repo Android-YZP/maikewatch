@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        >
+        <ImageView 
+            android:id="@+id/iv_index_tab_item_pic"
+            android:layout_width="@dimen/main_tabbar_item_img_width_or_height"
+            android:layout_height="@dimen/main_tabbar_item_img_width_or_height"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/buttom_home"
+            />
+        <TextView 
+            android:id="@+id/tv_index_tab_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/iv_index_tab_item_pic"
+            android:layout_marginTop="@dimen/main_tabbar_item_text_margin_top"
+            android:text="首页"
+            android:textSize="@dimen/main_tabbar_item_text_font_size"
+            android:textColor="@color/main_tabbar_item_text_font_color_unsel"
+            />
+    </RelativeLayout>
+
+</RelativeLayout>

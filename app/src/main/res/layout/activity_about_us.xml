@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/common_bg_color"
+    tools:context="com.maikeapp.maikewatch.activity.PsInfoActivity">
+
+    <include layout="@layout/layout_common_topbar"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/pscenter_bg_border_color"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/common_white_color"
+        android:layout_marginTop="@dimen/common_content_margin_top"
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/pscenter_bg_border_color"/>
+
+        <!--当前手表固件版本 start-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pscenter_funclist_list_item_height"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/about_us_list_gujianname"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20150721.H01"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
+                />
+
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/pscenter_bg_border_color"
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"/>
+        <!--当前手表固件版本 end-->
+
+        <!--当前版本 start-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pscenter_funclist_list_item_height"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/about_us_list_currentversion"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="v1.0.1"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
+                />
+
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/pscenter_bg_border_color"
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"/>
+        <!--当前版本 end-->
+
+
+        <!--检查新版本 start-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pscenter_funclist_list_item_height"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/psinfo_list_check_newversion"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                />
+
+
+
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/pscenter_bg_border_color"
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"/>
+        <!--检查新版本 end-->
+
+
+        <!--是否自动检查最新版本 start-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pscenter_funclist_list_item_height"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/about_us_list_ischeck_str"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                />
+
+            <CheckBox
+                android:id="@+id/cb_pscenter_calling"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/MyCheckBox"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
+                />
+
+        </LinearLayout>
+
+        <!--是否自动检查最新版本 end-->
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/pscenter_bg_border_color"/>
+    </LinearLayout>
+</LinearLayout>

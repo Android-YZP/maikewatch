@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:gravity="center_vertical" android:minHeight="@dimen/lv_item_watch_mac_item_height">
+
+    <ImageView
+        android:id="@+id/iv_item_watch_mac_rssi"
+        android:layout_width="@dimen/lv_item_watch_mac_img_width"
+        android:layout_height="@dimen/lv_item_watch_mac_img_height"
+        android:background="@drawable/bind_watch_one"
+        android:layout_marginLeft="@dimen/lv_item_watch_mac_img_margin_left"
+        />
+
+    <TextView
+        android:id="@+id/tv_item_watch_mac_rssi"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="0"
+        android:textColor="@color/common_content_dark_text_font_color"
+        android:textSize="@dimen/common_content_text_font_size"
+        android:gravity="center_vertical|right"
+        android:layout_marginLeft="@dimen/lv_item_watch_mac_text_margin_left"
+        />
+
+    <TextView
+        android:id="@+id/tv_item_watch_mac_address"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="00:00:00:00:00"
+        android:textColor="@color/common_content_dark_text_font_color"
+        android:textSize="@dimen/common_content_text_font_size"
+        android:gravity="center_vertical|right"
+        android:layout_marginRight="@dimen/lv_item_watch_mac_img_margin_left"
+        />
+</LinearLayout>

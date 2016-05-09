@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_bg_color"
+    android:orientation="vertical"
+    tools:context="com.maikeapp.maikewatch.activity.PsGlobalActivity">
+    <include layout="@layout/layout_common_topbar_action">
+    </include>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/common_bg_line_border"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/common_white_color"
+        android:layout_marginTop="@dimen/common_content_margin_top"
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/common_bg_line_border"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ps_global_step_str"
+            android:textColor="@color/common_content_dark_text_font_color"
+            android:textSize="@dimen/common_content_text_font_size"
+            android:layout_marginTop="@dimen/ps_global_step_margin_top"
+            android:layout_marginLeft="@dimen/ps_global_step_margin_left"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="@dimen/ps_global_step_line_margin_top"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10000"
+                android:textColor="@color/common_content_data_font_color"
+                android:textSize="@dimen/ps_global_data_font_size"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ps_global_step_step"
+                android:textColor="@color/common_content_data_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginLeft="@dimen/ps_global_step_step_margin_left"
+
+                />
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/pb_ps_global_set_num"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/ps_global_step_margin_left"
+            android:layout_marginRight="@dimen/ps_global_step_margin_left"
+            android:layout_marginTop="@dimen/ps_global_step_set_num_margin_top"
+            android:layout_marginBottom="@dimen/ps_global_step_set_num_margin_bottom"
+            android:thumb="@drawable/move_circle"
+            android:max="30000"
+            android:progress="2000"
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/common_bg_line_border"
+            />
+    </LinearLayout>
+</LinearLayout>

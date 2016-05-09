@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainActivity">
+
+    <com.maikeapp.maikewatch.view.IndexTabBarLayout
+        android:id="@+id/myIndexTabBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_tabbar_height"
+        android:layout_alignParentBottom="true"
+        ></com.maikeapp.maikewatch.view.IndexTabBarLayout>
+
+    <FrameLayout
+        android:id="@+id/layout_main_frag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/myIndexTabBarLayout"
+        >
+    </FrameLayout>
+</RelativeLayout>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.maikeapp.maikewatch.activity.AlertAlarmActivity">
+
+    <include layout="@layout/layout_common_topbar" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/pscenter_bg_border_color" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_content_margin_top"
+        android:background="@color/common_white_color"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/common_bg_line_border" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/help_content_margin_top"
+            android:layout_marginRight="@dimen/help_content_margin_top"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_bind_help_question1"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/bind_help_content_text_font_size"
+                android:layout_marginTop="@dimen/help_content_margin_top"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_bind_help_answer1"
+                android:textColor="@color/common_content_gray_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginTop="3dp"
+                android:lineSpacingMultiplier="1.2"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/help_content_margin_top"
+                android:text="@string/tv_bind_help_question2"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/bind_help_content_text_font_size"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_bind_help_answer2"
+                android:textColor="@color/common_content_gray_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginTop="3dp"
+                android:lineSpacingMultiplier="1.2"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/help_content_margin_top"
+                android:text="@string/tv_bind_help_question3"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/bind_help_content_text_font_size"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_bind_help_answer3"
+                android:textColor="@color/common_content_gray_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="@dimen/help_content_margin_top"
+                android:lineSpacingMultiplier="1.2"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/common_bg_line_border" />
+</LinearLayout>

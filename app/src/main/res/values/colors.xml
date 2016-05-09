@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- |main-bottom-tabbar -->
+    <color name="main_tabbar_bg_color">#d81759</color>
+    <color name="main_tabbar_item_text_font_color_unsel">#ffffff</color>
+    <color name="main_tabbar_item_text_font_color_sel">#d81759</color>
+    <color name="main_tabbar_border_color">#dcdcdd</color>
+
+    <!-- |common main topbar -->
+    <color name="common_topbar_bg_color">#ffffff</color>
+
+    <color name="common_white_color">#ffffff</color>
+    <color name="common_bg_color">#f5f8f7</color>
+    <color name="common_topbar_font_color">#4b4a4a</color>
+    <color name="common_content_dark_text_font_color">#4c4948</color>
+    <color name="common_content_gray_text_font_color">#b5b5b6</color>
+    <color name="common_content_data_font_color">#d82058</color>
+
+    <!-- |pscenter -->
+    <color name="pscenter_userinfo_intro_font_color">#b5b5b6</color>
+    <color name="pscenter_userinfo_data_font_color">#d82058</color>
+    <color name="pscenter_bg_border_color">#d2d5d4</color>
+    <color name="home_line_oneday_bg_border">#c4c4c4</color>
+    <color name="common_bg_line_border">#d2d5d4</color>
+    <color name="one_alarm_bg_line_border">#c9caca</color>
+
+    <!--|home-->
+
+
+    <!-- user login -->
+    <color name="user_login_btn_bg_color">#d82058</color>
+    <color name="user_login_bg_border_color">#d81759</color>
+    <color name="user_login_btn_press_color">#7fd81759</color>
+
+    <color name="user_login_visit_by_easy_press_color">#7fd81759</color>
+
+    <color name="user_reg_phone_et_text_font_color">#959595</color>
+    <color name="common_et_bg_border_color">#d2d2d2</color>
+    <color name="common_et_text_font_color">#959595</color>
+    <color name="common_content_text_font_color">#959595</color>
+    <color name="common_topbar_text_font_color">#ffffff</color>
+</resources>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.maikeapp.maikewatch.activity.AlertAlarmActivity">
+
+    <include layout="@layout/layout_common_topbar" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/pscenter_bg_border_color" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_content_margin_top"
+        android:background="@color/common_white_color"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/pscenter_bg_border_color" />
+        <!--闹钟1 start-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pscenter_funclist_list_item_height"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_time1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:text="08:00"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size" />
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_date1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
+                android:layout_weight="1"
+                android:text="一，二，三"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size" />
+
+            <CheckBox
+                android:id="@+id/cb_alert_alarm_ison1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
+                style="@style/MyCheckBox" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+            android:background="@color/pscenter_bg_border_color" />
+        <!--闹钟1 end-->
+
+        <!--闹钟2 start-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pscenter_funclist_list_item_height"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_time2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:text="08:00"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size" />
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_date2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
+                android:layout_weight="1"
+                android:text="一，二，三"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size" />
+
+            <CheckBox
+                android:id="@+id/cb_alert_alarm_ison2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
+                style="@style/MyCheckBox" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+            android:background="@color/pscenter_bg_border_color" />
+        <!--闹钟2 end-->
+
+        <!--闹钟3 start-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pscenter_funclist_list_item_height"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_time3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:text="08:00"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size" />
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_date3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
+                android:layout_weight="1"
+                android:text="一，二，三"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size" />
+
+            <CheckBox
+                android:id="@+id/cb_alert_alarm_ison3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
+                style="@style/MyCheckBox" />
+
+        </LinearLayout>
+        <!--闹钟3 end-->
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/pscenter_bg_border_color" />
+    </LinearLayout>
+</LinearLayout>
