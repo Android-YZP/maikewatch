@@ -281,13 +281,13 @@ public class UserRegUserNameActivity extends Activity {
 
 			private void fullUserInfo(JSONObject jsonObj) {
 				mUser = new User();
-				mUser.setAccount(JsonUtils.getString(jsonObj, "account"));
-				mUser.setPassword(JsonUtils.getString(jsonObj, "password"));
-				mUser.setId(JsonUtils.getInt(jsonObj, "id"));
-				mUser.setUserImg(JsonUtils.getString(jsonObj, "userImg"));
-				mUser.setUsername(JsonUtils.getString(jsonObj, "username"));
-				mUser.setMobile(JsonUtils.getString(jsonObj, "mobile"));
-				mUser.setVerifyCode(JsonUtils.getString(jsonObj, "verifyCode"));
+//				mUser.setAccount(JsonUtils.getString(jsonObj, "account"));
+//				mUser.setPassword(JsonUtils.getString(jsonObj, "password"));
+//				mUser.setId(JsonUtils.getInt(jsonObj, "id"));
+//				mUser.setUserImg(JsonUtils.getString(jsonObj, "userImg"));
+//				mUser.setUsername(JsonUtils.getString(jsonObj, "username"));
+//				mUser.setMobile(JsonUtils.getString(jsonObj, "mobile"));
+//				mUser.setVerifyCode(JsonUtils.getString(jsonObj, "verifyCode"));
 			}
 		}).start();
 	}

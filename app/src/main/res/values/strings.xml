@@ -40,4 +40,6 @@
     <string name="one_alarm_week_wednesday">周四</string>
     <string name="one_alarm_week_fridayday">周五</string>
     <string name="one_alarm_week_saturday">周六</string>
+    <string name="pscenter_user_logout">退出登录</string>
+    <string name="user_login_creative_live">创意生活</string>
 </resources>

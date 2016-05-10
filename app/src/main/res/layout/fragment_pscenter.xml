@@ -62,7 +62,7 @@
                     android:id="@+id/tv_pscenter_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Running Man"
+                    android:text="未登录"
                     android:textColor="@color/common_content_dark_text_font_color"
                     android:textSize="@dimen/common_content_text_font_size"
                     android:layout_marginTop="@dimen/pscenter_userinfo_username_margin_top"
@@ -312,6 +312,38 @@
                 </LinearLayout>
                 <!--关于软件 end-->
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/pscenter_bg_border_color"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/line_pscenter_login_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/common_white_color"
+                android:layout_marginTop="@dimen/pscenter_funclist_margin_top"
+                android:layout_marginBottom="@dimen/pscenter_funclist_margin_top"
+                android:visibility="gone"
+                >
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/pscenter_bg_border_color"/>
+                <!--退出登录 start-->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/pscenter_funclist_list_item_height"
+                    android:text="@string/pscenter_user_logout"
+                    android:textColor="@color/common_content_dark_text_font_color"
+                    android:textSize="@dimen/common_content_text_font_size"
+                    android:gravity="center"
+                    />
+                <!--退出登录 end-->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="1px"

@@ -90,12 +90,12 @@
     <dimen name="lv_item_watch_mac_item_height">50dp</dimen>
     <!-- user login -->
     <dimen name="user_login_username_or_password_or_commit_height">45dp</dimen>
-    <dimen name="user_login_username_margin_top">50dp</dimen>
+    <dimen name="user_login_username_margin_top">30dp</dimen>
     <dimen name="user_login_drawable_padding">5dp</dimen>
     <dimen name="user_login_password_margin_top">15dp</dimen>
     <dimen name="user_login_commit_text_font_size">14sp</dimen>
     <dimen name="user_login_commit_margin_top">17dp</dimen>
-    <dimen name="user_login_reg_or_forget_margin_top">39dp</dimen>
+    <dimen name="user_login_reg_or_forget_margin_top">10dp</dimen>
     <dimen name="user_login_common_comptent_margin_left_or_right">28dp</dimen>
     <dimen name="user_login_reg_or_forget_font_size">14sp</dimen>
     <dimen name="user_login_visit_by_easy_font_size">14sp</dimen>
@@ -139,4 +139,10 @@
 
     <!--old common-->
     <dimen name="common_et_text_font_size">13sp</dimen>
+    <dimen name="user_login_common_comptent_margin_top">50dp</dimen>
+    <dimen name="user_login_validate_img_width">100dp</dimen>
+    <dimen name="user_login_btn_visit_by_easy_margin_top">20dp</dimen>
+    <dimen name="user_login_text_line_height">30dp</dimen>
+    <dimen name="user_login_text_font_size">20sp</dimen>
+    <dimen name="user_login_creative_live_margin_top">10dp</dimen>
 </resources>

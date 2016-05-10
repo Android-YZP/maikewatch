@@ -1,5 +1,7 @@
 package com.maikeapp.maikewatch.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,6 +30,7 @@ public class PscenterFragment extends Fragment {
     private LinearLayout mLinePsInfo;
     private LinearLayout mLineAlertAlarm;
     private LinearLayout mLineAboutUs;
+    private LinearLayout mLineUserLogout;
     //用户登录
     private SmartImageView mIvUserLogin;
     private TextView mTvUsername;
@@ -55,8 +58,11 @@ public class PscenterFragment extends Fragment {
         super.onResume();
         mUser = CommonUtil.getUserInfo(getActivity());
         if (mUser!=null){
-            mTvUsername.setText(mUser.getUsername());
-            mIvUserLogin.setImageUrl(mUser.getUserImg(),R.drawable.pscenter_userinfo_headpic);
+            mLineUserLogout.setVisibility(View.VISIBLE);
+            mTvUsername.setText(mUser.getLoginName());
+            mIvUserLogin.setImageUrl(mUser.getPortraits(),R.drawable.pscenter_userinfo_headpic);
+        }else{
+            mLineUserLogout.setVisibility(View.GONE);
         }
     }
 
@@ -66,6 +72,7 @@ public class PscenterFragment extends Fragment {
         mLinePsInfo = (LinearLayout)view.findViewById(R.id.line_pscenter_psinfo);
         mLineAlertAlarm = (LinearLayout)view.findViewById(R.id.line_pscenter_alertalarm);
         mLineAboutUs = (LinearLayout)view.findViewById(R.id.line_pscenter_aboutus);
+        mLineUserLogout = (LinearLayout)view.findViewById(R.id.line_pscenter_login_out);
         //用户登录
         mIvUserLogin = (SmartImageView)view.findViewById(R.id.iv_pscenter_login);
         mTvUsername = (TextView)view.findViewById(R.id.tv_pscenter_username);
@@ -75,7 +82,7 @@ public class PscenterFragment extends Fragment {
     }
 
     private void initData() {
-
+        mUser = CommonUtil.getUserInfo(getActivity());
     }
 
     private void setListener() {
@@ -84,7 +91,12 @@ public class PscenterFragment extends Fragment {
         mLinePsInfo.setOnClickListener(new PsCenterOnClickListener());
         mLineAlertAlarm.setOnClickListener(new PsCenterOnClickListener());
         mLineAboutUs.setOnClickListener(new PsCenterOnClickListener());
-        mIvUserLogin.setOnClickListener(new PsCenterOnClickListener());//用户登录
+        mLineUserLogout.setOnClickListener(new PsCenterOnClickListener());
+        //未登录用户-需要登录
+        if (mUser==null){
+            mIvUserLogin.setOnClickListener(new PsCenterOnClickListener());//用户登录
+        }
+
     }
 
 
@@ -124,7 +136,40 @@ public class PscenterFragment extends Fragment {
                     _intent = new Intent(getActivity(), UserLoginActivity.class);
                     startActivity(_intent);
                     break;
+                case R.id.line_pscenter_login_out:
+                    //用户注销登录
+                    userLoginOut();
+                    break;
             }
         }
+    }
+
+    /**
+     * 用户注销登录
+     */
+    private void userLoginOut() {
+        //是否退出
+        new AlertDialog.Builder(getActivity())
+                .setTitle("提示")
+                .setMessage("您确定退出登录吗？")
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CommonUtil.clearUserInfo(getActivity());//清除本地数据
+                        mLineUserLogout.setVisibility(View.GONE);//隐藏控件
+                        mTvUsername.setText("未登录");//更改未登录头像和文字
+                        mIvUserLogin.setImageUrl(null, R.drawable.pscenter_userinfo_headpic);
+                        mIvUserLogin.setOnClickListener(new PsCenterOnClickListener());//用户登录设置监听事件
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        }).show();
+
+
     }
 }

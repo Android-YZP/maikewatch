@@ -6,96 +6,90 @@ package com.maikeapp.maikewatch.bean;
  */
 public class User {
 	//登录时获取
-	private String account;
-	private String password;
-	private int id;
-	private String userImg;
-	private String username;
-	private String mobile;
-	private String verifyCode;
+	private int Id;//编号
+	private String LoginName;//登录名
+	private String Mobile;//手机号
+	private String Portraits;//头像
+	private int Sex;//性别
+	private int Height;//身高
+	private int Weight;//体重
+	private int SportsTarget;//个人目标
 
-	
-	//加入时间
-	private String registerTime;
-	
-	private String realname;
-	public User() {
-		super();
-	}
-	
-	public String getRealname() {
-		return realname;
-	}
-
-	public void setRealname(String realname) {
-		this.realname = realname;
-	}
-
-
-	public String getAccount() {
-		return account;
-	}
-	public void setAccount(String account) {
-		this.account = account;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
 	public int getId() {
-		return id;
+		return Id;
 	}
+
 	public void setId(int id) {
-		this.id = id;
+		Id = id;
 	}
-	public String getUserImg() {
-		return userImg;
+
+	public String getLoginName() {
+		return LoginName;
 	}
-	public void setUserImg(String userImg) {
-		this.userImg = userImg;
+
+	public void setLoginName(String loginName) {
+		LoginName = loginName;
 	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
+
 	public String getMobile() {
-		return mobile;
+		return Mobile;
 	}
+
 	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
-	public String getVerifyCode() {
-		return verifyCode;
-	}
-	public void setVerifyCode(String verifyCode) {
-		this.verifyCode = verifyCode;
+		Mobile = mobile;
 	}
 
-	public String getRegisterTime() {
-		return registerTime;
+	public String getPortraits() {
+		return Portraits;
 	}
 
-	public void setRegisterTime(String registerTime) {
-		this.registerTime = registerTime;
+	public void setPortraits(String portraits) {
+		Portraits = portraits;
 	}
 
-	public User(String account, String password, int id, String userImg,
-			String username, String mobile, String verifyCode,String registerTime) {
-		super();
-		this.account = account;
-		this.password = password;
-		this.id = id;
-		this.userImg = userImg;
-		this.username = username;
-		this.mobile = mobile;
-		this.verifyCode = verifyCode;
-		this.registerTime = registerTime;
+	public int getSex() {
+		return Sex;
 	}
 
+	public void setSex(int sex) {
+		Sex = sex;
+	}
 
-	
+	public int getHeight() {
+		return Height;
+	}
+
+	public void setHeight(int height) {
+		Height = height;
+	}
+
+	public int getWeight() {
+		return Weight;
+	}
+
+	public void setWeight(int weight) {
+		Weight = weight;
+	}
+
+	public int getSportsTarget() {
+		return SportsTarget;
+	}
+
+	public void setSportsTarget(int sportsTarget) {
+		SportsTarget = sportsTarget;
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"Id=" + Id +
+				", LoginName='" + LoginName + '\'' +
+				", Mobile='" + Mobile + '\'' +
+				", Portraits='" + Portraits + '\'' +
+				", Sex=" + Sex +
+				", Height=" + Height +
+				", Weight=" + Weight +
+				", SportsTarget=" + SportsTarget +
+				'}';
+	}
 }

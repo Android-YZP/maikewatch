@@ -6,7 +6,12 @@ import com.maikeapp.maikewatch.bean.User;
 
 
 public interface IUserBusiness {
-
+	/**
+	 * 获取tokenID
+	 * @return
+	 * @throws Exception
+     */
+	public abstract String getTokenID() throws Exception;
 
 	/**
 	 * 获取手机短信验证码

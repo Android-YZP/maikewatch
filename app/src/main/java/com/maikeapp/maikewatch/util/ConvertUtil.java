@@ -31,7 +31,7 @@ public class ConvertUtil {
 	      }
 	    }
 	      
-	    return strBuf.toString().toUpperCase();//大写
+	    return strBuf.toString().toLowerCase();//小写
 	  }
 	  catch (NoSuchAlgorithmException e)
 	  {

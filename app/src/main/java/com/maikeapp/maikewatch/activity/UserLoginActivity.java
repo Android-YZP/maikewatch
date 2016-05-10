@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
@@ -34,7 +35,7 @@ public class UserLoginActivity extends Activity {
 	
 	private EditText mEtAccount;//用户名
 	private EditText mEtPassword;//密码
-	
+
 	private Button mBtnLogin;//登录按钮
 	private TextView mTvGoRegister;//去注册
 	private TextView mTvGoForgot;//去忘记密码
@@ -56,7 +57,7 @@ public class UserLoginActivity extends Activity {
 	private void initView() {
 		mEtAccount = (EditText)findViewById(R.id.et_user_login_account);
 		mEtPassword = (EditText)findViewById(R.id.et_user_login_password);
-		
+
 		mBtnLogin = (Button)findViewById(R.id.btn_user_login_commit);
 		
 		mTvGoRegister = (TextView)findViewById(R.id.tv_user_login_reg);
@@ -105,10 +106,12 @@ public class UserLoginActivity extends Activity {
 	private void showTip(String str){
 		Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
 	}
-	
+
+	/**
+	 * 保存用户信息，提醒，并关闭登录界面
+	 */
 	public void saveUserInfo() {
 		//保存用户信息，并关闭该界面
-		Log.d(CommonConstants.LOGCAT_TAG_NAME+"_user_login_info", mUser.toString());
 		CommonUtil.saveUserInfo(mUser,this);
 		Toast.makeText(UserLoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
 		UserLoginActivity.this.finish();
@@ -121,14 +124,13 @@ public class UserLoginActivity extends Activity {
 			Intent _intent = null;
 			switch (view.getId()) {
 			case R.id.btn_user_login_visit_by_easy:
+				//随便看看
 				UserLoginActivity.this.finish();
 				break;
 			case R.id.btn_user_login_commit:
-				
-				
+				//用户登录提交
 				String account = mEtAccount.getText().toString();
 				String password = mEtPassword.getText().toString();
-				
 				if(account==null||account.equals("")){
 					Toast.makeText(UserLoginActivity.this, "您未填写用户名", Toast.LENGTH_SHORT).show();
 					return;
@@ -142,13 +144,14 @@ public class UserLoginActivity extends Activity {
 				mProgressDialog = ProgressDialog.show(UserLoginActivity.this, "请稍等", "正在玩命登录中...",true,true);
 				//开启副线程-发起登录
 				userLoginFromNet(account,password);
-				
 				break;
 			case R.id.tv_user_login_reg:
+				//点击用户注册
 				_intent = new Intent(UserLoginActivity.this,UserRegPhoneActivity.class);
 				startActivity(_intent);
 				break;
 			case R.id.tv_user_login_forget:
+				//点击忘记密码
 				_intent = new Intent(UserLoginActivity.this,UserForgotPhoneActivity.class);
 				startActivity(_intent);
 				break;
@@ -156,16 +159,19 @@ public class UserLoginActivity extends Activity {
 				break;
 			}
 		}
-
+		/**
+		 * 开启副线程-发起登录
+		 */
 		private void userLoginFromNet(final String account, final String password) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						String result = mUserBusiness.getUserLogin(account,password);
+						String result = mUserBusiness.getUserLogin(account,password);//获取网络数据
 						Log.d(CommonConstants.LOGCAT_TAG_NAME + "_result_getUserLogin", result);
+						//解析result
 						JSONObject jsonObj = new JSONObject(result);
-						boolean Success = jsonObj.getBoolean("success");
+						boolean Success = JsonUtils.getBoolean(jsonObj,"Success");
 						if(Success){
 							//填充用户信息
 							fullUserInfo(jsonObj);
@@ -173,22 +179,15 @@ public class UserLoginActivity extends Activity {
 							handler.sendEmptyMessage(CommonConstants.FLAG_GET_REG_USER_LOGIN_SUCCESS);
 						}else{
 							//获取错误代码，并查询出错误文字
-							String errorMsg = jsonObj.getString("errorMsg");
+							String errorMsg = JsonUtils.getString(jsonObj, "Message");
 							CommonUtil.sendErrorMessage(errorMsg,handler);
 						}
-					} catch (ConnectTimeoutException e) {
-						e.printStackTrace();
-						CommonUtil.sendErrorMessage(CommonConstants.MSG_REQUEST_TIMEOUT,handler);
-					}catch (SocketTimeoutException e) {
-						e.printStackTrace();
-						CommonUtil.sendErrorMessage(CommonConstants.MSG_SERVER_RESPONSE_TIMEOUT,handler);
-					}
-					catch (ServiceException e) {
+					} catch (ServiceException e) {
 						e.printStackTrace();
 						CommonUtil.sendErrorMessage(e.getMessage(),handler);
 					} catch (Exception e) {
 						//what = 0;sendmsg 0;
-						CommonUtil.sendErrorMessage("注册-用户登录："+CommonConstants.MSG_GET_ERROR,handler);
+						CommonUtil.sendErrorMessage("用户登录："+CommonConstants.MSG_GET_ERROR,handler);
 					}
 				}
 				/**
@@ -196,14 +195,11 @@ public class UserLoginActivity extends Activity {
 				 * @param jsonObj
 				 */
 				private void fullUserInfo(JSONObject jsonObj) {
-					mUser = new User();
-					mUser.setAccount(JsonUtils.getString(jsonObj, "account"));
-					mUser.setPassword(JsonUtils.getString(jsonObj, "password"));
-					mUser.setId(JsonUtils.getInt(jsonObj, "id"));
-					mUser.setUserImg(JsonUtils.getString(jsonObj, "userImg"));
-					mUser.setUsername(JsonUtils.getString(jsonObj, "username"));
-					mUser.setMobile(JsonUtils.getString(jsonObj, "mobile"));
-					mUser.setVerifyCode(JsonUtils.getString(jsonObj, "verifyCode"));
+					JSONObject _json_user = JsonUtils.getObj(jsonObj,"Datas");//把Datas里面的数据存于user对象
+					Log.d(CommonConstants.LOGCAT_TAG_NAME+"_json_user_datas",_json_user.toString());
+					Gson gson = new Gson();
+					mUser = gson.fromJson(_json_user.toString(),User.class);
+					Log.d(CommonConstants.LOGCAT_TAG_NAME+"_user_info",mUser.toString());
 				}
 			}).start();
 		}
