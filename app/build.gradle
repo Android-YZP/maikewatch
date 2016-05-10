@@ -26,4 +26,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.3.0'
     compile files('libs/achartengine-1.2.0.jar')
     compile files('libs/android-smart-image-view-1.0.0.jar')
+    compile files('libs/qqhd_band_sdk_v1.3.jar')
 }

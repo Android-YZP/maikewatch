@@ -1,9 +1,6 @@
 package com.maikeapp.maikewatch.activity;
 
 import java.lang.ref.WeakReference;
-import java.net.SocketTimeoutException;
-
-import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -40,7 +37,7 @@ public class UserLoginActivity extends Activity {
 	private TextView mTvGoRegister;//去注册
 	private TextView mTvGoForgot;//去忘记密码
 	private Button mBtnVisitByEasy;//随便看看
-	
+
 	//业务层
 	private IUserBusiness mUserBusiness = new UserBusinessImp();
 	
@@ -49,11 +46,27 @@ public class UserLoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if(checkUserLogin()){
+			UserLoginActivity.this.finish();
+			return;
+		}
 		setContentView(R.layout.activity_user_login);
 		initView();
 		initData();
 		setListener();
 	}
+
+	private boolean checkUserLogin() {
+		User mUser = CommonUtil.getUserInfo(this);
+		if(mUser!=null){
+			Intent _intent = new Intent(this,MainActivity.class);
+			startActivity(_intent);
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	private void initView() {
 		mEtAccount = (EditText)findViewById(R.id.et_user_login_account);
 		mEtPassword = (EditText)findViewById(R.id.et_user_login_password);
@@ -108,13 +121,15 @@ public class UserLoginActivity extends Activity {
 	}
 
 	/**
-	 * 保存用户信息，提醒，并关闭登录界面
+	 * 保存用户信息，提醒
 	 */
 	public void saveUserInfo() {
 		//保存用户信息，并关闭该界面
 		CommonUtil.saveUserInfo(mUser,this);
 		Toast.makeText(UserLoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
 		UserLoginActivity.this.finish();
+		Intent _intent = new Intent(this,MainActivity.class);
+		startActivity(_intent);
 	}
 	
 	private class UserLoginOnClickListener implements OnClickListener{
@@ -125,6 +140,8 @@ public class UserLoginActivity extends Activity {
 			switch (view.getId()) {
 			case R.id.btn_user_login_visit_by_easy:
 				//随便看看
+				_intent = new Intent(UserLoginActivity.this,MainActivity.class);
+				startActivity(_intent);
 				UserLoginActivity.this.finish();
 				break;
 			case R.id.btn_user_login_commit:

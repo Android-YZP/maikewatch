@@ -14,6 +14,8 @@ public class User {
 	private int Height;//身高
 	private int Weight;//体重
 	private int SportsTarget;//个人目标
+	private boolean isBindWatch;//是否绑定手表
+
 
 	public int getId() {
 		return Id;
@@ -77,6 +79,14 @@ public class User {
 
 	public void setSportsTarget(int sportsTarget) {
 		SportsTarget = sportsTarget;
+	}
+
+	public boolean isBindWatch() {
+		return isBindWatch;
+	}
+
+	public void setBindWatch(boolean bindWatch) {
+		isBindWatch = bindWatch;
 	}
 
 	@Override

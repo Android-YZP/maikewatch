@@ -14,6 +14,7 @@ public class CommonConstants {
 	public static final int FLAG_GET_USER_FORGOT_PWD_ONE_SUCCESS = 13;
 	public static final int FLAG_GET_USER_FORGOT_SMS_CAN_GET_AGAIN_SUCCESS = 14;
 	public static final int FLAG_GET_USER_FORGOT_PWD_UPDATE_SUCCESS = 15;
+	public static final int FLAG_GET_MAC_ADDRESS_SUCCESS = 16;
 
 	
 	public static final String MSG_GET_ERROR = "服务端数据异常";
