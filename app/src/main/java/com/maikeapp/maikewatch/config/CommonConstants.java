@@ -15,6 +15,10 @@ public class CommonConstants {
 	public static final int FLAG_GET_USER_FORGOT_SMS_CAN_GET_AGAIN_SUCCESS = 14;
 	public static final int FLAG_GET_USER_FORGOT_PWD_UPDATE_SUCCESS = 15;
 	public static final int FLAG_GET_MAC_ADDRESS_SUCCESS = 16;
+	public static final int FLAG_BIND_MAC_ADDRESS_SUCCESS = 17;
+	public static final int FLAG_UNBIND_MAC_ADDRESS_SUCCESS = 18;
+	public static final int FLAG_SYNC_COMPLETED_SUCCESS = 19;
+	public static final int FLAG_HOME_SYNC_SUCCESS = 20;
 
 	
 	public static final String MSG_GET_ERROR = "服务端数据异常";
@@ -39,6 +43,8 @@ public class CommonConstants {
 
 	//登录
 	public static final String USER_LOGIN = NOW_ADDRESS + "WebServices/WatchServices/Login";
+
+	public static final String SET_SPORTS_TARGET = NOW_ADDRESS + "WebServices/WatchServices/SetSportsTarget";
 
 	//发送注册短信
 	public static final String MOBILEMSG_REGISTER = NOW_ADDRESS + "mobilemsg/register.json";
@@ -66,7 +72,7 @@ public class CommonConstants {
 	public static final String USER_DETAIL = NOW_ADDRESS + "user/detail.json";
 	//检查更新
 	public static final String CHECK_APP_VERSION = NOW_ADDRESS + "version.json";
-	
 
-	
+
+
 }

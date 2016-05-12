@@ -6,11 +6,30 @@ import com.maikeapp.maikewatch.bean.User;
 
 
 public interface IUserBusiness {
+
+
+	/**
+	 * 用户登录
+	 * @param pPhone
+	 * @param pPassword
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract String getUserLogin(String pPhone, String pPassword) throws Exception;
+
+	/**
+	 * 设置个人目标步数
+	 * @param mUser
+	 * @throws Exception
+     */
+	public abstract String setSportsTarget(User mUser) throws Exception;
+
+
 	/**
 	 * 获取tokenID
 	 * @return
 	 * @throws Exception
-     */
+	 */
 	public abstract String getTokenID() throws Exception;
 
 	/**
@@ -41,14 +60,7 @@ public interface IUserBusiness {
 	public abstract String getUserRegister(String mPhone, String mCode,
 										   String username, String password) throws Exception;
 
-	/**
-	 * 用户登录
-	 * @param pPhone
-	 * @param pPassword
-	 * @return
-	 * @throws Exception
-	 */
-	public abstract String getUserLogin(String pPhone, String pPassword) throws Exception;
+
 
 	/**
 	 * 用户忘记密码第一步
@@ -117,5 +129,6 @@ public interface IUserBusiness {
 			String _usersign, User mUser) throws Exception;
 
 	public abstract String checkAppUpdate() throws Exception;
+
 
 }

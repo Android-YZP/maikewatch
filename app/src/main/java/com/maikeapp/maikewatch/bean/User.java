@@ -11,11 +11,40 @@ public class User {
 	private String Mobile;//手机号
 	private String Portraits;//头像
 	private int Sex;//性别
+	private int Age;//年龄
 	private int Height;//身高
 	private int Weight;//体重
 	private int SportsTarget;//个人目标
 	private boolean isBindWatch;//是否绑定手表
 
+	private String macAddress;//mac地址
+
+	private String watchVersion;//手表固件版本号
+	private int battery;// 目前电量
+
+	public String getWatchVersion() {
+		return watchVersion;
+	}
+
+	public void setWatchVersion(String watchVersion) {
+		this.watchVersion = watchVersion;
+	}
+
+	public int getBattery() {
+		return battery;
+	}
+
+	public void setBattery(int battery) {
+		this.battery = battery;
+	}
+
+	public String getMacAddress() {
+		return macAddress;
+	}
+
+	public void setMacAddress(String macAddress) {
+		this.macAddress = macAddress;
+	}
 
 	public int getId() {
 		return Id;
@@ -89,6 +118,14 @@ public class User {
 		isBindWatch = bindWatch;
 	}
 
+	public int getAge() {
+		return Age;
+	}
+
+	public void setAge(int age) {
+		Age = age;
+	}
+
 	@Override
 	public String toString() {
 		return "User{" +
@@ -97,9 +134,14 @@ public class User {
 				", Mobile='" + Mobile + '\'' +
 				", Portraits='" + Portraits + '\'' +
 				", Sex=" + Sex +
+				", Age=" + Age +
 				", Height=" + Height +
 				", Weight=" + Weight +
 				", SportsTarget=" + SportsTarget +
+				", isBindWatch=" + isBindWatch +
+				", macAddress='" + macAddress + '\'' +
+				", watchVersion='" + watchVersion + '\'' +
+				", battery=" + battery +
 				'}';
 	}
 }

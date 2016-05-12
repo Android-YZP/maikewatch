@@ -90,6 +90,7 @@
                             android:textSize="@dimen/common_content_text_font_size"
                             />
                         <TextView
+                            android:id="@+id/tv_pscenter_global_step"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1000"
@@ -114,6 +115,7 @@
                             android:textSize="@dimen/common_content_text_font_size"
                             />
                         <TextView
+                            android:id="@+id/tv_pscenter_battery_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="- -"
@@ -139,6 +141,7 @@
                             android:textSize="@dimen/common_content_text_font_size"
                             />
                         <ImageView
+                            android:id="@+id/iv_pscenter_bindwatch_islock"
                             android:layout_width="@dimen/pscenter_userinfo_data_lock_width_or_height"
                             android:layout_height="@dimen/pscenter_userinfo_data_lock_width_or_height"
                             android:layout_marginTop="8dp"

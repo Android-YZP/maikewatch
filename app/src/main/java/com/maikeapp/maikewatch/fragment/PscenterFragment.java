@@ -25,6 +25,7 @@ import com.maikeapp.maikewatch.util.CommonUtil;
 
 
 public class PscenterFragment extends Fragment {
+    //个人目标、绑定手表、个人信息、设置闹钟、关于我们、退出登录
     private LinearLayout mLineGlobal;
     private LinearLayout mLineBindWatch;
     private LinearLayout mLinePsInfo;
@@ -34,6 +35,10 @@ public class PscenterFragment extends Fragment {
     //用户登录
     private SmartImageView mIvUserLogin;
     private TextView mTvUsername;
+    private ImageView mIvBindWatchIsLock;
+
+    private TextView mTvGlobalStep;
+    private TextView mTvBatteryStatus;
 
     private User mUser;
     public PscenterFragment() {
@@ -58,9 +63,27 @@ public class PscenterFragment extends Fragment {
         super.onResume();
         mUser = CommonUtil.getUserInfo(getActivity());
         if (mUser!=null){
+            //更新界面信息
             mLineUserLogout.setVisibility(View.VISIBLE);
             mTvUsername.setText(mUser.getLoginName());
             mIvUserLogin.setImageUrl(mUser.getPortraits(),R.drawable.pscenter_userinfo_headpic);
+            mTvGlobalStep.setText(""+mUser.getSportsTarget());
+            int _battery = mUser.getBattery();
+            if(_battery >= 56){
+                mTvBatteryStatus.setText("充足");
+            }else if(_battery >= 5 && _battery <= 56){
+                mTvBatteryStatus.setText("正常");
+            }else if (_battery < 5){
+                mTvBatteryStatus.setText("- -");
+            }
+
+            if (mUser.isBindWatch()){
+                //显示已绑定手表的图标
+                mIvBindWatchIsLock.setBackgroundResource(R.drawable.bangding_watch);
+            }else{
+                //显示未绑定手表的图标
+                mIvBindWatchIsLock.setBackgroundResource(R.drawable.pscenter_unbind_lock);
+            }
         }else{
             mLineUserLogout.setVisibility(View.GONE);
         }
@@ -76,6 +99,10 @@ public class PscenterFragment extends Fragment {
         //用户登录
         mIvUserLogin = (SmartImageView)view.findViewById(R.id.iv_pscenter_login);
         mTvUsername = (TextView)view.findViewById(R.id.tv_pscenter_username);
+        mTvGlobalStep = (TextView)view.findViewById(R.id.tv_pscenter_global_step);
+        mTvBatteryStatus = (TextView)view.findViewById(R.id.tv_pscenter_battery_status);
+        //是否已绑定图标
+        mIvBindWatchIsLock = (ImageView) view.findViewById(R.id.iv_pscenter_bindwatch_islock);
 
         initData();
         setListener();

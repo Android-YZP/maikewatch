@@ -13,17 +13,7 @@ import com.maikeapp.maikewatch.util.NetWorkUtil;
 
 public class UserBusinessImp implements IUserBusiness {
 
-	/**
-	 * 获取tokenID
-	 * @return
-	 * @throws Exception
-	 */
-	public String getTokenID() throws Exception {
-		//添加头信息
-		String _md5_value = ConvertUtil.getMD5("MAIKEWATCH");
-		String _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.GET_TOKEN_ID,"", _md5_value.substring(0,8));
-		return _result;
-	}
+
 
 
 	/**
@@ -54,6 +44,42 @@ public class UserBusinessImp implements IUserBusiness {
 		Log.d(CommonConstants.LOGCAT_TAG_NAME+"_md5_value",_md5_value.substring(0,8));
 
 		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.USER_LOGIN, _json_viewModel.toString(), _md5_value.substring(0,8));
+		return _result;
+	}
+
+	/**
+	 * 上传个人目标步数
+	 * @param mUser
+	 * @throws Exception
+     */
+	@Override
+	public String setSportsTarget(User mUser) throws Exception {
+		String _result = null;
+		//封装成json数据
+		JSONObject _json_args = new JSONObject();
+		_json_args.put("sLoginName", mUser.getLoginName());
+		_json_args.put("iSportsTarget", ""+mUser.getSportsTarget());
+
+		_json_args.put("ClientVersion", "1.0");
+		_json_args.put("ClientType", "Phone");
+
+
+		Log.d(CommonConstants.LOGCAT_TAG_NAME+"_getUserLogin",_json_args.toString());
+
+		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SET_SPORTS_TARGET, _json_args.toString(), "");
+		return _result;
+	}
+
+
+	/**
+	 * 获取tokenID
+	 * @return
+	 * @throws Exception
+	 */
+	public String getTokenID() throws Exception {
+		//添加头信息
+		String _md5_value = ConvertUtil.getMD5("MAIKEWATCH");
+		String _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.GET_TOKEN_ID,"", _md5_value.substring(0,8));
 		return _result;
 	}
 

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/common_bg_color"
     android:orientation="vertical"
-    tools:context="com.maikeapp.maikewatch.activity.PsGlobalActivity">
+    tools:context="com.maikeapp.maikewatch.activity.BindWatchActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,7 +53,9 @@
         android:layout_marginTop="@dimen/common_content_margin_top"
         android:background="@color/common_white_color"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone"
+        >
 
         <ImageView
             android:layout_width="match_parent"
@@ -62,6 +64,7 @@
 
 
         <ImageView
+            android:id="@+id/iv_bind_watch_binding"
             android:layout_width="@dimen/iv_bind_watch_binding_width_or_height"
             android:layout_height="@dimen/iv_bind_watch_binding_width_or_height"
             android:background="@drawable/bind_watch_bangding"
@@ -84,25 +87,24 @@
             android:background="@color/common_bg_line_border" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/line_bind_watch_unbind"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/common_content_margin_top"
-        android:background="@color/common_white_color"
-        android:orientation="vertical">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/common_bg_line_border" />
 
-        <ListView
+
+
+        <com.handmark.pulltorefresh.library.PullToRefreshListView
+            xmlns:ptr="http://schemas.android.com/apk/res-auto"
             android:id="@+id/lv_bind_watch_maclist"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            ></ListView>
-
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/common_content_margin_top"
+            android:background="@color/common_white_color"
+            android:fadingEdge="none"
+            android:fastScrollEnabled="false"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:smoothScrollbar="true"
+            ptr:ptrMode="both"
+            ptr:ptrDrawable="@drawable/creative_loading"
+            ptr:ptrHeaderTextColor="@color/common_content_gray_text_font_color"
+            />
 
 </LinearLayout>
