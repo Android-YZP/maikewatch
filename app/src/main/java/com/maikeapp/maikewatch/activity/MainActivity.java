@@ -98,7 +98,7 @@ public class MainActivity extends FragmentActivity {
             boolean isBindWatch = mUser.isBindWatch();
             if(isBindWatch){
                 //同步手表数据（获取手表端数据，并上传到服务端，并在当前界面展示）
-                syncWatchData();
+//                syncWatchData();
             }else{
                 //去绑定
                 Intent _intent = new Intent(MainActivity.this,BindWatchActivity.class);

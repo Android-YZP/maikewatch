@@ -36,6 +36,11 @@ public class OneAlarmActivity extends AppCompatActivity {
         //通用控件
         mTvCommonTitle.setText(m_title);
         mTvCommonAction.setText(m_action);
+        //获取需要设置哪个手表
+        Bundle _bundle = getIntent().getExtras();
+        if (_bundle!=null){
+            _bundle.getInt("_which_clock");
+        }
 
     }
 

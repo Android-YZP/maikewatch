@@ -17,6 +17,8 @@ public class AlertAlarmActivity extends AppCompatActivity {
     private String m_title="闹钟设定";
 
     private TextView mTvAlarmOne;//第一个闹钟时间
+    private TextView mTvAlarmTwo;//第二个闹钟时间
+    private TextView mTvAlarmThree;//第三个闹钟时间
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +33,8 @@ public class AlertAlarmActivity extends AppCompatActivity {
         mIvCommonBack = (ImageView)findViewById(R.id.iv_common_back);
         mTvCommonTitle = (TextView)findViewById(R.id.tv_common_title);
         mTvAlarmOne = (TextView)findViewById(R.id.tv_alert_alarm_time1);//第一个闹钟时间
+        mTvAlarmTwo = (TextView)findViewById(R.id.tv_alert_alarm_time2);//第二个闹钟时间
+        mTvAlarmThree = (TextView)findViewById(R.id.tv_alert_alarm_time3);//第三个闹钟时间
     }
 
     private void initData() {
@@ -47,12 +51,33 @@ public class AlertAlarmActivity extends AppCompatActivity {
                 AlertAlarmActivity.this.finish();
             }
         });
-        mTvAlarmOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent _intent = new Intent(AlertAlarmActivity.this,OneAlarmActivity.class);
-                AlertAlarmActivity.this.startActivity(_intent);
+        mTvAlarmOne.setOnClickListener(new OneTimeOnClickListener());
+        mTvAlarmTwo.setOnClickListener(new OneTimeOnClickListener());
+        mTvAlarmThree.setOnClickListener(new OneTimeOnClickListener());
+    }
+
+    private class OneTimeOnClickListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            Intent _intent = null;
+            switch (v.getId()){
+                case R.id.tv_alert_alarm_time1:
+                    _intent = new Intent(AlertAlarmActivity.this,OneAlarmActivity.class);
+                    _intent.putExtra("_which_clock",1);
+                    AlertAlarmActivity.this.startActivity(_intent);
+                    break;
+                case R.id.tv_alert_alarm_time2:
+                    _intent = new Intent(AlertAlarmActivity.this,OneAlarmActivity.class);
+                    _intent.putExtra("_which_clock",2);
+                    AlertAlarmActivity.this.startActivity(_intent);
+                    break;
+                case R.id.tv_alert_alarm_time3:
+                    _intent = new Intent(AlertAlarmActivity.this,OneAlarmActivity.class);
+                    _intent.putExtra("_which_clock",3);
+                    AlertAlarmActivity.this.startActivity(_intent);
+                    break;
             }
-        });
+        }
     }
 }
