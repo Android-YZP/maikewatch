@@ -95,9 +95,9 @@ public class HistoryDataActivity extends AppCompatActivity {
         if (pAllData!=null&&pAllData.size()>0){
             for (int i = 0; i <pAllData.size() ; i++) {
                 OneDayData _one_day_data = (OneDayData) pAllData.get(i);
-                int hour = _one_day_data.getTime();
+                int hour = _one_day_data.getCompleteHour();
                 //小时，步数
-                series.add(hour,_one_day_data.getStep());
+                series.add(hour,_one_day_data.getSteps());
 
             }
         }
@@ -182,9 +182,9 @@ public class HistoryDataActivity extends AppCompatActivity {
         if (pAllData!=null&&pAllData.size()>0){
             for (int i = 0; i <pAllData.size() ; i++) {
                 OneDayData _one_day_data = (OneDayData) pAllData.get(i);
-                int hour = _one_day_data.getTime();
+                int hour = _one_day_data.getCompleteHour();
                 //小时，步数
-                series.add(hour,_one_day_data.getStep());
+                series.add(hour,_one_day_data.getSteps());
 
             }
         }

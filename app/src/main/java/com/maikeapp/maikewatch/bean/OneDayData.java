@@ -4,43 +4,71 @@ package com.maikeapp.maikewatch.bean;
  * Created by JLJ on 2016/5/11.
  */
 public class OneDayData {
-    private String date;//日期
-    private int time;//时间
-    private int step;//步数
+    private String LoginName;
+    private String MacAddress;
+
+    private String SportsTime;//日期
+    private int CompleteHour;//时间
+    private int Steps;//步数
+    private int CompletedSteps = 0;//总步数0
     private String type;//类型
 
     public OneDayData() {
     }
 
     public OneDayData(String date,int time, int step, String type) {
-        this.date = date;
-        this.time = time;
-        this.step = step;
+        this.SportsTime = date;
+        this.CompleteHour = time;
+        this.Steps = step;
         this.type = type;
     }
 
-    public int getTime() {
-        return time;
+    public String getLoginName() {
+        return LoginName;
     }
 
-    public void setTime(int time) {
-        this.time = time;
+    public void setLoginName(String loginName) {
+        LoginName = loginName;
     }
 
-    public String getDate() {
-        return date;
+    public String getMacAddress() {
+        return MacAddress;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setMacAddress(String macAddress) {
+        MacAddress = macAddress;
     }
 
-    public int getStep() {
-        return step;
+    public String getSportsTime() {
+        return SportsTime;
     }
 
-    public void setStep(int step) {
-        this.step = step;
+    public void setSportsTime(String sportsTime) {
+        SportsTime = sportsTime;
+    }
+
+    public int getCompleteHour() {
+        return CompleteHour;
+    }
+
+    public void setCompleteHour(int completeHour) {
+        CompleteHour = completeHour;
+    }
+
+    public int getSteps() {
+        return Steps;
+    }
+
+    public void setSteps(int steps) {
+        Steps = steps;
+    }
+
+    public int getCompletedSteps() {
+        return CompletedSteps;
+    }
+
+    public void setCompletedSteps(int completedSteps) {
+        CompletedSteps = completedSteps;
     }
 
     public String getType() {

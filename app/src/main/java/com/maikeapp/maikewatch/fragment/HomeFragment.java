@@ -29,6 +29,7 @@ import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
+import com.maikeapp.maikewatch.exception.ServiceException;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
 import com.maikeapp.maikewatch.view.CirclePercentView;
@@ -319,20 +320,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
 
-                    if (allDayData!=null&&allDayData.size()>0){
-                        //有数据
-//                        //上传数据到服务器-上传个人目标
-//                        String _setResult = mUserBusiness.setSportsTarget(mUser);
-//                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_setTarget_result",_setResult);
-//                        JSONObject _json_result = new JSONObject(_setResult);
-//                        boolean Success = JsonUtils.getBoolean(_json_result,"Success");
-//                        if (Success){
-//                            Log.d(CommonConstants.LOGCAT_TAG_NAME+"_Success","true");
-//                        }else{
-//                            Log.d(CommonConstants.LOGCAT_TAG_NAME+"_Success","false");
-//                        }
-                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_Success",""+allDayData.size());
-                    }
+
 
                     // 设置手环同步完成
                     device.setFinishSync();
@@ -377,6 +365,9 @@ public class HomeFragment extends Fragment {
 
                         //添加到allDayData中
                         OneDayData _one_day_data = new OneDayData(date,time,step,type);
+                        _one_day_data.setLoginName(mUser.getLoginName());
+                        _one_day_data.setMacAddress(mUser.getMacAddress());
+                        _one_day_data.setCompletedSteps(0);//服务端要求
                         allDayData.add(_one_day_data);
 
                         Log.i("sync", "data = " + object);
@@ -443,7 +434,7 @@ public class HomeFragment extends Fragment {
          Collections.sort(allDayData, new Comparator<OneDayData>() {
             @Override
             public int compare(OneDayData lhs, OneDayData rhs) {
-                return new Integer(lhs.getTime()).compareTo(new Integer(rhs.getTime()));
+                return new Integer(lhs.getCompleteHour()).compareTo(new Integer(rhs.getCompleteHour()));
             }
         });
 
@@ -455,13 +446,13 @@ public class HomeFragment extends Fragment {
         int _sum_step = 0;//总步数
         List<OneDayData> _todayData = new ArrayList<OneDayData>();
         for (int i = 0; i < allDayData.size(); i++) {
-            Log.d(CommonConstants.LOGCAT_TAG_NAME+"_oneDay",allDayData.get(i).getDate()+","+allDayData.get(i).getTime()+","+allDayData.get(i).getStep()+","+allDayData.get(i).getType());
+            Log.d(CommonConstants.LOGCAT_TAG_NAME+"_oneDay",allDayData.get(i).getSportsTime()+","+allDayData.get(i).getCompleteHour()+","+allDayData.get(i).getSteps()+","+allDayData.get(i).getType());
             try{
-                Date _the_date = _sdf.parse(allDayData.get(i).getDate());
+                Date _the_date = _sdf.parse(allDayData.get(i).getSportsTime());
                 String _the_date_str = _sdf.format(_the_date);
                 //当天的数据叠加
                 if (_TodayStr.equals(_the_date_str)){
-                    _sum_step += allDayData.get(i).getStep();
+                    _sum_step += allDayData.get(i).getSteps();
                     _todayData.add(allDayData.get(i));
                 }
             }catch (Exception e){
@@ -486,8 +477,70 @@ public class HomeFragment extends Fragment {
 
         lineView(_todayData);//更新折线图
         Toast.makeText(getActivity(),"同步已完成", Toast.LENGTH_SHORT).show();
+
+        //上传当天以及最近7天的所有数据到服务端
+        uploadAllDataToServer(_calories,_distance);
+
     }
 
+    /**
+     * 上传当天以及最近7天的所有数据到服务端
+     * @param calories 卡路里千卡
+     * @param distance 公里数
+     */
+    private void uploadAllDataToServer(final double calories,final double distance) {
+        //开启副线程-上传数据
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //上传个人目标、身高、体重
+                    String _set_sports_target_Result = mUserBusiness.setSportsTarget(mUser);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_setTarget_result",_set_sports_target_Result);
+                    JSONObject _json_result = new JSONObject(_set_sports_target_Result);
+                    boolean Success = JsonUtils.getBoolean(_json_result,"Success");
+                    if (Success) {
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_sports_target_r", "true");
+
+                        //上传卡路里和公里数
+                        String _sync_sports_data_today_result = mUserBusiness.syncSportsDataToday(mUser, calories, distance);
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_up_today_data1_r", _sync_sports_data_today_result);
+                        JSONObject _json_upload_today_data_result = new JSONObject(_sync_sports_data_today_result);
+                        boolean _upload_today_Success = JsonUtils.getBoolean(_json_upload_today_data_result, "Success");
+                        if (_upload_today_Success) {
+                            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_today_data_r", "true");
+                            //上传最近7天数据
+                            if (allDayData!=null&&allDayData.size()>0){
+                                String _upload_recent_week_data_result = mUserBusiness.uploadRecentWeekData(allDayData);
+                                JSONObject _json_upload_recent_data_result = new JSONObject(_upload_recent_week_data_result);
+                                boolean _upload_recent_data_Success = JsonUtils.getBoolean(_json_upload_recent_data_result, "Success");
+                                if (_upload_recent_data_Success) {
+                                    Log.d(CommonConstants.LOGCAT_TAG_NAME + "_upload_recent_r", "true");
+                                }else{
+                                    Log.d(CommonConstants.LOGCAT_TAG_NAME + "_upload_recent_r", "false");
+                                }
+
+                            }
+
+                        } else {
+                            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_today_data_r", "false");
+                        }
+                    }else{
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_sports_target_r", "false");
+                    }
+                }catch (ServiceException e){
+                    e.printStackTrace();
+                    CommonUtil.sendErrorMessage(e.getMessage(),handler);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_exception","出现异常错误");
+                }
+
+            }
+
+        }).start();
+
+    }
 
 
     //折线图
@@ -503,9 +556,9 @@ public class HomeFragment extends Fragment {
         if (pTodayData!=null&&pTodayData.size()>0){
             for (int i = 0; i <pTodayData.size() ; i++) {
                 OneDayData _one_day_data = (OneDayData) pTodayData.get(i);
-                int hour = _one_day_data.getTime();
+                int hour = _one_day_data.getCompleteHour();
                 //小时，步数
-                series.add(hour,_one_day_data.getStep());
+                series.add(hour,_one_day_data.getSteps());
 
             }
         }

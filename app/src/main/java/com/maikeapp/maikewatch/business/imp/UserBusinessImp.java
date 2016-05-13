@@ -4,11 +4,17 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.maikeapp.maikewatch.bean.OneDayData;
 import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.config.CommonConstants;
 import com.maikeapp.maikewatch.util.ConvertUtil;
 import com.maikeapp.maikewatch.util.NetWorkUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 
 public class UserBusinessImp implements IUserBusiness {
@@ -58,7 +64,9 @@ public class UserBusinessImp implements IUserBusiness {
 		//封装成json数据
 		JSONObject _json_args = new JSONObject();
 		_json_args.put("sLoginName", mUser.getLoginName());
-		_json_args.put("iSportsTarget", ""+mUser.getSportsTarget());
+		_json_args.put("iSportsTarget", ""+(mUser.getSportsTarget()==0?2000:mUser.getSportsTarget()));//默认目标2000
+		_json_args.put("Height", ""+(mUser.getHeight()==0?175:mUser.getHeight()));//没有值默认取175身高
+		_json_args.put("Weight", ""+(mUser.getWeight()==0?70:mUser.getWeight()));//没有值默认取70身高
 		_json_args.put("MacAddress", ""+mUser.getMacAddress());
 
 		_json_args.put("ClientVersion", "1.0");
@@ -68,6 +76,62 @@ public class UserBusinessImp implements IUserBusiness {
 		Log.d(CommonConstants.LOGCAT_TAG_NAME+"_getUserLogin",_json_args.toString());
 
 		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SET_SPORTS_TARGET, _json_args.toString(), "");
+		return _result;
+	}
+
+	/**
+	 * 保存今天的运动数据
+	 * @param mUser
+	 * @param calories
+	 * @param distance
+	 * @return
+     * @throws Exception
+     */
+	@Override
+	public String syncSportsDataToday(User mUser, double calories, double distance) throws Exception {
+		String _result = null;
+		//封装成json数据
+		JSONObject _json_args = new JSONObject();
+		_json_args.put("LoginName", mUser.getLoginName());
+		_json_args.put("MacAddress", mUser.getMacAddress());
+			Date _date = new Date();
+			SimpleDateFormat _sdf = new SimpleDateFormat("yyyy-MM-dd");
+			String _today_str = _sdf.format(_date);
+		_json_args.put("SportsTime",_today_str);
+		_json_args.put("Kcal", ""+calories);
+		_json_args.put("iKils", ""+distance);
+
+
+		_json_args.put("ClientVersion", "1.0");
+		_json_args.put("ClientType", "Phone");
+
+		JSONObject _json_sportview = new JSONObject();
+		_json_sportview.put("sportview",_json_args);
+
+		Log.d(CommonConstants.LOGCAT_TAG_NAME+"_syncSportsDataToday",_json_sportview.toString());
+
+		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SYNC_SPORTS_DATATODAY, _json_sportview.toString(), "");
+		return _result;
+	}
+
+	/**
+	 * 上传最近7天的数据
+	 * @param allDayData
+	 * @return
+	 * @throws Exception
+     */
+	@Override
+	public String uploadRecentWeekData(List<OneDayData> allDayData) throws Exception {
+		String _result = null;
+		//封装成json数据
+		JSONObject _json_args = new JSONObject();
+		Gson _gson = new Gson();
+		String _gson_str = _gson.toJson(allDayData);
+		_json_args.put("sportview",_gson_str);
+
+		Log.d(CommonConstants.LOGCAT_TAG_NAME+"_uploadRecentWeekD",_json_args.toString());
+
+		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SYNC_SPORTS_DATA, _json_args.toString(), "");
 		return _result;
 	}
 
@@ -83,6 +147,8 @@ public class UserBusinessImp implements IUserBusiness {
 		String _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.GET_TOKEN_ID,"", _md5_value.substring(0,8));
 		return _result;
 	}
+
+
 
 	@Override
 	public String getMobilemsgRegister(String phone) throws Exception {
