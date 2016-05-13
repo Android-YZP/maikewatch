@@ -139,7 +139,7 @@ public class CirclePercentView extends View {
 
     //外部设置百分比数
     public void setPercent(int percent) {
-        if (percent > 100) {
+        if (percent > 101) {
             throw new IllegalArgumentException("percent must less than 100!");
         }
 

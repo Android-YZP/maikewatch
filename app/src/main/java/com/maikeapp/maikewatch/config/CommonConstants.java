@@ -19,6 +19,7 @@ public class CommonConstants {
 	public static final int FLAG_UNBIND_MAC_ADDRESS_SUCCESS = 18;
 	public static final int FLAG_SYNC_COMPLETED_SUCCESS = 19;
 	public static final int FLAG_HOME_SYNC_SUCCESS = 20;
+	public static final int FLAG_SET_TARGET_SUCCESS = 21;
 
 	
 	public static final String MSG_GET_ERROR = "服务端数据异常";

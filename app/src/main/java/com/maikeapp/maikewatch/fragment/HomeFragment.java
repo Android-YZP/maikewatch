@@ -1,7 +1,8 @@
 package com.maikeapp.maikewatch.fragment;
 
 
-import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ import com.gzgamut.sdk.global.Global;
 import com.gzgamut.sdk.helper.NoConnectException;
 import com.gzgamut.sdk.model.Maike;
 import com.maikeapp.maikewatch.R;
+import com.maikeapp.maikewatch.activity.HistoryDataActivity;
 import com.maikeapp.maikewatch.bean.OneDayData;
 import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
@@ -37,31 +40,41 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.achartengine.util.MathHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
-    private Button mButton;
-    private CirclePercentView mCirclePercentView;
-    private LinearLayout mLinearChart;
+    private CirclePercentView mCirclePercentView;//总进度
+    private TextView mTvDate;//日期
 
-    private TextView mTvSportsTarget;
+    private ImageView mIvHistoryData;//历史数据
+    private ImageView mIvShare;//分享
+
+    private TextView mTvSportsTarget;//个人目标
+    private TextView mTvSumSteps;//总步数
+    private TextView mTvSumCarolies;//总热量
+    private TextView mTvSumDistance;//里程数
+
+    private LinearLayout mLinearChart;//图表
     /**
      * 业务层
      */
     private IUserBusiness mUserBusiness = new UserBusinessImp();
+    private static ProgressDialog mProgressDialog = null;
     private User mUser;//用户信息
     //sdk
     private Maike device = null;
@@ -90,39 +103,88 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+//        try {
+//            device = new Maike(getActivity());
+//            JSONObject objectMac = this.device.scanDevice(Global.TYPE_DEVICE_Wristband, mUser.getMacAddress());
+//            Log.i("reconnect", "objectMac，Result = " + objectMac);
+//
+//
+//
+//            boolean isDestroy = true;
+////            if (device!=null){
+//                JSONObject object = device.disconnectDevice(isDestroy);		// 断开设备
+//                Log.d("disconnect", "disconncet = " + object);		// 如果为result = 0，则成功，否则失败
+////            }
+//            device=null;
+//        } catch (NoConnectException e) {
+//            e.printStackTrace();
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+    }
 
     void findView(View view) {
         initView(view);
         initData();
-        lineView();//显示折线图
+        lineView(null);//显示折线图
         setListener();
     }
 
-    private void initData() {
-        //获取用户信息
-        mUser = CommonUtil.getUserInfo(getActivity());
-
-        //初始化device
-        try{
-            device = new Maike(getActivity());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
     private void initView(View view) {
+
+        mIvHistoryData = (ImageView)view.findViewById(R.id.iv_home_history_data);
+        mIvShare = (ImageView)view.findViewById(R.id.iv_home_share);
+
+        mTvDate = (TextView)view.findViewById(R.id.tv_home_one_day_date);
         mCirclePercentView = (CirclePercentView) view.findViewById(R.id.circleView);
-//        circleViewmButton = (Button) view.findViewById(R.id.button);
-//        mButton.setOnClickListener(new View.OnClickListener() {
+
+
+        mTvSportsTarget = (TextView)view.findViewById(R.id.tv_home_one_day_sports_target);
+        mTvSumSteps = (TextView)view.findViewById(R.id.tv_home_one_day_sum_steps);
+        mTvSumCarolies = (TextView)view.findViewById(R.id.tv_home_one_day_sum_calories);
+        mTvSumDistance = (TextView)view.findViewById(R.id.tv_home_one_day_sum_distance);
+
+
+//        mTvSportsTarget.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                int n = (int)(Math.random()*100);
+//                int n = 101;
 //                mCirclePercentView.setPercent(n);
 //            }
 //        });
 
         mLinearChart = (LinearLayout) view.findViewById(R.id.line_other_chart);
     }
+
+    private void initData() {
+        //初始化日期
+        Date _today = new Date();
+        SimpleDateFormat _sdf = new SimpleDateFormat("MM月dd日");
+        String _TodayStr = _sdf.format(_today);
+        mTvDate.setText(_TodayStr);
+        //获取用户信息
+        mUser = CommonUtil.getUserInfo(getActivity());
+        if (mUser!=null){
+            mTvSportsTarget.setText("目标:"+mUser.getSportsTarget());
+            //从服务端初始化当日同步前的数据
+            // TODO: 2016/5/12
+        }else{
+            mTvSportsTarget.setText("");
+            mTvSumSteps.setText("0步");
+            mTvSumCarolies.setText("0千卡");
+            mTvSumDistance.setText("0公里");
+            mCirclePercentView.setPercent(0);
+        }
+
+
+
+    }
+
+
 
     private void setListener() {
         /**
@@ -131,7 +193,29 @@ public class HomeFragment extends Fragment {
         mCirclePercentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //弹出加载进度条
+                mProgressDialog = ProgressDialog.show(getActivity(), "请稍等", "正在玩命同步中...",true,true);
                 syncWatchData();//同步手表数据
+            }
+        });
+        /**
+         * 查看历史数据
+         */
+        mIvHistoryData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(CommonConstants.LOGCAT_TAG_NAME+"_onclick_history","click_history");
+                Intent _intent = new Intent(getActivity(), HistoryDataActivity.class);
+                getActivity().startActivity(_intent);
+            }
+        });
+        /**
+         * 分享今日数据
+         */
+        mIvShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: 2016/5/12  
             }
         });
     }
@@ -140,7 +224,15 @@ public class HomeFragment extends Fragment {
      * 同步手表数据（获取手表端数据，并上传到服务端，并在当前界面展示）
      */
     private void syncWatchData() {
-        Toast.makeText(getActivity(),"正在同步数据...",Toast.LENGTH_SHORT).show();
+
+        //初始化device
+        try{
+            device = new Maike(getActivity());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         //开启副线程-同步数据
         new Thread(new Runnable() {
             @Override
@@ -149,7 +241,13 @@ public class HomeFragment extends Fragment {
                 //连接某只手表mac
                 JSONObject objectMac = device.scanDevice(Global.TYPE_DEVICE_Wristband, _macAddress);
                 Log.i(CommonConstants.LOGCAT_TAG_NAME+"_reconnect", "objectMac，Result = " + objectMac);
-                syncWatchData(_macAddress);//同步数据
+                if (objectMac==null){
+                    //同步失败，未连接手表
+                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
+                }else{
+                    syncWatchData(_macAddress);//同步数据
+                }
+
             }
         }).start();
     }
@@ -176,9 +274,12 @@ public class HomeFragment extends Fragment {
 
                     JSONObject batteryResult = device.getBattery();		// 获取手环的电量
                     Log.d("sync", "batteryResult= " + batteryResult);			// result 里面的数值就是电量
-                    mBattery = JsonUtils.getInt(batteryResult,"result");
-                    mUser.setBattery(mBattery);
-                    CommonUtil.saveUserInfo(mUser,getActivity());//覆盖用户电量
+                    mBattery = JsonUtils.getInt(batteryResult,"result",-1);
+                    if (mBattery!=-1){
+                        mUser.setBattery(mBattery);
+                        CommonUtil.saveUserInfo(mUser,getActivity());//覆盖用户电量
+                    }
+
 
                     int count = 0;
                     int sn = 0;
@@ -240,10 +341,13 @@ public class HomeFragment extends Fragment {
 
                 } catch (NoConnectException e) {
                     e.printStackTrace();
+                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
                 } catch (Exception e){
                     e.printStackTrace();
+                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
                 }
                 running = false;
                 //断开连接
@@ -295,6 +399,7 @@ public class HomeFragment extends Fragment {
             boolean isDestroy = true;
             JSONObject object = device.disconnectDevice(isDestroy);		// 断开设备
             Log.d("disconnect", "disconncet = " + object);		// 如果为result = 0，则成功，否则失败
+            device = null;
         } catch (NoConnectException e) {
             e.printStackTrace();
         } catch (Exception e){
@@ -306,6 +411,9 @@ public class HomeFragment extends Fragment {
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
+            if(mProgressDialog!=null){
+                mProgressDialog.dismiss();
+            }
             int flag = msg.what;
             switch (flag) {
                 case 0:
@@ -328,11 +436,9 @@ public class HomeFragment extends Fragment {
     };
 
     /**
-     * 更新UI数据
+     * 更新UI数据-当天总步数、并计算出进度百分比、热量、里程数、当天每个小时的步数
      */
     private void updateUIAfterSync() {
-        //当天总步数、并计算出进度百分比、热量、里程数、当天每个小时的步数
-
 
          Collections.sort(allDayData, new Comparator<OneDayData>() {
             @Override
@@ -341,10 +447,27 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //初始化日期
+        Date _today = new Date();
+        SimpleDateFormat _sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String _TodayStr = _sdf.format(_today);
+
         int _sum_step = 0;//总步数
+        List<OneDayData> _todayData = new ArrayList<OneDayData>();
         for (int i = 0; i < allDayData.size(); i++) {
             Log.d(CommonConstants.LOGCAT_TAG_NAME+"_oneDay",allDayData.get(i).getDate()+","+allDayData.get(i).getTime()+","+allDayData.get(i).getStep()+","+allDayData.get(i).getType());
-            _sum_step += allDayData.get(i).getStep();
+            try{
+                Date _the_date = _sdf.parse(allDayData.get(i).getDate());
+                String _the_date_str = _sdf.format(_the_date);
+                //当天的数据叠加
+                if (_TodayStr.equals(_the_date_str)){
+                    _sum_step += allDayData.get(i).getStep();
+                    _todayData.add(allDayData.get(i));
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
 
         int _height = mUser.getHeight()==0?175:mUser.getHeight();
@@ -353,60 +476,40 @@ public class HomeFragment extends Fragment {
         double _distance = ((0.45*_height*_sum_step)/100)/1000;//里程数
 //        double _calories = 0.53*_height+0.58*_weight+0.04*_sum_step-135;//热量
         double _calories = _weight*_distance*1.036;//热量
-        String percent = calcPercent(_sum_step,mUser.getSportsTarget());//百分比
+        String percent = CommonUtil.calcPercent(_sum_step,mUser.getSportsTarget());//百分比
         Log.d(CommonConstants.LOGCAT_TAG_NAME+"_result","总步数："+_sum_step+",百分比："+percent+",热量："+_calories+",里程数："+_distance);
+        //更新界面
+        mTvSumSteps.setText(_sum_step+"步");
+        mTvSumCarolies.setText(CommonUtil.formatData(Double.valueOf(_calories),2)+"千卡");
+        mTvSumDistance.setText(CommonUtil.formatData(Double.valueOf(_distance),2)+"公里");
+        mCirclePercentView.setPercent(Integer.parseInt(percent) + 1);
+
+        lineView(_todayData);//更新折线图
+        Toast.makeText(getActivity(),"同步已完成", Toast.LENGTH_SHORT).show();
     }
 
-    private String calcPercent(int diliverNum,int queryMailNum){
-//        int diliverNum=3;//举例子的变量
-//        int queryMailNum=9;//举例子的变量
-        // 创建一个数值格式化对象
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        // 设置精确到小数点后2位
-        numberFormat.setMaximumFractionDigits(0);
-        String result = numberFormat.format((float)diliverNum/(float)queryMailNum*100);
-        System.out.println("diliverNum和queryMailNum的百分比为:" + result + "%");
-        return result;
-    }
 
-    private String formatData(double d){
-        // 创建一个数值格式化对象
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        // 设置精确到小数点后2位
-        numberFormat.setMaximumFractionDigits(0);
-        String result = numberFormat.format(d);
-        return result;
-    }
 
     //折线图
-    public void lineView(){
+    public void lineView(List pTodayData){
         //同样是需要数据dataset和视图渲染器renderer
         XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
         XYSeries  series = new XYSeries("步数");
-        series.add(0, 200);
-        series.add(1, 155);
-        series.add(2, 145);
-        series.add(3, 127);
-        series.add(4, 144);
-        series.add(5, 116);
-        series.add(6, 115);
-        series.add(7, 137);
-        series.add(8, 124);
-        series.add(9, 116);
-        series.add(10, 125);
-        series.add(11, 177);
-        series.add(12, 224);
-        series.add(13, 406);
-        series.add(14, 525);
-        series.add(15, 417);
-        series.add(16, 430);
-        series.add(17, 236);
-        series.add(18, 418);
-        series.add(19, 424);
-        series.add(20, 442);
-        series.add(21, 434);
-        series.add(22, 432);
-        series.add(23, 426);
+//        //先画所有的数据为0
+//        for (int i = 0; i <24 ; i++) {
+//            series.add(i, MathHelper.NULL_VALUE);
+//        }
+        //再画每个时刻的步数
+        if (pTodayData!=null&&pTodayData.size()>0){
+            for (int i = 0; i <pTodayData.size() ; i++) {
+                OneDayData _one_day_data = (OneDayData) pTodayData.get(i);
+                int hour = _one_day_data.getTime();
+                //小时，步数
+                series.add(hour,_one_day_data.getStep());
+
+            }
+        }
+
 
         mDataset.addSeries(series);
 //	        XYSeries  seriesTwo = new XYSeries("第二条线");
@@ -429,37 +532,17 @@ public class HomeFragment extends Fragment {
         mRenderer.setLegendTextSize(20);//设置图例文本大小
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
-        mRenderer.setYAxisMax(600);
+        mRenderer.setYAxisMax(600);//y轴最大值600
         mRenderer.setYLabels(3);//设置Y轴刻度个数（貌似不太准确）
         mRenderer.setXAxisMax(23);
         mRenderer.setShowGrid(true);//显示网格
 
 
         //将x标签栏目显示如：1,2,3,4替换为显示1月，2月，3月，4月
-        mRenderer.addXTextLabel(0, "0");
-        mRenderer.addXTextLabel(1, "1");
-        mRenderer.addXTextLabel(2, "2");
-        mRenderer.addXTextLabel(3, "3");
-        mRenderer.addXTextLabel(4, "4");
-        mRenderer.addXTextLabel(5, "5");
-        mRenderer.addXTextLabel(6, "6");
-        mRenderer.addXTextLabel(7, "7");
-        mRenderer.addXTextLabel(8, "8");
-        mRenderer.addXTextLabel(9, "9");
-        mRenderer.addXTextLabel(10, "10");
-        mRenderer.addXTextLabel(11, "11");
-        mRenderer.addXTextLabel(12, "12");
-        mRenderer.addXTextLabel(13, "13");
-        mRenderer.addXTextLabel(14, "14");
-        mRenderer.addXTextLabel(15, "15");
-        mRenderer.addXTextLabel(16, "16");
-        mRenderer.addXTextLabel(17, "17");
-        mRenderer.addXTextLabel(18, "18");
-        mRenderer.addXTextLabel(19, "19");
-        mRenderer.addXTextLabel(20, "20");
-        mRenderer.addXTextLabel(21, "21");
-        mRenderer.addXTextLabel(22, "22");
-        mRenderer.addXTextLabel(23, "23");
+        for (int i = 0; i < 24; i++) {
+            mRenderer.addXTextLabel(i, String.valueOf(i));
+        }
+
         mRenderer.setXLabels(0);//设置只显示如1月，2月等替换后的东西，不显示1,2,3等
         mRenderer.setMargins(new int[] { 20, 30, 15, 20 });//设置视图位置
 
@@ -507,6 +590,7 @@ public class HomeFragment extends Fragment {
 
 
 //	        setContentView(view);
+        mLinearChart.removeAllViews();
         mLinearChart.addView(view);
     }
 }

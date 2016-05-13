@@ -23,6 +23,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/common_topbar_height"
                     >
+
+                    <ImageView
+                        android:id="@+id/iv_home_history_data"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentLeft="true"
+                        android:src="@drawable/home_history_data"
+                        android:paddingRight="@dimen/home_topbar_nav_share_padding"
+                        android:paddingLeft="@dimen/home_topbar_nav_share_padding"
+                        />
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -39,6 +50,7 @@
                             android:background="@drawable/nav_date"
                             android:layout_marginLeft="@dimen/home_topbar_nav_date_margin_left"/>
                         <TextView
+                            android:id="@+id/tv_home_one_day_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="4月16日"
@@ -73,15 +85,15 @@
                         android:id="@+id/circleView"
                         app:stripeWidth="15dp"
                         app:centerTextSize="16sp"
-                        app:percent="45"
+                        app:percent="0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         />
                     <TextView
+                        android:id="@+id/tv_home_one_day_sports_target"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="目标:1000"
                         android:textColor="@color/common_white_color"
                         android:textSize="@dimen/common_content_text_font_size"
                         android:layout_marginTop="@dimen/home_globle_margin_top"
@@ -126,9 +138,10 @@
                         android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
                         />
                     <TextView
+                        android:id="@+id/tv_home_one_day_sum_steps"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="695步"
+                        android:text="0步"
                         android:textColor="@color/common_content_dark_text_font_color"
                         android:textSize="@dimen/common_content_text_font_size"
                         android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
@@ -159,9 +172,10 @@
                         android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
                         />
                     <TextView
+                        android:id="@+id/tv_home_one_day_sum_calories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="26千卡"
+                        android:text="0千卡"
                         android:textColor="@color/common_content_dark_text_font_color"
                         android:textSize="@dimen/common_content_text_font_size"
                         android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
@@ -190,9 +204,10 @@
                         android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
                         />
                     <TextView
+                        android:id="@+id/tv_home_one_day_sum_distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.5公里"
+                        android:text="0公里"
                         android:textColor="@color/common_content_dark_text_font_color"
                         android:textSize="@dimen/common_content_text_font_size"
                         android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
@@ -206,6 +221,13 @@
                 android:background="@color/home_line_oneday_bg_border"
                 />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_today_data_str"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/home_today_data_str_margin_top"
+                />
             <LinearLayout
                 android:id="@+id/line_other_chart"
                 android:layout_width="match_parent"
@@ -213,12 +235,7 @@
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
                 >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_today_data_str"
-                    android:layout_marginTop="@dimen/home_today_data_str_margin_top"
-                    />
+
 
             </LinearLayout>
         </LinearLayout>

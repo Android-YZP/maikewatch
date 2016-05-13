@@ -21,6 +21,8 @@ import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.bean.AppVersion;
 import com.maikeapp.maikewatch.bean.User;
 
+import java.text.NumberFormat;
+
 
 public class CommonUtil {
 	/**
@@ -179,4 +181,37 @@ public class CommonUtil {
        addShortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, context.getString(R.string.app_name));
        context.sendBroadcast(addShortcut);
   	}
+
+	/**
+	 * 计算百分比
+	 * @param diliverNum 除数
+	 * @param queryMailNum 被除数
+	 * @return
+	 */
+	public static String calcPercent(int diliverNum,int queryMailNum){
+//        int diliverNum=3;//举例子的变量
+//        int queryMailNum=9;//举例子的变量
+		// 创建一个数值格式化对象
+		NumberFormat numberFormat = NumberFormat.getInstance();
+		// 设置精确到小数点后2位
+		numberFormat.setMaximumFractionDigits(0);
+		String result = numberFormat.format((float)diliverNum/(float)queryMailNum*100);
+		System.out.println("diliverNum和queryMailNum的百分比为:" + result + "%");
+		return result;
+	}
+
+	/**
+	 * 格式化数据
+	 * @param d 原数据
+	 * @param savenum 保留小数位数
+	 * @return
+	 */
+	public static String formatData(double d,int savenum){
+		// 创建一个数值格式化对象
+		NumberFormat numberFormat = NumberFormat.getInstance();
+		// 设置精确到小数点后2位
+		numberFormat.setMaximumFractionDigits(savenum);
+		String result = numberFormat.format(d);
+		return result;
+	}
 }

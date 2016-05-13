@@ -106,7 +106,6 @@
     <dimen name="user_login_logo_height">68dp</dimen>
 
 
-
     <!-- user reg phone -->
     <dimen name="user_reg_phone_et_phone_height">44dp</dimen>
     <dimen name="user_reg_phone_et_phone_margin_top">10dp</dimen>
