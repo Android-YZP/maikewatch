@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.maikeapp.maikewatch.bean.OneDayData;
+import com.maikeapp.maikewatch.bean.SportView;
 import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.config.CommonConstants;
@@ -88,7 +89,7 @@ public class UserBusinessImp implements IUserBusiness {
      * @throws Exception
      */
 	@Override
-	public String syncSportsDataToday(User mUser, double calories, double distance) throws Exception {
+	public String syncSportsDataToday(User mUser, String calories, String distance) throws Exception {
 		String _result = null;
 		//封装成json数据
 		JSONObject _json_args = new JSONObject();
@@ -98,8 +99,8 @@ public class UserBusinessImp implements IUserBusiness {
 			SimpleDateFormat _sdf = new SimpleDateFormat("yyyy-MM-dd");
 			String _today_str = _sdf.format(_date);
 		_json_args.put("SportsTime",_today_str);
-		_json_args.put("Kcal", ""+calories);
-		_json_args.put("iKils", ""+distance);
+		_json_args.put("Kcal", calories);
+		_json_args.put("iKils", distance);
 
 
 		_json_args.put("ClientVersion", "1.0");
@@ -124,14 +125,64 @@ public class UserBusinessImp implements IUserBusiness {
 	public String uploadRecentWeekData(List<OneDayData> allDayData) throws Exception {
 		String _result = null;
 		//封装成json数据
-		JSONObject _json_args = new JSONObject();
 		Gson _gson = new Gson();
-		String _gson_str = _gson.toJson(allDayData);
-		_json_args.put("sportview",_gson_str);
+		SportView sportView = new SportView();
+		sportView.setSportview(allDayData);
+		String _gson_str = _gson.toJson(sportView);
 
-		Log.d(CommonConstants.LOGCAT_TAG_NAME+"_uploadRecentWeekD",_json_args.toString());
+		Log.d(CommonConstants.LOGCAT_TAG_NAME+"_uploadRecentWeekD",_gson_str);
 
-		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SYNC_SPORTS_DATA, _json_args.toString(), "");
+		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SYNC_SPORTS_DATA, _gson_str, "");
+		return _result;
+	}
+
+	/**
+	 * 查询某个日期的当天运动数据
+	 * @param mUser 用户信息
+	 * @param day_time 日期
+	 * @return
+	 * @throws Exception
+     */
+	@Override
+	public String querySportsDataByDay(User mUser, String day_time) throws Exception {
+		String _result = null;
+		//封装成json数据
+		JSONObject _json_args = new JSONObject();
+		_json_args.put("sLoginName", mUser.getLoginName());
+		_json_args.put("sMacAddress", mUser.getMacAddress());
+		_json_args.put("DayTime", day_time);
+
+		_json_args.put("ClientVersion", "1.0");
+		_json_args.put("ClientType", "Phone");
+
+		Log.d(CommonConstants.LOGCAT_TAG_NAME+"querySportsDataByDay",_json_args.toString());
+
+		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.QUERY_SPORTS_DATA_BYDAY, _json_args.toString(), "");
+		return _result;
+	}
+
+	/**
+	 * 查询最近几天的运动总步数
+	 * @param mUser
+	 * @param days
+	 * @return
+	 * @throws Exception
+     */
+	@Override
+	public String queryRecentlySportsData(User mUser, int days) throws Exception {
+		String _result = null;
+		//封装成json数据
+		JSONObject _json_args = new JSONObject();
+		_json_args.put("sLoginName", mUser.getLoginName());
+		_json_args.put("sMacAddress", mUser.getMacAddress());
+		_json_args.put("iDays", days+"");
+
+		_json_args.put("ClientVersion", "1.0");
+		_json_args.put("ClientType", "Phone");
+
+		Log.d(CommonConstants.LOGCAT_TAG_NAME+"querySportsDataByDay",_json_args.toString());
+
+		_result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.QUERY_RECENTLY_SPORTS_DATA, _json_args.toString(), "");
 		return _result;
 	}
 

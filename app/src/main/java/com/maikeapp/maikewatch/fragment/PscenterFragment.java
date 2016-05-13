@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,6 +40,8 @@ public class PscenterFragment extends Fragment {
 
     private TextView mTvGlobalStep;
     private TextView mTvBatteryStatus;
+
+    private CheckBox mCbCallAlertIsOn;
 
     private User mUser;
     public PscenterFragment() {

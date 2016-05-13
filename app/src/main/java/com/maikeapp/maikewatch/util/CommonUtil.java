@@ -193,7 +193,7 @@ public class CommonUtil {
 //        int queryMailNum=9;//举例子的变量
 		// 创建一个数值格式化对象
 		NumberFormat numberFormat = NumberFormat.getInstance();
-		// 设置精确到小数点后2位
+		// 设置精确到小数点后0位
 		numberFormat.setMaximumFractionDigits(0);
 		String result = numberFormat.format((float)diliverNum/(float)queryMailNum*100);
 		System.out.println("diliverNum和queryMailNum的百分比为:" + result + "%");

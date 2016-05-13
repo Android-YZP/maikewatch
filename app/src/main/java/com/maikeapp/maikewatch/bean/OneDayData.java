@@ -4,6 +4,13 @@ package com.maikeapp.maikewatch.bean;
  * Created by JLJ on 2016/5/11.
  */
 public class OneDayData {
+    private int Id;
+    private double Kcal;
+    private double iKils;
+    private int TargetSteps;
+    private int CompletedPercent;
+
+
     private String LoginName;
     private String MacAddress;
 
@@ -21,6 +28,46 @@ public class OneDayData {
         this.CompleteHour = time;
         this.Steps = step;
         this.type = type;
+    }
+
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
+    }
+
+    public double getKcal() {
+        return Kcal;
+    }
+
+    public void setKcal(double kcal) {
+        Kcal = kcal;
+    }
+
+    public double getiKils() {
+        return iKils;
+    }
+
+    public void setiKils(double iKils) {
+        this.iKils = iKils;
+    }
+
+    public int getTargetSteps() {
+        return TargetSteps;
+    }
+
+    public void setTargetSteps(int targetSteps) {
+        TargetSteps = targetSteps;
+    }
+
+    public int getCompletedPercent() {
+        return CompletedPercent;
+    }
+
+    public void setCompletedPercent(int completedPercent) {
+        CompletedPercent = completedPercent;
     }
 
     public String getLoginName() {
@@ -77,5 +124,23 @@ public class OneDayData {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "OneDayData{" +
+                "Id=" + Id +
+                ", Kcal=" + Kcal +
+                ", iKils=" + iKils +
+                ", TargetSteps=" + TargetSteps +
+                ", CompletedPercent=" + CompletedPercent +
+                ", LoginName='" + LoginName + '\'' +
+                ", MacAddress='" + MacAddress + '\'' +
+                ", SportsTime='" + SportsTime + '\'' +
+                ", CompleteHour=" + CompleteHour +
+                ", Steps=" + Steps +
+                ", CompletedSteps=" + CompletedSteps +
+                ", type='" + type + '\'' +
+                '}';
     }
 }
