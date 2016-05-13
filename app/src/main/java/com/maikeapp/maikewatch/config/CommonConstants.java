@@ -37,16 +37,133 @@ public class CommonConstants {
 	
 
 	/**
-	 * 注册登录
+	 * 获取tokenID
 	 */
-	//获取tokenID
 	public static final String GET_TOKEN_ID = NOW_ADDRESS + "WebServices/WatchServices/GetTokenID";
 
-	//登录
+	/**
+	 * 登录
+	 */
 	public static final String USER_LOGIN = NOW_ADDRESS + "WebServices/WatchServices/Login";
 
+
+
+	/**
+	 * 设置个人目标
+	 */
 	public static final String SET_SPORTS_TARGET = NOW_ADDRESS + "WebServices/WatchServices/SetSportsTarget";
 
+
+
+	/**
+	 * 注册
+	 */
+	public static final String JOIN = NOW_ADDRESS + "WebServices/WatchServices/Join";
+
+	/**
+	 * 发送短信验证码
+	 */
+	public static final String SET_VERIFICATION_CODE = NOW_ADDRESS + "WebServices/WatchServices/SetVerificationCode";
+
+	/**
+	 * 切换图片验证码
+	 */
+	public static final String RELOAD_PIC_CODE = NOW_ADDRESS + "WebServices/WatchServices/ReloadPicCode";
+
+	/**
+	 * 验证短信验证码
+	 */
+	public static final String CHECK_CODE = NOW_ADDRESS + "WebServices/WatchServices/CheckCode";
+
+	/**
+	 * 上传图像
+	 */
+	public static final String UPLOAD_IMAGE = NOW_ADDRESS + "WebServices/WatchServices/UploadImage";
+
+	/**
+	 * 获取用户信息
+	 */
+	public static final String QUERY_WATCH_USER = NOW_ADDRESS + "WebServices/WatchServices/QueryWatchUser";
+
+	/**
+	 * 设置用户信息
+	 */
+	public static final String SET_PERSONAL = NOW_ADDRESS + "WebServices/WatchServices/SetPersonal";
+
+	/**
+	 * 新增闹钟
+	 */
+	public static final String ADD_CLOCK = NOW_ADDRESS + "WebServices/WatchServices/AddClock";
+
+	/**
+	 * 查询闹钟
+	 */
+	public static final String QUERY_CLOCKS = NOW_ADDRESS + "WebServices/WatchServices/QueryClocks";
+
+	/**
+	 * 修改闹钟
+	 */
+	public static final String MODIFY_CLOCK = NOW_ADDRESS + "WebServices/WatchServices/ModifyClock";
+
+	/**
+	 * 同步运动数据(操作之前先调用设置运动目标和最新身高体重接口)
+	 */
+	public static final String SYNC_SPORTS_DATA = NOW_ADDRESS + "WebServices/WatchServices/SyncSportsData";
+
+	/**
+	 * 查询运动数据
+	 */
+	public static final String QUERY_SPORTS_DATA = NOW_ADDRESS + "WebServices/WatchServices/QuerySportsData";
+
+	/**
+	 * 查询最近运动数据
+	 */
+	public static final String QUERY_RECENTLY_SPORTS_DATA = NOW_ADDRESS + "WebServices/WatchServices/QueryRecentlySportsData";
+
+	/**
+	 * 设置运动目标和最新身高体重
+	 */
+	public static final String SET_TARGET_HEIGHT_WEIGHT = NOW_ADDRESS + "WebServices/WatchServices/SetSportsTarget";
+
+	/**
+	 * 查询运动目标
+	 */
+	public static final String QUERY_SPORTS_TARGET = NOW_ADDRESS + "WebServices/WatchServices/QuerySportsTarget";
+
+	/**
+	 * 验证登陆名是否有效
+	 */
+	public static final String LOGIN_NAME_ISVAILD = NOW_ADDRESS + "WebServices/WatchServices/LoginNameIsVaild";
+
+	/**
+	 * 验证手机号码是否有效
+	 */
+	public static final String MOBILE_NUMBER_ISVAILD = NOW_ADDRESS + "WebServices/WatchServices/MobileNumberIsVaild";
+
+	/**
+	 * 忘记密码
+	 */
+	public static final String FORGET_PASSWORD = NOW_ADDRESS + "WebServices/WatchServices/ForgetPassword";
+
+	/**
+	 * 修改密码
+	 */
+	public static final String CHANGE_PASSWORD = NOW_ADDRESS + "WebServices/WatchServices/ChangePassword";
+
+	/**
+	 * 查询当天运动数据
+	 */
+	public static final String QUERY_SPORTS_DATA_BYDAY = NOW_ADDRESS + "WebServices/WatchServices/QuerySportsDataByDay";
+
+	/**
+	 * 保存今天运动数据
+	 */
+	public static final String SYNC_SPORTS_DATATODAY = NOW_ADDRESS + "WebServices/WatchServices/SyncSportsDataToday";
+
+
+    /**
+	 * 下面的不用看，是上一个项目拷贝过来的
+	 */
 	//发送注册短信
 	public static final String MOBILEMSG_REGISTER = NOW_ADDRESS + "mobilemsg/register.json";
 	//验证注册短信
