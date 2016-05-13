@@ -44,6 +44,7 @@
                 />
 
             <TextView
+                android:id="@+id/tv_about_us_watch_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20150721.H01"
@@ -79,6 +80,7 @@
                 />
 
             <TextView
+                android:id="@+id/tv_app_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="v1.0.1"
@@ -98,6 +100,7 @@
 
         <!--检查新版本 start-->
         <LinearLayout
+            android:id="@+id/line_about_us_check_new_version"
             android:layout_width="match_parent"
             android:layout_height="@dimen/pscenter_funclist_list_item_height"
             android:orientation="horizontal"
@@ -143,7 +146,7 @@
                 />
 
             <CheckBox
-                android:id="@+id/cb_pscenter_calling"
+                android:id="@+id/cb_about_us_isauto_check_update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/MyCheckBox"

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.maikeapp.maikewatch.activity.HistoryDataActivity">
+
+    <include layout="@layout/layout_common_topbar" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_content_margin_top"
+        android:background="@color/common_white_color"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/pscenter_bg_border_color" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/home_line_oneday_bg_border"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/history_data_week_str"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/home_today_data_str_margin_top"
+            />
+        <LinearLayout
+            android:id="@+id/line_history_data_chart_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            >
+
+
+        </LinearLayout>
+
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/home_line_oneday_bg_border"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/history_data_month_str"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/home_today_data_str_margin_top"
+            />
+        <LinearLayout
+            android:id="@+id/line_history_data_chart_month"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            >
+
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

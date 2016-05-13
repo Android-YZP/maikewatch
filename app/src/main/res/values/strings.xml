@@ -42,4 +42,6 @@
     <string name="one_alarm_week_saturday">周六</string>
     <string name="pscenter_user_logout">退出登录</string>
     <string name="user_login_creative_live">创意生活</string>
+    <string name="history_data_week_str">最近7天数据</string>
+    <string name="history_data_month_str">最近30天数据</string>
 </resources>

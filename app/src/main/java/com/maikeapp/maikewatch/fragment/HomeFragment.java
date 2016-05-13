@@ -1,6 +1,8 @@
 package com.maikeapp.maikewatch.fragment;
 
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +23,7 @@ import com.gzgamut.sdk.global.Global;
 import com.gzgamut.sdk.helper.NoConnectException;
 import com.gzgamut.sdk.model.Maike;
 import com.maikeapp.maikewatch.R;
+import com.maikeapp.maikewatch.activity.HistoryDataActivity;
 import com.maikeapp.maikewatch.bean.OneDayData;
 import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
@@ -71,6 +74,7 @@ public class HomeFragment extends Fragment {
      * 业务层
      */
     private IUserBusiness mUserBusiness = new UserBusinessImp();
+    private static ProgressDialog mProgressDialog = null;
     private User mUser;//用户信息
     //sdk
     private Maike device = null;
@@ -99,6 +103,29 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+//        try {
+//            device = new Maike(getActivity());
+//            JSONObject objectMac = this.device.scanDevice(Global.TYPE_DEVICE_Wristband, mUser.getMacAddress());
+//            Log.i("reconnect", "objectMac，Result = " + objectMac);
+//
+//
+//
+//            boolean isDestroy = true;
+////            if (device!=null){
+//                JSONObject object = device.disconnectDevice(isDestroy);		// 断开设备
+//                Log.d("disconnect", "disconncet = " + object);		// 如果为result = 0，则成功，否则失败
+////            }
+//            device=null;
+//        } catch (NoConnectException e) {
+//            e.printStackTrace();
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+    }
 
     void findView(View view) {
         initView(view);
@@ -110,7 +137,7 @@ public class HomeFragment extends Fragment {
     private void initView(View view) {
 
         mIvHistoryData = (ImageView)view.findViewById(R.id.iv_home_history_data);
-        mIvShare = (ImageView)view.findViewById(R.id.iv_home_history_data);
+        mIvShare = (ImageView)view.findViewById(R.id.iv_home_share);
 
         mTvDate = (TextView)view.findViewById(R.id.tv_home_one_day_date);
         mCirclePercentView = (CirclePercentView) view.findViewById(R.id.circleView);
@@ -154,12 +181,7 @@ public class HomeFragment extends Fragment {
         }
 
 
-        //初始化device
-        try{
-            device = new Maike(getActivity());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
     }
 
 
@@ -171,6 +193,8 @@ public class HomeFragment extends Fragment {
         mCirclePercentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //弹出加载进度条
+                mProgressDialog = ProgressDialog.show(getActivity(), "请稍等", "正在玩命同步中...",true,true);
                 syncWatchData();//同步手表数据
             }
         });
@@ -180,7 +204,9 @@ public class HomeFragment extends Fragment {
         mIvHistoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 2016/5/12  
+                Log.d(CommonConstants.LOGCAT_TAG_NAME+"_onclick_history","click_history");
+                Intent _intent = new Intent(getActivity(), HistoryDataActivity.class);
+                getActivity().startActivity(_intent);
             }
         });
         /**
@@ -198,7 +224,15 @@ public class HomeFragment extends Fragment {
      * 同步手表数据（获取手表端数据，并上传到服务端，并在当前界面展示）
      */
     private void syncWatchData() {
-        Toast.makeText(getActivity(),"正在同步数据...",Toast.LENGTH_LONG).show();
+
+        //初始化device
+        try{
+            device = new Maike(getActivity());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         //开启副线程-同步数据
         new Thread(new Runnable() {
             @Override
@@ -362,9 +396,10 @@ public class HomeFragment extends Fragment {
      */
     private void disConnectWatch() {
         try {
-            boolean isDestroy = false;
+            boolean isDestroy = true;
             JSONObject object = device.disconnectDevice(isDestroy);		// 断开设备
             Log.d("disconnect", "disconncet = " + object);		// 如果为result = 0，则成功，否则失败
+            device = null;
         } catch (NoConnectException e) {
             e.printStackTrace();
         } catch (Exception e){
@@ -376,6 +411,9 @@ public class HomeFragment extends Fragment {
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
+            if(mProgressDialog!=null){
+                mProgressDialog.dismiss();
+            }
             int flag = msg.what;
             switch (flag) {
                 case 0:

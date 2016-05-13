@@ -43,7 +43,8 @@
                 android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
                 />
 
-            <ImageView
+            <com.maikeapp.maikewatch.view.CustomSmartImageView
+                android:id="@+id/iv_ps_info_userhead"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/pscenter_userinfo_headpic"
@@ -76,11 +77,12 @@
                 android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
                 />
 
-            <EditText
+            <TextView
+                android:id="@+id/tv_ps_info_loginname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:text="test"
+                android:text="未登录"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size"
                 android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
@@ -154,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:inputType="number"
-                android:text="25"
+                android:text="30"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size"
                 android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
@@ -191,7 +193,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:inputType="number"
-                android:text="165"
+                android:text="175"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size"
                 android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
@@ -229,7 +231,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:inputType="number"
-                android:text="50"
+                android:text="70"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size"
                 android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
