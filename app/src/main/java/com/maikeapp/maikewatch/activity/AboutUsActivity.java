@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.bean.User;
+import com.maikeapp.maikewatch.config.CommonConstants;
 import com.maikeapp.maikewatch.util.CommonUtil;
 
 /**
@@ -28,7 +29,6 @@ public class AboutUsActivity extends AppCompatActivity {
     private LinearLayout mLineCheckNewVersion;//检查新版本
     private CheckBox mCBIsAutoCheck;//是否检查新版本
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,14 +42,10 @@ public class AboutUsActivity extends AppCompatActivity {
         //通用控件
         mIvCommonBack = (ImageView)findViewById(R.id.iv_common_back);
         mTvCommonTitle = (TextView)findViewById(R.id.tv_common_title);
-
         mTvWatchVersion = (TextView)findViewById(R.id.tv_about_us_watch_version);
         mTvAppVersion = (TextView)findViewById(R.id.tv_app_version);
-
         mLineCheckNewVersion = (LinearLayout)findViewById(R.id.line_about_us_check_new_version);
         mCBIsAutoCheck = (CheckBox)findViewById(R.id.cb_about_us_isauto_check_update);
-
-
     }
 
     private void initData() {
@@ -59,13 +55,15 @@ public class AboutUsActivity extends AppCompatActivity {
         if (mUser!=null){
             String _watchVersion = mUser.getWatchVersion();
             mTvWatchVersion.setText(_watchVersion);
-
         }
+        //获取版本信息
         String _versionName = CommonUtil.getAppVersion(this).getVersionName();
+        getVersionFromService();
         mTvAppVersion.setText("v"+_versionName);
-
     }
-
+    //获取网络版本信息
+    private void getVersionFromService() {
+    }
     private void setListener() {
         //通用控件
         mIvCommonBack.setOnClickListener(new View.OnClickListener() {

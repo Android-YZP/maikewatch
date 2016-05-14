@@ -32,26 +32,22 @@ public class NetWorkUtil {
     /**
      * 上传照片
      * @param urlconn
-     * @param jsonargs
-     * @param sVerifyCode
      * @param mFile
      * @return
      * @throws Exception
      */
-    private static String getResultFromUrlConnectionWithPhoto(
+    public static String getResultFromUrlConnectionWithPhoto(
             String urlconn, String jsonargs,
-            String sVerifyCode, File mFile) throws Exception {
+            String fileName, String LoginName, File mFile) throws Exception {
         String result = null;
 
         InputStream in = null;
         URL url = null;
         HttpURLConnection urlConnection = null;
         OutputStream out = null;
-        byte[] data = null;
         String BOUNDARY = "|"; // request头和上传文件内容分隔符
         DataInputStream in1 =null;
         try {
-            data = jsonargs.getBytes();
             url = new URL(urlconn);
             urlConnection = (HttpURLConnection) url.openConnection();
             // 设置可以读取数据
@@ -66,7 +62,8 @@ public class NetWorkUtil {
                     "Mozilla/5.0 (Windows; U; Windows NT 6.1; zh-CN; rv:1.9.2.6)");
             urlConnection.setRequestProperty("Content-Type",
                     "multipart/form-data; boundary=" + BOUNDARY);
-            urlConnection.setRequestProperty("sVerifyCode", sVerifyCode);
+            urlConnection.setRequestProperty("fileName", fileName);
+            urlConnection.setRequestProperty("LoginName", LoginName);
             urlConnection.connect();
 
             out = new DataOutputStream(urlConnection.getOutputStream());
@@ -102,12 +99,6 @@ public class NetWorkUtil {
             throw new ServiceException("服务器响应超时...");
         } catch (Exception e) {
             e.printStackTrace();
-            if (e.getMessage().equals("服务器错误")) {
-                throw new ServiceException(e.getMessage());
-            } else {
-                throw new ServiceException("照片出错，出现异常错误");
-            }
-
         } finally {
             if (out != null) {
                 out.close();
@@ -129,14 +120,13 @@ public class NetWorkUtil {
     }
 
 
-
     /**
      * 以post方式发送url请求
      */
-    public static String getResultFromUrlConnection(String urlconn,String jsonargs,String sVerifyCode) throws Exception{
-        String result=null;
+    public static String getResultFromUrlConnection(String urlconn, String jsonargs, String sVerifyCode) throws Exception {
+        String result = null;
 
-        InputStream in=null;
+        InputStream in = null;
         URL url = null;
         HttpURLConnection urlConnection = null;
         OutputStream out = null;
@@ -146,7 +136,7 @@ public class NetWorkUtil {
         try {
             data = jsonargs.getBytes();
             url = new URL(urlconn);
-            urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
             //设置可以读取数据
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
@@ -161,41 +151,35 @@ public class NetWorkUtil {
             out.write(data);
             out.flush();
 
-            int statusCode =urlConnection.getResponseCode();
-            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_url_status", urlconn + ",_status = "+statusCode);
-            if(statusCode != HttpURLConnection.HTTP_OK){
+            int statusCode = urlConnection.getResponseCode();
+            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_url_status", urlconn + ",_status = " + statusCode);
+            if (statusCode != HttpURLConnection.HTTP_OK) {
                 throw new ServiceException("服务器错误");
             }
             in = new BufferedInputStream(urlConnection.getInputStream());
             result = getStrFromInputSteam(in);
 
-        } catch(ConnectException e){
+        } catch (ConnectException e) {
             e.printStackTrace();
             throw new ServiceException("连接出错，请检查您的网络");
-        }catch (ConnectTimeoutException e) {
+        } catch (ConnectTimeoutException e) {
             e.printStackTrace();
             throw new ServiceException("连接超时，请检查您的网络...");
-        }catch (SocketTimeoutException e) {
+        } catch (SocketTimeoutException e) {
             e.printStackTrace();
             throw new ServiceException("服务器响应超时...");
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            if(e.getMessage().equals("服务器错误")){
-                throw new ServiceException(e.getMessage());
-            }else{
-                throw new ServiceException("查询出错");
-            }
-
-        } finally{
-            if(out!=null){
+        } finally {
+            if (out != null) {
                 out.close();
             }
 
-            if(in!=null){
+            if (in != null) {
                 in.close();
             }
 
-            if(urlConnection!=null){
+            if (urlConnection != null) {
                 urlConnection.disconnect();
             }
         }
@@ -205,20 +189,20 @@ public class NetWorkUtil {
     /**
      * 以get方式发送url请求
      */
-    public static String getResultFromUrlConnectionWithGet(String urlconn,String jsonargs,String sVerifyCode) throws Exception{
-        String result=null;
+    public static String getResultFromUrlConnectionWithGet(String urlconn, String jsonargs, String sVerifyCode) throws Exception {
+        String result = null;
 
-        InputStream in=null;
+        InputStream in = null;
         URL url = null;
         HttpURLConnection urlConnection = null;
         String _urlconn = urlconn;
-        if(jsonargs!=null&&!jsonargs.equals("")){
+        if (jsonargs != null && !jsonargs.equals("")) {
             _urlconn = urlconn + "?jsonString=" + jsonargs;
         }
 
         try {
             url = new URL(_urlconn);
-            urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
             //设置可以读取数据
             urlConnection.setDoInput(true);
             urlConnection.setRequestMethod("GET");
@@ -229,50 +213,50 @@ public class NetWorkUtil {
             urlConnection.setRequestProperty("sVerifyCode", sVerifyCode);
             urlConnection.connect();
 
-            int statusCode =urlConnection.getResponseCode();
-            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_url_status", _urlconn + ",_status = "+statusCode);
-            if(statusCode != HttpURLConnection.HTTP_OK){
+            int statusCode = urlConnection.getResponseCode();
+            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_url_status", _urlconn + ",_status = " + statusCode);
+            if (statusCode != HttpURLConnection.HTTP_OK) {
                 throw new ServiceException("服务器错误");
             }
             in = new BufferedInputStream(urlConnection.getInputStream());
             result = getStrFromInputSteam(in);
 
-        } catch(ConnectException e){
+        } catch (ConnectException e) {
             e.printStackTrace();
             throw new ServiceException("连接出错，请检查您的网络");
-        }catch (ConnectTimeoutException e) {
+        } catch (ConnectTimeoutException e) {
             e.printStackTrace();
             throw new ServiceException("连接超时，请检查您的网络...");
-        }catch (SocketTimeoutException e) {
+        } catch (SocketTimeoutException e) {
             e.printStackTrace();
             throw new ServiceException("服务器响应超时...");
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            if(e.getMessage().equals("服务器错误")){
+            if (e.getMessage().equals("服务器错误")) {
                 throw new ServiceException(e.getMessage());
-            }else{
+            } else {
                 throw new ServiceException("查询出错");
             }
 
-        } finally{
+        } finally {
 
-            if(in!=null){
+            if (in != null) {
                 in.close();
             }
 
-            if(urlConnection!=null){
+            if (urlConnection != null) {
                 urlConnection.disconnect();
             }
         }
         return result;
     }
 
-    public static String getStrFromInputSteam(InputStream in) throws Exception{
-        BufferedReader bf=new BufferedReader(new InputStreamReader(in,"UTF-8"));
+    public static String getStrFromInputSteam(InputStream in) throws Exception {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         //最好在将字节流转换为字符流的时候 进行转码
-        StringBuffer buffer=new StringBuffer();
-        String line="";
-        while((line=bf.readLine())!=null){
+        StringBuffer buffer = new StringBuffer();
+        String line = "";
+        while ((line = bf.readLine()) != null) {
             buffer.append(line);
         }
 
@@ -280,21 +264,21 @@ public class NetWorkUtil {
     }
 
     private static Map<String, String> getResultFromUrlConnectionWithGetReturnSessionId(
-            String urlconn,String jsonargs,String sVerifyCode) throws Exception {
+            String urlconn, String jsonargs, String sVerifyCode) throws Exception {
         Map<String, String> resultMap = new HashMap<String, String>();
-        String result=null;
+        String result = null;
 
-        InputStream in=null;
+        InputStream in = null;
         URL url = null;
         HttpURLConnection urlConnection = null;
         String _urlconn = urlconn;
-        if(jsonargs!=null&&!jsonargs.equals("")){
+        if (jsonargs != null && !jsonargs.equals("")) {
             _urlconn = urlconn + "?jsonString=" + jsonargs;
         }
 
         try {
             url = new URL(_urlconn);
-            urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
             //设置可以读取数据
             urlConnection.setDoInput(true);
             urlConnection.setRequestMethod("GET");
@@ -305,9 +289,9 @@ public class NetWorkUtil {
             urlConnection.setRequestProperty("sVerifyCode", sVerifyCode);
             urlConnection.connect();
 
-            int statusCode =urlConnection.getResponseCode();
-            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_url_status", _urlconn + ",_status = "+statusCode);
-            if(statusCode != HttpURLConnection.HTTP_OK){
+            int statusCode = urlConnection.getResponseCode();
+            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_url_status", _urlconn + ",_status = " + statusCode);
+            if (statusCode != HttpURLConnection.HTTP_OK) {
                 throw new ServiceException("服务器错误");
             }
 
@@ -318,52 +302,53 @@ public class NetWorkUtil {
             result = getStrFromInputSteam(in);
             resultMap.put("result", result);
 
-        } catch(ConnectException e){
+        } catch (ConnectException e) {
             e.printStackTrace();
             throw new ServiceException("连接出错，请检查您的网络");
-        }catch (ConnectTimeoutException e) {
+        } catch (ConnectTimeoutException e) {
             e.printStackTrace();
             throw new ServiceException("连接超时，请检查您的网络...");
-        }catch (SocketTimeoutException e) {
+        } catch (SocketTimeoutException e) {
             e.printStackTrace();
             throw new ServiceException("服务器响应超时...");
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            if(e.getMessage().equals("服务器错误")){
+            if (e.getMessage().equals("服务器错误")) {
                 throw new ServiceException(e.getMessage());
-            }else{
+            } else {
                 throw new ServiceException("查询出错");
             }
 
-        } finally{
+        } finally {
 
-            if(in!=null){
+            if (in != null) {
                 in.close();
             }
 
-            if(urlConnection!=null){
+            if (urlConnection != null) {
                 urlConnection.disconnect();
             }
         }
         return resultMap;
     }
-    public static String getCookieValue(HttpURLConnection urlConnection){
+
+    public static String getCookieValue(HttpURLConnection urlConnection) {
         String cookieskey = "Set-Cookie";
         Map<String, List<String>> maps = urlConnection.getHeaderFields();
         List<String> coolist = maps.get(cookieskey);
         Iterator<String> it = coolist.iterator();
         StringBuffer sbu = new StringBuffer();
         //	    sbu.append("eos_style_cookie=default; ");
-        while(it.hasNext()){
+        while (it.hasNext()) {
             String _cookie = it.next();
-            if(_cookie.contains("JSESSIONID")){
-                sbu.append(_cookie.subSequence(0, _cookie.indexOf(";")+1));
+            if (_cookie.contains("JSESSIONID")) {
+                sbu.append(_cookie.subSequence(0, _cookie.indexOf(";") + 1));
                 break;
             }
             //	    	sbu.append(_cookie);
         }
         //	    sbu.append("appWapLogin=true;");
-        Log.d(CommonConstants.LOGCAT_TAG_NAME+"sessionid=", "is "+sbu.toString());
+        Log.d(CommonConstants.LOGCAT_TAG_NAME + "sessionid=", "is " + sbu.toString());
         return sbu.toString();
     }
 }
