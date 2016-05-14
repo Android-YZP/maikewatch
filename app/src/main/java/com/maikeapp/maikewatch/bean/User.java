@@ -16,11 +16,20 @@ public class User {
 	private int Weight;//体重
 	private int SportsTarget;//个人目标
 	private boolean isBindWatch;//是否绑定手表
+	private boolean isCallAlertOn;//是否开启手表来电提醒
 
 	private String macAddress;//mac地址
 
 	private String watchVersion;//手表固件版本号
 	private int battery;// 目前电量
+
+	public boolean isCallAlertOn() {
+		return isCallAlertOn;
+	}
+
+	public void setCallAlertOn(boolean callAlertOn) {
+		isCallAlertOn = callAlertOn;
+	}
 
 	public String getWatchVersion() {
 		return watchVersion;

@@ -1,34 +1,95 @@
 package com.maikeapp.maikewatch.activity;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.bean.User;
+import com.maikeapp.maikewatch.business.imp.UpDateToServer;
+import com.maikeapp.maikewatch.config.CommonConstants;
 import com.maikeapp.maikewatch.util.CommonUtil;
+import com.maikeapp.maikewatch.util.JsonUtils;
+import com.maikeapp.maikewatch.util.NetWorkUtil;
+import com.maikeapp.maikewatch.util.ToastUtil;
 import com.maikeapp.maikewatch.view.CustomSmartImageView;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
 public class PsInfoActivity extends AppCompatActivity {
+    //男女性别状态
+    private static final int PERSON_MAN = 1;
+    private static final int PERSON_WOMAN = 0;
+    //头像选择相关变量
+    private String mpicName = "touxiang";
+    private String mPicPath =Environment.getExternalStorageDirectory().getPath()+ "/maike/";
+    private File tempFile = new File(Environment.getExternalStorageDirectory(),
+            getPhotoFileName());
+    private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
+    private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
+    private static final int PHOTO_REQUEST_CUT = 3;// 结果
+
     private ImageView mIvCommonBack;//返回
     private TextView mTvCommonTitle;//标题
     private TextView mTvCommonAction;//编辑
 
     private CustomSmartImageView mUserHead;//用户头像
     private TextView mTvLoginName;//用户名
-
-    private String m_title="个人信息";
-    private String m_action="完成";
-
+    private String m_title = "个人信息";
+    private String m_action = "完成";
+    private SharedPreferences sp;
     private User mUser;
+    //用户信息
+    private EditText mEtAge;
+    private EditText mEtHeight;
+    private EditText mEtWeight;
+    private RadioGroup mRgSax;
+    private int mSax = 0;
+    private RadioButton mRbMan, mRbWoman;
+    private String mPhotoUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ps_info);
+        //判断文件夹是否存在,不存在则创建
+        File file = new File(mPicPath);
+        if (!file.exists()) {
+            file.mkdir();
+        }
         initView();
         initData();
         setListener();
@@ -36,25 +97,64 @@ public class PsInfoActivity extends AppCompatActivity {
 
     private void initView() {
         //通用控件
-        mIvCommonBack = (ImageView)findViewById(R.id.iv_common_back);
-        mTvCommonTitle = (TextView)findViewById(R.id.tv_common_title);
-        mTvCommonAction = (TextView)findViewById(R.id.tv_common_action);
-
-        mUserHead = (CustomSmartImageView)findViewById(R.id.iv_ps_info_userhead);
-        mTvLoginName = (TextView)findViewById(R.id.tv_ps_info_loginname);
+        mIvCommonBack = (ImageView) findViewById(R.id.iv_common_back);
+        mTvCommonTitle = (TextView) findViewById(R.id.tv_common_title);
+        mTvCommonAction = (TextView) findViewById(R.id.tv_common_action);
+        //用户信息
+        mRgSax = (RadioGroup) findViewById(R.id.rg_ps_info_sax);
+        mRbMan = (RadioButton) findViewById(R.id.rb_ps_info_man);
+        mRbWoman = (RadioButton) findViewById(R.id.rb_ps_info_woman);
+        mUserHead = (CustomSmartImageView) findViewById(R.id.iv_ps_info_userhead);
+        mTvLoginName = (TextView) findViewById(R.id.tv_ps_info_loginname);
+        mEtAge = (EditText) findViewById(R.id.et_ps_info_age);
+        mEtHeight = (EditText) findViewById(R.id.et_ps_info_height);
+        mEtWeight = (EditText) findViewById(R.id.et_ps_info_weight);
     }
 
     private void initData() {
         //通用控件
         mTvCommonTitle.setText(m_title);
         mTvCommonAction.setText(m_action);
-
         mUser = CommonUtil.getUserInfo(this);
-        if (mUser!=null){
-            mUserHead.setImageUrl(mUser.getPortraits(),R.drawable.pscenter_userinfo_headpic);
-            mTvLoginName.setText(mUser.getLoginName());
+        mRbWoman.setChecked(true);//初始化女
+        //设置头像,本地没有就 用默认头像
+        Bitmap bitmap = getLoacalBitmap(mPicPath + mpicName); //从本地取图片(在cdcard中获取)  //
+        if (bitmap == null) {
+            mUserHead.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+        } else {
+            mUserHead.setImageBitmap(bitmap); //设置Bitmap
         }
 
+        if (mUser != null) {
+            mTvLoginName.setText(mUser.getLoginName());
+            //SAX判断
+            if (mUser.getSex() == PERSON_MAN) {
+                mRbMan.setChecked(true);
+            } else {
+                mRbWoman.setChecked(true);
+            }
+            //填充其他信息
+            mEtAge.setText("" + mUser.getAge());
+            mEtHeight.setText("" + mUser.getHeight());
+            mEtWeight.setText("" + mUser.getWeight());
+        }
+    }
+
+    /**
+     * 加载本地图片
+     *
+     * @param url
+     * @return
+     */
+    public static Bitmap getLoacalBitmap(String url) {
+        try {
+            FileInputStream fis = new FileInputStream(url);
+            return BitmapFactory.decodeStream(fis);  ///把流转化为Bitmap图片
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void setListener() {
@@ -65,5 +165,274 @@ public class PsInfoActivity extends AppCompatActivity {
                 PsInfoActivity.this.finish();
             }
         });
+        //完成的点击事件
+        mTvCommonAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPersonUserData();
+            }
+        });
+        //男女选择事件
+        mRgSax.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.rb_ps_info_man:
+                        mSax = PERSON_MAN;
+                        break;
+                    case R.id.rb_ps_info_woman:
+                        mSax = PERSON_WOMAN;
+                        break;
+                }
+            }
+        });
+        //头像点击事件
+        mUserHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOptionDialog();
+            }
+        });
     }
+
+    Dialog alertDialog;
+
+    private void showOptionDialog() {
+        // 取得自定义View
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View _OptionView = layoutInflater.inflate(R.layout.layout_photo_option, null);
+        TextView _camera = (TextView) _OptionView.findViewById(R.id.tv_camera);
+        TextView _cancle = (TextView) _OptionView.findViewById(R.id.tv_cancel);
+        TextView _photo = (TextView) _OptionView.findViewById(R.id.tv_photo);
+        //拍照选取图片的点击事件
+        _camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent _cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                // 指定调用相机拍照后照片的储存路径
+                _cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(tempFile));
+                startActivityForResult(_cameraIntent, PHOTO_REQUEST_TAKEPHOTO);
+                alertDialog.dismiss();
+            }
+        });
+
+        //选取图库图片的点击事件
+        _photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); // "Android.intent.action.GET_CONTENT"
+                innerIntent.setType("image/*"); // 查看类型
+                // StringIMAGE_UNSPECIFIED="image/*";详细的类型在com.google.android.mms.ContentType中
+                Intent wrapperIntent = Intent.createChooser(innerIntent, null);
+                startActivityForResult(wrapperIntent, PHOTO_REQUEST_GALLERY);
+                alertDialog.dismiss();
+            }
+        });
+
+        //取消事件
+        _cancle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog = new AlertDialog.Builder(this).
+                setView(_OptionView).
+                create();
+        alertDialog.show();
+    }
+
+    //处理图片的剪辑
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case PHOTO_REQUEST_TAKEPHOTO:// 当选择拍照时调用
+                startPhotoZoom(Uri.fromFile(tempFile));
+                break;
+            case PHOTO_REQUEST_GALLERY:// 当选择从本地获取图片时
+                // 做非空判断，当我们觉得不满意想重新剪裁的时候便不会报异常，下同
+                if (data != null)
+                    startPhotoZoom(data.getData());
+                break;
+            case PHOTO_REQUEST_CUT:// 返回的结果
+                if (data != null)
+                    // setPicToView(data);
+                    sentPicToNext(data);
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    private void startPhotoZoom(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        // crop为true是设置在开启的intent中设置显示的view可以剪裁
+        intent.putExtra("crop", "true");
+        // aspectX aspectY 是宽高的比例
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // outputX,outputY 是剪裁图片的宽高
+        intent.putExtra("outputX", 300);
+        intent.putExtra("outputY", 300);
+        intent.putExtra("return-data", true);
+        intent.putExtra("noFaceDetection", true);
+        startActivityForResult(intent, PHOTO_REQUEST_CUT);
+    }
+
+    // 将进行剪裁后的图片传递到下一个界面上
+    private void sentPicToNext(Intent picdata) {
+        Bundle bundle = picdata.getExtras();
+        if (bundle != null) {
+            Bitmap photo = bundle.getParcelable("data");
+            //上传图片到服务器
+            sendPicToServer();
+            saveBitmap(photo);  //保存BitMap到本地
+            if (photo == null) {
+                mUserHead.setImageResource(R.drawable.pscenter_userinfo_headpic);
+            } else {
+                mUserHead.setImageBitmap(photo);
+            }
+
+            ByteArrayOutputStream baos = null;
+            try {
+                baos = new ByteArrayOutputStream();
+                photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] photodata = baos.toByteArray();
+                System.out.println(photodata.toString());
+                // Intent intent = new Intent();
+                // intent.setClass(RegisterActivity.this, ShowActivity.class);
+                // intent.putExtra("photo", photodata);
+                // startActivity(intent);
+                // finish();
+            } catch (Exception e) {
+                e.getStackTrace();
+            } finally {
+                if (baos != null) {
+                    try {
+                        baos.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    //上传图片到服务器
+    private void sendPicToServer() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File file = new File(mPicPath + mpicName);
+                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null,mpicName+".jpg",mUser.getLoginName(), file);
+                    Log.e("_withPhoto", "yzp_"+_withPhoto );
+                } catch (Exception e) {
+                    e.printStackTrace();
+//                    Log.e("_withPhoto", mUser.getLoginName());
+                    CommonUtil.sendErrorMessage("上传图片失败，请检查网络", handler);
+                }
+            }
+        }).start();
+
+
+
+
+    }
+
+    // 使用系统当前日期加以调整作为照片的名称
+    private String getPhotoFileName() {
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyyMMdd_HHmmss");
+        return dateFormat.format(date) + ".jpg";
+    }
+
+    /**
+     * 保存方法
+     */
+    public void saveBitmap(Bitmap bm) {
+        File f = new File(mPicPath, mpicName);
+        if (f.exists()) {
+            f.delete();
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(f);
+            bm.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.flush();
+            out.close();
+//            Log.i(TAG, "已经保存");
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 同步数据-设置手表个人信息
+     */
+    private void setPersonUserData() {
+        //用子线程上传数据
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //判断是否登录
+                if (mUser != null) {
+                    mUser.setAge(Integer.parseInt(mEtAge.getText().toString()));
+                    mUser.setSex(mSax);
+                    mUser.setHeight(Integer.parseInt(mEtHeight.getText().toString()));
+                    mUser.setWeight(Integer.parseInt(mEtWeight.getText().toString()));
+                    try {
+                        CommonUtil.saveUserInfo(mUser, PsInfoActivity.this);//更新数据
+                        //上传数据到服务器
+                        String _set_result = new UpDateToServer().setInfoToServer(mUser);
+                        Log.e("服务端的数据", _set_result);
+                        JSONObject _json_result = new JSONObject(_set_result);
+                        boolean _success = JsonUtils.getBoolean(_json_result, "Success");
+                        if (_success) {
+                            // 同步完成
+                            handler.sendEmptyMessage(CommonConstants.FLAG_SET_TARGET_SUCCESS);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        CommonUtil.sendErrorMessage("设置个人信息失败，请检查网络", handler);
+                    }
+                } else {
+                    CommonUtil.sendErrorMessage("请先登录", handler);
+                }
+            }
+        }).start();
+    }
+
+
+    //处理消息队列
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+//            if(mProgressDialog!=null){
+//                mProgressDialog.dismiss();
+//            }
+            int flag = msg.what;
+            switch (flag) {
+                case 0:
+                    String errorMsg = (String) msg.getData().getSerializable("ErrorMsg");
+                    try {
+                        Toast.makeText(PsInfoActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case CommonConstants.FLAG_SET_TARGET_SUCCESS:
+                    //   setTargetCompleted();//操作完成
+                    Toast.makeText(PsInfoActivity.this, "操作完成", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+    };
+
 }

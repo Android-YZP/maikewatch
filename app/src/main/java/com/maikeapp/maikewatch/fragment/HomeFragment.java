@@ -1,6 +1,7 @@
 package com.maikeapp.maikewatch.fragment;
 
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,12 +14,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.gzgamut.sdk.global.Global;
 import com.gzgamut.sdk.helper.NoConnectException;
 import com.gzgamut.sdk.model.Maike;
@@ -29,6 +33,7 @@ import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
+import com.maikeapp.maikewatch.exception.ServiceException;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
 import com.maikeapp.maikewatch.view.CirclePercentView;
@@ -46,6 +51,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -81,6 +87,8 @@ public class HomeFragment extends Fragment {
 
     //同步时获取每天的数据
     private List<OneDayData> allDayData;
+    //一天的数据
+    private List<OneDayData> m_day_datas;
 
     private int mBattery;//电量数值
 
@@ -142,20 +150,10 @@ public class HomeFragment extends Fragment {
         mTvDate = (TextView)view.findViewById(R.id.tv_home_one_day_date);
         mCirclePercentView = (CirclePercentView) view.findViewById(R.id.circleView);
 
-
         mTvSportsTarget = (TextView)view.findViewById(R.id.tv_home_one_day_sports_target);
         mTvSumSteps = (TextView)view.findViewById(R.id.tv_home_one_day_sum_steps);
         mTvSumCarolies = (TextView)view.findViewById(R.id.tv_home_one_day_sum_calories);
         mTvSumDistance = (TextView)view.findViewById(R.id.tv_home_one_day_sum_distance);
-
-
-//        mTvSportsTarget.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                int n = 101;
-//                mCirclePercentView.setPercent(n);
-//            }
-//        });
 
         mLinearChart = (LinearLayout) view.findViewById(R.id.line_other_chart);
     }
@@ -163,15 +161,14 @@ public class HomeFragment extends Fragment {
     private void initData() {
         //初始化日期
         Date _today = new Date();
-        SimpleDateFormat _sdf = new SimpleDateFormat("MM月dd日");
-        String _TodayStr = _sdf.format(_today);
-        mTvDate.setText(_TodayStr);
+        setTodayDate(_today);
         //获取用户信息
         mUser = CommonUtil.getUserInfo(getActivity());
         if (mUser!=null){
             mTvSportsTarget.setText("目标:"+mUser.getSportsTarget());
             //从服务端初始化当日同步前的数据
-            // TODO: 2016/5/12
+            String _day_time = new SimpleDateFormat("yyyy-MM-dd").format(_today);
+            getOnedayDataFromNetWork(_day_time);
         }else{
             mTvSportsTarget.setText("");
             mTvSumSteps.setText("0步");
@@ -184,6 +181,52 @@ public class HomeFragment extends Fragment {
 
     }
 
+    /**
+     * 设置今日日期
+     * @param _today
+     */
+    private void setTodayDate(Date _today) {
+        SimpleDateFormat _sdf = new SimpleDateFormat("MM月dd日");
+        String _TodayStr = _sdf.format(_today);
+        mTvDate.setText(_TodayStr);
+    }
+
+    /**
+     *从网络获取某个日期的数据
+     */
+    private void getOnedayDataFromNetWork(final String _day_time) {
+        //开启副线程-从网络查询某个日期的数据
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String _one_day_data_result = mUserBusiness.querySportsDataByDay(mUser,_day_time);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_oneday_result",_one_day_data_result);
+
+                    JSONObject _json_obj_result = new JSONObject(_one_day_data_result);
+                    boolean _Success = JsonUtils.getBoolean(_json_obj_result,"Success");
+                    if (_Success){
+                        String _json_datas = JsonUtils.getString(_json_obj_result,"Datas");
+                        m_day_datas = new Gson().fromJson(_json_datas,new TypeToken<List<OneDayData>>(){}.getType());
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_day_datas",m_day_datas.toString());
+                        // 同步完成
+                        handler.sendEmptyMessage(CommonConstants.FLAG_HOME_GET_ONE_DAY_DATA_SUCCESS);
+                    }else{
+                        String _Message = JsonUtils.getString(_json_obj_result,"Message");
+                        CommonUtil.sendErrorMessage(_Message,handler);
+                    }
+
+                }catch (ServiceException e){
+                    e.printStackTrace();
+                    CommonUtil.sendErrorMessage(e.getMessage(),handler);
+                }catch(Exception e){
+                    e.printStackTrace();
+                    CommonUtil.sendErrorMessage(CommonConstants.MSG_GET_ERROR,handler);
+                }
+            }
+        }).start();
+
+    }
 
 
     private void setListener() {
@@ -195,7 +238,11 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 //弹出加载进度条
                 mProgressDialog = ProgressDialog.show(getActivity(), "请稍等", "正在玩命同步中...",true,true);
-                syncWatchData();//同步手表数据
+                //初始化日期
+                Date _today = new Date();
+                setTodayDate(_today);
+                //同步手表数据
+                syncWatchData();
             }
         });
         /**
@@ -209,6 +256,16 @@ public class HomeFragment extends Fragment {
                 getActivity().startActivity(_intent);
             }
         });
+
+        /**
+         * 点击日期切换日期
+         */
+        mTvDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialogToQueryOneDayData();
+            }
+        });
         /**
          * 分享今日数据
          */
@@ -218,6 +275,26 @@ public class HomeFragment extends Fragment {
                 // TODO: 2016/5/12  
             }
         });
+    }
+
+    /**
+     * 查询某个日期的所有数据
+     */
+    private void showDatePickerDialogToQueryOneDayData() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int monthOfYear = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog _data_picker_dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                mTvDate.setText((monthOfYear+1)+"月"+dayOfMonth+"日");
+                String _one_datetime = year+"-"+(monthOfYear+1)+"-"+dayOfMonth;
+                getOnedayDataFromNetWork(_one_datetime);
+            }
+        },year,monthOfYear,dayOfMonth);
+        _data_picker_dialog.show();
+
     }
 
     /**
@@ -243,7 +320,7 @@ public class HomeFragment extends Fragment {
                 Log.i(CommonConstants.LOGCAT_TAG_NAME+"_reconnect", "objectMac，Result = " + objectMac);
                 if (objectMac==null){
                     //同步失败，未连接手表
-                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
+                    CommonUtil.sendErrorMessage("同步失败，请重新开启蓝牙",handler);
                 }else{
                     syncWatchData(_macAddress);//同步数据
                 }
@@ -292,6 +369,7 @@ public class HomeFragment extends Fragment {
                             allDayData = new ArrayList<OneDayData>();
                         }else{
                             //无数据
+                            Log.d("sync", "no data");
                             return;
                         }
 
@@ -319,20 +397,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
 
-                    if (allDayData!=null&&allDayData.size()>0){
-                        //有数据
-//                        //上传数据到服务器-上传个人目标
-//                        String _setResult = mUserBusiness.setSportsTarget(mUser);
-//                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_setTarget_result",_setResult);
-//                        JSONObject _json_result = new JSONObject(_setResult);
-//                        boolean Success = JsonUtils.getBoolean(_json_result,"Success");
-//                        if (Success){
-//                            Log.d(CommonConstants.LOGCAT_TAG_NAME+"_Success","true");
-//                        }else{
-//                            Log.d(CommonConstants.LOGCAT_TAG_NAME+"_Success","false");
-//                        }
-                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_Success",""+allDayData.size());
-                    }
+
 
                     // 设置手环同步完成
                     device.setFinishSync();
@@ -377,6 +442,9 @@ public class HomeFragment extends Fragment {
 
                         //添加到allDayData中
                         OneDayData _one_day_data = new OneDayData(date,time,step,type);
+                        _one_day_data.setLoginName(mUser.getLoginName());
+                        _one_day_data.setMacAddress(mUser.getMacAddress());
+                        _one_day_data.setCompletedSteps(0);//服务端要求
                         allDayData.add(_one_day_data);
 
                         Log.i("sync", "data = " + object);
@@ -427,6 +495,9 @@ public class HomeFragment extends Fragment {
                 case CommonConstants.FLAG_HOME_SYNC_SUCCESS:
                     updateUIAfterSync();//更新界面信息
                     break;
+                case CommonConstants.FLAG_HOME_GET_ONE_DAY_DATA_SUCCESS:
+                    updateUIOfOneDayData();//更新界面上一天的数据
+                    break;
                 default:
                     break;
             }
@@ -436,6 +507,32 @@ public class HomeFragment extends Fragment {
     };
 
     /**
+     * 更新UI-一天的数据
+     */
+    private void updateUIOfOneDayData() {
+        if (m_day_datas!=null&&m_day_datas.size()>0){
+            OneDayData _head_one_day_data = m_day_datas.get(0);
+            mCirclePercentView.setPercent(_head_one_day_data.getCompletedPercent()+1);
+            mTvSportsTarget.setText("目标:"+_head_one_day_data.getTargetSteps());
+            mTvSumSteps.setText(_head_one_day_data.getCompletedSteps()+"步");
+            mTvSumCarolies.setText(_head_one_day_data.getKcal()+"千卡");
+            mTvSumDistance.setText(_head_one_day_data.getiKils()+"公里");
+
+            lineView(m_day_datas);
+        }else{
+            mCirclePercentView.setPercent(0+1);
+            mTvSportsTarget.setText("目标:0");
+            mTvSumSteps.setText("0步");
+            mTvSumCarolies.setText("0千卡");
+            mTvSumDistance.setText("0公里");
+
+            lineView(null);
+        }
+
+
+    }
+
+    /**
      * 更新UI数据-当天总步数、并计算出进度百分比、热量、里程数、当天每个小时的步数
      */
     private void updateUIAfterSync() {
@@ -443,7 +540,18 @@ public class HomeFragment extends Fragment {
          Collections.sort(allDayData, new Comparator<OneDayData>() {
             @Override
             public int compare(OneDayData lhs, OneDayData rhs) {
-                return new Integer(lhs.getTime()).compareTo(new Integer(rhs.getTime()));
+                String _datetime_1 = lhs.getSportsTime()+" "+lhs.getCompleteHour()+":00:00";
+                String _datetime_2 = rhs.getSportsTime()+" "+rhs.getCompleteHour()+":00:00";
+                SimpleDateFormat _sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date _date_1 = null;
+                Date _date_2 = null;
+                try {
+                    _date_1 = _sdf.parse(_datetime_1);
+                    _date_2 = _sdf.parse(_datetime_2);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return _date_1.compareTo(_date_2);
             }
         });
 
@@ -455,13 +563,13 @@ public class HomeFragment extends Fragment {
         int _sum_step = 0;//总步数
         List<OneDayData> _todayData = new ArrayList<OneDayData>();
         for (int i = 0; i < allDayData.size(); i++) {
-            Log.d(CommonConstants.LOGCAT_TAG_NAME+"_oneDay",allDayData.get(i).getDate()+","+allDayData.get(i).getTime()+","+allDayData.get(i).getStep()+","+allDayData.get(i).getType());
+            Log.d(CommonConstants.LOGCAT_TAG_NAME+"_oneDay",allDayData.get(i).getSportsTime()+","+allDayData.get(i).getCompleteHour()+","+allDayData.get(i).getSteps()+","+allDayData.get(i).getType());
             try{
-                Date _the_date = _sdf.parse(allDayData.get(i).getDate());
+                Date _the_date = _sdf.parse(allDayData.get(i).getSportsTime());
                 String _the_date_str = _sdf.format(_the_date);
                 //当天的数据叠加
                 if (_TodayStr.equals(_the_date_str)){
-                    _sum_step += allDayData.get(i).getStep();
+                    _sum_step += allDayData.get(i).getSteps();
                     _todayData.add(allDayData.get(i));
                 }
             }catch (Exception e){
@@ -486,8 +594,70 @@ public class HomeFragment extends Fragment {
 
         lineView(_todayData);//更新折线图
         Toast.makeText(getActivity(),"同步已完成", Toast.LENGTH_SHORT).show();
+
+        //上传当天以及最近7天的所有数据到服务端
+        uploadAllDataToServer(CommonUtil.formatData(Double.valueOf(_calories),2),CommonUtil.formatData(Double.valueOf(_distance),2));
+
     }
 
+    /**
+     * 上传当天以及最近7天的所有数据到服务端
+     * @param calories 卡路里千卡
+     * @param distance 公里数
+     */
+    private void uploadAllDataToServer(final String calories,final String distance) {
+        //开启副线程-上传数据
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //上传个人目标、身高、体重
+                    String _set_sports_target_Result = mUserBusiness.setSportsTarget(mUser);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_setTarget_result",_set_sports_target_Result);
+                    JSONObject _json_result = new JSONObject(_set_sports_target_Result);
+                    boolean Success = JsonUtils.getBoolean(_json_result,"Success");
+                    if (Success) {
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_sports_target_r", "true");
+
+                        //上传卡路里和公里数
+                        String _sync_sports_data_today_result = mUserBusiness.syncSportsDataToday(mUser, calories, distance);
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_up_today_data1_r", _sync_sports_data_today_result);
+                        JSONObject _json_upload_today_data_result = new JSONObject(_sync_sports_data_today_result);
+                        boolean _upload_today_Success = JsonUtils.getBoolean(_json_upload_today_data_result, "Success");
+                        if (_upload_today_Success) {
+                            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_today_data_r", "true");
+                            //上传最近7天数据
+                            if (allDayData!=null&&allDayData.size()>0){
+                                String _upload_recent_week_data_result = mUserBusiness.uploadRecentWeekData(allDayData);
+                                JSONObject _json_upload_recent_data_result = new JSONObject(_upload_recent_week_data_result);
+                                boolean _upload_recent_data_Success = JsonUtils.getBoolean(_json_upload_recent_data_result, "Success");
+                                if (_upload_recent_data_Success) {
+                                    Log.d(CommonConstants.LOGCAT_TAG_NAME + "_upload_recent_r", "true");
+                                }else{
+                                    Log.d(CommonConstants.LOGCAT_TAG_NAME + "_upload_recent_r", "false");
+                                }
+
+                            }
+
+                        } else {
+                            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_today_data_r", "false");
+                        }
+                    }else{
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_sports_target_r", "false");
+                    }
+                }catch (ServiceException e){
+                    e.printStackTrace();
+                    CommonUtil.sendErrorMessage(e.getMessage(),handler);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_exception","出现异常错误");
+                }
+
+            }
+
+        }).start();
+
+    }
 
 
     //折线图
@@ -503,9 +673,9 @@ public class HomeFragment extends Fragment {
         if (pTodayData!=null&&pTodayData.size()>0){
             for (int i = 0; i <pTodayData.size() ; i++) {
                 OneDayData _one_day_data = (OneDayData) pTodayData.get(i);
-                int hour = _one_day_data.getTime();
+                int hour = _one_day_data.getCompleteHour();
                 //小时，步数
-                series.add(hour,_one_day_data.getStep());
+                series.add(hour,_one_day_data.getSteps());
 
             }
         }

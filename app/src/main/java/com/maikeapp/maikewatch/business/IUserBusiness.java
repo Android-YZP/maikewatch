@@ -1,8 +1,9 @@
 package com.maikeapp.maikewatch.business;
 
+import com.maikeapp.maikewatch.bean.OneDayData;
 import com.maikeapp.maikewatch.bean.User;
 
-
+import java.util.List;
 
 
 public interface IUserBusiness {
@@ -31,6 +32,43 @@ public interface IUserBusiness {
 	 * @throws Exception
 	 */
 	public abstract String getTokenID() throws Exception;
+
+	/**
+	 * 保存今日的运动数据
+	 * @param mUser
+	 * @param calories
+	 * @param distance
+	 * @return
+     * @throws Exception
+     */
+	public abstract String syncSportsDataToday(User mUser, String calories, String distance) throws Exception;
+
+	/**
+	 * 上传最近7天的数据
+	 * @param allDayData
+	 * @return
+	 * @throws Exception
+     */
+	public abstract String uploadRecentWeekData(List<OneDayData> allDayData) throws Exception;
+
+	/**
+	 * 查询某个日期的当天运动数据，包括小时数的步数
+	 * @param mUser 用户信息
+	 * @param day_time 日期
+	 * @return json字符串
+	 * @throws Exception
+     */
+	public abstract String querySportsDataByDay(User mUser, String day_time) throws Exception;
+
+	/**
+	 * 查询最近的几天的运动数据
+	 * @param mUser
+	 * @param i
+	 * @return
+	 * @throws Exception
+     */
+	public abstract String queryRecentlySportsData(User mUser, int days) throws Exception;
+
 
 	/**
 	 * 获取手机短信验证码
@@ -129,6 +167,7 @@ public interface IUserBusiness {
 			String _usersign, User mUser) throws Exception;
 
 	public abstract String checkAppUpdate() throws Exception;
+
 
 
 }

@@ -20,6 +20,9 @@ public class CommonConstants {
 	public static final int FLAG_SYNC_COMPLETED_SUCCESS = 19;
 	public static final int FLAG_HOME_SYNC_SUCCESS = 20;
 	public static final int FLAG_SET_TARGET_SUCCESS = 21;
+	public static final int FLAG_HOME_GET_ONE_DAY_DATA_SUCCESS = 22;
+	public static final int FLAG_GET_RECENT_DATAS_FOR_WEEK_SUCCESS = 23;
+	public static final int FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS = 24;
 
 	
 	public static final String MSG_GET_ERROR = "服务端数据异常";
@@ -190,6 +193,8 @@ public class CommonConstants {
 	public static final String USER_DETAIL = NOW_ADDRESS + "user/detail.json";
 	//检查更新
 	public static final String CHECK_APP_VERSION = NOW_ADDRESS + "version.json";
+
+
 
 
 
