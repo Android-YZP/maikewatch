@@ -103,7 +103,7 @@ public class HistoryDataActivity extends AppCompatActivity {
                     boolean _Success = JsonUtils.getBoolean(_json_obj_result,"Success");
                     if (_Success){
                         String _json_datas = JsonUtils.getString(_json_obj_result,"Datas");
-                        m_day_datas_for_week = new Gson().fromJson(_json_datas,new TypeToken<List<OneDayData>>(){}.getType());
+                        m_day_datas_for_month = new Gson().fromJson(_json_datas,new TypeToken<List<OneDayData>>(){}.getType());
                         Log.d(CommonConstants.LOGCAT_TAG_NAME+"_day7_datas",m_day_datas_for_week.toString());
                         // 同步完成
                         handler.sendEmptyMessage(CommonConstants.FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS);
@@ -178,9 +178,9 @@ public class HistoryDataActivity extends AppCompatActivity {
         if (pAllData!=null&&pAllData.size()>0){
             for (int i = 0; i <pAllData.size() ; i++) {
                 OneDayData _one_day_data = (OneDayData) pAllData.get(i);
-                int hour = _one_day_data.getCompleteHour();
+//                int hour = _one_day_data.getCompleteHour();
                 //小时，步数
-                series.add(hour,_one_day_data.getCompletedSteps());
+                series.add(i,_one_day_data.getCompletedSteps());
 
             }
         }
@@ -404,6 +404,6 @@ public class HistoryDataActivity extends AppCompatActivity {
      */
     private void updateUIAfterGetRecentDatasForMonth() {
         //显示折线图
-        lineView(m_day_datas_for_week,mLineChartMonth);
+        lineView(m_day_datas_for_month,mLineChartMonth);
     }
 }

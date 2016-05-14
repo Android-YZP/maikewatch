@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -104,6 +105,9 @@ public class PscenterFragment extends Fragment {
         mTvUsername = (TextView)view.findViewById(R.id.tv_pscenter_username);
         mTvGlobalStep = (TextView)view.findViewById(R.id.tv_pscenter_global_step);
         mTvBatteryStatus = (TextView)view.findViewById(R.id.tv_pscenter_battery_status);
+        //来电提醒
+        mCbCallAlertIsOn = (CheckBox)view.findViewById(R.id.cb_pscenter_calling);
+
         //是否已绑定图标
         mIvBindWatchIsLock = (ImageView) view.findViewById(R.id.iv_pscenter_bindwatch_islock);
 
@@ -127,6 +131,14 @@ public class PscenterFragment extends Fragment {
             mIvUserLogin.setOnClickListener(new PsCenterOnClickListener());//用户登录
         }
 
+        mCbCallAlertIsOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+
+                }
+            }
+        });
     }
 
 
