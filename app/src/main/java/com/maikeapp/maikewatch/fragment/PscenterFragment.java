@@ -3,8 +3,11 @@ package com.maikeapp.maikewatch.fragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +26,14 @@ import com.maikeapp.maikewatch.activity.UserLoginActivity;
 import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.util.CommonUtil;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 
 public class PscenterFragment extends Fragment {
+    //头像路径
+    String picName = "touxiang";
+    String mPicPath = "/sdcard/maike/";
     //个人目标、绑定手表、个人信息、设置闹钟、关于我们、退出登录
     private LinearLayout mLineGlobal;
     private LinearLayout mLineBindWatch;
@@ -55,18 +64,30 @@ public class PscenterFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pscenter, container, false);
         findView(view);
+        initView();
         return view;
+    }
+
+    private void initView() {
+        //初始化头像
+        Bitmap bitmap = getLoacalBitmap(mPicPath+picName); //从本地取图片(在cdcard中获取)  //
+        if (bitmap == null){
+            mIvUserLogin.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+        }else {
+            mIvUserLogin .setImageBitmap(bitmap); //设置Bitmap
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        initView();//初始化头像
         mUser = CommonUtil.getUserInfo(getActivity());
         if (mUser!=null){
             //更新界面信息
             mLineUserLogout.setVisibility(View.VISIBLE);
             mTvUsername.setText(mUser.getLoginName());
-            mIvUserLogin.setImageUrl(mUser.getPortraits(),R.drawable.pscenter_userinfo_headpic);
+//            mIvUserLogin.setImageUrl(mUser.getPortraits(),R.drawable.pscenter_userinfo_headpic);
             mTvGlobalStep.setText(""+mUser.getSportsTarget());
             int _battery = mUser.getBattery();
             if(_battery >= 56){
@@ -107,8 +128,24 @@ public class PscenterFragment extends Fragment {
         initData();
         setListener();
     }
+    /**
+     * 加载本地图片
+     * @param url
+     * @return
+     */
+    public static Bitmap getLoacalBitmap(String url) {
+        try {
+            FileInputStream fis = new FileInputStream(url);
+            return BitmapFactory.decodeStream(fis);  ///把流转化为Bitmap图片
 
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.e("12345678","1234567");
+            return null;
+        }
+    }
     private void initData() {
+
         mUser = CommonUtil.getUserInfo(getActivity());
     }
 
@@ -196,7 +233,5 @@ public class PscenterFragment extends Fragment {
                 dialog.cancel();
             }
         }).show();
-
-
     }
 }

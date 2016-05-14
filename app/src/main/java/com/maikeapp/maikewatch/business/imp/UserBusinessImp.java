@@ -60,7 +60,6 @@ public class UserBusinessImp implements IUserBusiness {
 		_json_args.put("sLoginName", mUser.getLoginName());
 		_json_args.put("iSportsTarget", ""+mUser.getSportsTarget());
 		_json_args.put("MacAddress", ""+mUser.getMacAddress());
-
 		_json_args.put("ClientVersion", "1.0");
 		_json_args.put("ClientType", "Phone");
 

@@ -3,133 +3,152 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/common_bg_color"
+    android:orientation="vertical"
     tools:context="com.maikeapp.maikewatch.activity.PsInfoActivity">
 
-    <include layout="@layout/layout_common_topbar_action"/>
+    <include layout="@layout/layout_common_topbar_action" />
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/pscenter_bg_border_color"/>
+        android:background="@color/pscenter_bg_border_color" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/common_white_color"
         android:layout_marginTop="@dimen/common_content_margin_top"
-        >
+        android:background="@color/common_white_color"
+        android:orientation="vertical">
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/pscenter_bg_border_color"/>
+            android:background="@color/pscenter_bg_border_color" />
 
         <!--头像 start-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/pscenter_funclist_list_item_height"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:layout_weight="1"
                 android:text="@string/psinfo_list_headpic"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
             <com.maikeapp.maikewatch.view.CustomSmartImageView
                 android:id="@+id/iv_ps_info_userhead"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/pscenter_userinfo_headpic"
                 android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 />
+            <!--android:background="@drawable/pscenter_userinfo_headpic"-->
 
         </LinearLayout>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/pscenter_bg_border_color"
-            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"/>
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+            android:background="@color/pscenter_bg_border_color" />
         <!--头像 end-->
 
         <!--昵称 start-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/pscenter_funclist_list_item_height"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:layout_weight="1"
                 android:text="@string/psinfo_list_loginname"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
             <TextView
                 android:id="@+id/tv_ps_info_loginname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:background="@null"
                 android:text="未登录"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
         </LinearLayout>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/pscenter_bg_border_color"
-            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"/>
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+            android:background="@color/pscenter_bg_border_color" />
         <!--昵称 end-->
 
         <!--性别 start-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/pscenter_funclist_list_item_height"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:layout_weight="1"
                 android:text="@string/psinfo_list_sex"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
-            <EditText
+            <!--<EditText-->
+            <!--android:id="@+id/et_ps_info_sex"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"-->
+            <!--android:background="@null"-->
+            <!--android:text="男"-->
+            <!--android:textColor="@color/common_content_dark_text_font_color"-->
+            <!--android:textSize="@dimen/common_content_text_font_size" />-->
+
+            <RadioGroup
+                android:id="@+id/rg_ps_info_sax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:text="男"
-                android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_ps_info_man"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/pscenter_funclist_list_item_img_margin_left"
+                    android:text="男"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:id="@+id/rb_ps_info_woman"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/pscenter_funclist_list_item_img_margin_left"
+                    android:text="女" />
+            </RadioGroup>
 
         </LinearLayout>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/pscenter_bg_border_color"
-            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"/>
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+            android:background="@color/pscenter_bg_border_color" />
         <!--性别 end-->
 
 
@@ -137,74 +156,74 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/pscenter_funclist_list_item_height"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:layout_weight="1"
                 android:text="@string/psinfo_list_age"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
+
+            \
 
             <EditText
+                android:id="@+id/et_ps_info_age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:background="@null"
                 android:inputType="number"
                 android:text="30"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
         </LinearLayout>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/pscenter_bg_border_color"
-            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"/>
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+            android:background="@color/pscenter_bg_border_color" />
         <!--年龄 end-->
 
         <!--身高 start-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/pscenter_funclist_list_item_height"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:layout_weight="1"
                 android:text="@string/psinfo_list_height"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
             <EditText
+                android:id="@+id/et_ps_info_height"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:background="@null"
                 android:inputType="number"
                 android:text="175"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
         </LinearLayout>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/pscenter_bg_border_color"
-            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"/>
+            android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+            android:background="@color/pscenter_bg_border_color" />
         <!--身高 end-->
 
 
@@ -212,30 +231,28 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/pscenter_funclist_list_item_height"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:layout_weight="1"
                 android:text="@string/psinfo_list_weight"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
             <EditText
+                android:id="@+id/et_ps_info_weight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:background="@null"
                 android:inputType="number"
                 android:text="70"
                 android:textColor="@color/common_content_dark_text_font_color"
-                android:textSize="@dimen/common_content_text_font_size"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:textSize="@dimen/common_content_text_font_size" />
 
         </LinearLayout>
 
@@ -244,6 +261,6 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/pscenter_bg_border_color"/>
+            android:background="@color/pscenter_bg_border_color" />
     </LinearLayout>
 </LinearLayout>
