@@ -48,7 +48,6 @@ public class AboutUsActivity extends AppCompatActivity {
         mLineCheckNewVersion = (LinearLayout)findViewById(R.id.line_about_us_check_new_version);
         mCBIsAutoCheck = (CheckBox)findViewById(R.id.cb_about_us_isauto_check_update);
     }
-
     private void initData() {
         //通用控件
         mTvCommonTitle.setText(m_title);
