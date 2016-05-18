@@ -24,6 +24,7 @@ public class AboutUsActivity extends AppCompatActivity {
     private String m_title="关于软件";
 
     private User mUser;//用户信息
+
     private TextView mTvWatchVersion;//固件版本
     private TextView mTvAppVersion;//当前app版本
     private LinearLayout mLineCheckNewVersion;//检查新版本
