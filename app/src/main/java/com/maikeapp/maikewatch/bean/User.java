@@ -19,9 +19,17 @@ public class User {
 	private boolean isCallAlertOn;//是否开启手表来电提醒
 
 	private String macAddress;//mac地址
-
+	private String mToken;//保存Token
 	private String watchVersion;//手表固件版本号
 	private int battery;// 目前电量
+
+	public String getmToken() {
+		return mToken;
+	}
+
+	public void setmToken(String mToken) {
+		this.mToken = mToken;
+	}
 
 	public boolean isCallAlertOn() {
 		return isCallAlertOn;

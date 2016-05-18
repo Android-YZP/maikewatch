@@ -4,15 +4,16 @@ import java.lang.ref.WeakReference;
 import java.net.SocketTimeoutException;
 
 import org.apache.http.conn.ConnectTimeoutException;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,7 +24,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.image.SmartImageTask;
+import com.loopj.android.image.SmartImageView;
 import com.maikeapp.maikewatch.R;
+import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
@@ -34,6 +38,8 @@ import com.maikeapp.maikewatch.util.JsonUtils;
 
 
 public class UserRegPhoneActivity extends Activity {
+    private static final int PIC_OK = 88;
+    private static final int CHANGE_PICNUMBER = 89;
     private ImageView mIvBack;
     private TextView mTvTitle;
     private Button mBtnCommitPhone;
@@ -47,15 +53,24 @@ public class UserRegPhoneActivity extends Activity {
     //业务层
     private IUserBusiness mUserBusiness = new UserBusinessImp();
     private String mPhone;
-
     private static ProgressDialog mProgressDialog = null;
-    private String mTokenID;
-    private String tokenID;
+    private static SmartImageView mSivPicNumber;
+    private EditText mEtPicNumber;
+    private SharedPreferences mSP;
+    private static String mPicCodePath;
+    private boolean isCheckPicNumber = false;
+    private String mMobilemsgRegisterResult;
+    private String mPicNumber;
+    private String mToken;
+    private String mPicNextPath;
+
+    private User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_reg_phone);
+        mSP = getSharedPreferences("UserInfo", MODE_PRIVATE);
         initView();
         initData();
         setListener();
@@ -65,7 +80,8 @@ public class UserRegPhoneActivity extends Activity {
         mIvBack = (ImageView) findViewById(R.id.iv_common_topbar_back);
         mTvTitle = (TextView) findViewById(R.id.tv_common_topbar_title);
         mBtnCommitPhone = (Button) findViewById(R.id.btn_user_reg_getcode_phone_commit);
-
+        mSivPicNumber = (SmartImageView) findViewById(R.id.siv_pic_number);
+        mEtPicNumber = (EditText) findViewById(R.id.et_pic_number);
         mEtPhone = (EditText) findViewById(R.id.et_user_reg_phone);
         mCbIsRead = (CheckBox) findViewById(R.id.cb_user_reg_phone_ischecked);
 
@@ -74,26 +90,43 @@ public class UserRegPhoneActivity extends Activity {
     }
 
     private void initData() {
+
         mTvTitle.setText("注册");
-        getToken();
+        if (TextUtils.isEmpty(mSP.getString("mToken", ""))) {
+            mSivPicNumber.setVisibility(View.GONE);
+            mEtPicNumber.setVisibility(View.GONE);
+            isCheckPicNumber = false;
+        } else {
+            mSivPicNumber.setVisibility(View.VISIBLE);
+            mEtPicNumber.setVisibility(View.VISIBLE);
+            isCheckPicNumber = true;
+        }
+        getToken();//拿到token保存本地
     }
 
     //获取token信息
     private void getToken() {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    mTokenID = mUserBusiness.getTokenID();
-                    Log.e("tokenID", mTokenID + "YZP");
-
-                    JSONObject _token = new JSONObject(mTokenID);
-                    String datas = JsonUtils.getString(_token, "Datas");
-//                    Log.e("datas",datas+"YZP");
-                    JSONObject _datas = new JSONObject(datas);
-                    tokenID = JsonUtils.getString(_datas, "TokenID");
-                    Log.e("_tokenID", tokenID +"YZP");
-
+                    mToken = mSP.getString("mToken", "");
+//                    mToken = mUser.getmToken();
+                    if (TextUtils.isEmpty(mToken)) {   //不显示图片验证,直接提交号码验证
+                        String _result = mUserBusiness.getTokenID();
+                        Log.e("tokenID", _result + "YZP");
+                        JSONObject _token = new JSONObject(_result);
+                        String datas = JsonUtils.getString(_token, "Datas");
+                        JSONObject _datas = new JSONObject(datas);
+                        String _tokenID = JsonUtils.getString(_datas, "TokenID");
+                        Log.e("_tokenID", _tokenID + "YZP12345678");
+                        //保存token信息
+                        mSP.edit().putString("mToken", _tokenID).apply();
+//                        mUser.setmToken(_tokenID);
+                    } else { //显示图片验证,提交号码,图片验证码
+                        getPicNumber(mToken);//显示图片
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,9 +134,27 @@ public class UserRegPhoneActivity extends Activity {
         }).start();
     }
 
+    //获取PICnumber
+    public void getPicNumber(String token) {
+        try {
+            String _numberPicResult = mUserBusiness.getNumberPic(token);
+            JSONObject object = new JSONObject(_numberPicResult);
+            String datas = JsonUtils.getString(object, "Datas");
+            Log.e("haha", datas);
+            if (datas != null) {
+                JSONObject _picLocation = new JSONObject(datas);
+                mPicCodePath = JsonUtils.getString(_picLocation, "PicCodePath");
+                Message msg = new Message();
+                msg.what = PIC_OK;
+                handler.sendMessage(msg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void setListener() {
         mIvBack.setOnClickListener(new OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 UserRegPhoneActivity.this.finish();
@@ -112,10 +163,11 @@ public class UserRegPhoneActivity extends Activity {
         mBtnCommitPhone.setOnClickListener(new UserRegPhoneOnClickListener());
         mTvIsRead.setOnClickListener(new UserRegPhoneOnClickListener());
         mTvProtocal.setOnClickListener(new UserRegPhoneOnClickListener());
+        mSivPicNumber.setOnClickListener(new UserRegPhoneOnClickListener());
     }
 
 
-    private static class MyHandler extends Handler {
+    public class MyHandler extends Handler {
         private final WeakReference<Activity> mActivity;
 
         public MyHandler(UserRegPhoneActivity activity) {
@@ -133,14 +185,24 @@ public class UserRegPhoneActivity extends Activity {
                     String errorMsg = (String) msg.getData().getSerializable("ErrorMsg");
                     ((UserRegPhoneActivity) mActivity.get()).showTip(errorMsg);
                     break;
-                case CommonConstants.FLAG_GET_REG_MOBILEMGS_REGISTER_SUCCESS:
+                case CommonConstants.FLAG_GET_REG_MOBILEMGS_REGISTER_SUCCESS://验证手机号码成功
+                    //跳转页面.发送请求验证码
                     ((UserRegPhoneActivity) mActivity.get()).goNextActivity();
+                    break;
+                case PIC_OK:
+                    //显示图片验证码.
+                    mSivPicNumber.setImageUrl(CommonConstants.PIC_LOCATION + mPicCodePath);
+                    break;
+                case CHANGE_PICNUMBER:
+                    //显示图片验证码.
+                    mSivPicNumber.setImageUrl(CommonConstants.PIC_LOCATION + mPicNextPath);
                     break;
                 default:
                     break;
             }
         }
     }
+
 
     private MyHandler handler = new MyHandler(this);
 
@@ -154,12 +216,12 @@ public class UserRegPhoneActivity extends Activity {
     public void goNextActivity() {
         Intent _intent = new Intent(UserRegPhoneActivity.this, UserRegCodeActivity.class);
         _intent.putExtra("_phone", mPhone);
+        _intent.putExtra("_phone", mPhone);
         startActivity(_intent);
         UserRegPhoneActivity.this.finish();
     }
 
     private class UserRegPhoneOnClickListener implements OnClickListener {
-
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
@@ -175,11 +237,18 @@ public class UserRegPhoneActivity extends Activity {
                         mCbIsRead.setChecked(true);
                     }
                     break;
+                case R.id.siv_pic_number:
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getPicNumber(mToken);
+                        }
+                    }).start();
+                    break;
                 default:
                     break;
             }
         }
-
     }
 
     /**
@@ -187,11 +256,17 @@ public class UserRegPhoneActivity extends Activity {
      */
     public void UserCommitPhoneNumer() {
         mPhone = mEtPhone.getText().toString();
+        mPicNumber = mEtPicNumber.getText().toString();
         boolean ischecked = mCbIsRead.isChecked();
         if (!ischecked) {
             Toast.makeText(UserRegPhoneActivity.this, "您未同意注册协议", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (TextUtils.isEmpty(mPicNumber) && isCheckPicNumber) {
+            Toast.makeText(UserRegPhoneActivity.this, "填写验证码", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (mPhone != null && !mPhone.equals("")) {
             if (!CheckUtil.checkMobile(mPhone)) {
                 Toast.makeText(UserRegPhoneActivity.this, "手机号格式输入有误", Toast.LENGTH_LONG).show();
@@ -200,43 +275,78 @@ public class UserRegPhoneActivity extends Activity {
 
             //弹出加载进度条
             mProgressDialog = ProgressDialog.show(UserRegPhoneActivity.this, "请稍等", "正在玩命获取中...", true, true);
-
-//			mProgressDialog = new ProgressDialog(UserRegPhoneActivity.this, R.style.progress_dialog);
-//			mProgressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-//			mProgressDialog.show();
-
             //开启副线程-检查手机号码是否存在
-            checkPhoneFromNet(mPhone);
-            //若检查不通过、提示报错信息；检查通过，跳转到下一个界面
-            //进度条消失
+            checkPhoneFromNet(mPhone, mPicNumber);
+            //若检查不通过、提示报错信息；检查通过，
+            // 进度条消失
+
         } else {
             Toast.makeText(UserRegPhoneActivity.this, "您未填写手机号", Toast.LENGTH_SHORT).show();
         }
 
     }
 
+
     /**
-     * 开启副线程-检查手机号码是否存在
+     * 发送消息到手机
+     */
+    private String sendSMSToPhone(String PicNumber) {
+        try {
+            String _mToken = mSP.getString("mToken", "");
+            Log.e("_register", _mToken);
+            String _result = mUserBusiness.getMobilemsgRegister(mPhone, _mToken, PicNumber);
+            Log.e("_result-------------", _result);
+            return _result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    /**
+     * 开启副线程-检查手机号码,并发送信息
      *
      * @param phone
      */
-    private void checkPhoneFromNet(final String phone) {
+    private void checkPhoneFromNet(final String phone, final String picNumber) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    String result = mUserBusiness.getMobilemsgRegister(phone);
-                    Log.e("result",result);
-                    Log.d(CommonConstants.LOGCAT_TAG_NAME + "_result_reg_phone_getMobilemsgRegister", result);
+                    String result = mUserBusiness.getMobileNumberIsVaild(phone);
+                    Log.e("result", result);
                     JSONObject jsonObj = new JSONObject(result);
-                    boolean Success = jsonObj.getBoolean("success");
-                    if (Success) {
-                        //获取成功
-                        handler.sendEmptyMessage(CommonConstants.FLAG_GET_REG_MOBILEMGS_REGISTER_SUCCESS);
+                    Boolean Success = JsonUtils.getBoolean(jsonObj, "Success");
+                    if (Success) {//检查手机是否存在
+                        //当手机号码存在之后,发送数据到服务器
+                        if (!isCheckPicNumber) {
+                            mMobilemsgRegisterResult = sendSMSToPhone(null);
+                            Log.e("这是没有图片验证码的", "mErrorCode");
+                        } else {
+                            mMobilemsgRegisterResult = sendSMSToPhone(picNumber);
+                            Log.e("这是有图片验证码的", mMobilemsgRegisterResult);
+                        }
+                        JSONObject _object = new JSONObject(mMobilemsgRegisterResult);
+                        boolean _success = JsonUtils.getBoolean(_object, "Success");
+                        if (_success) {
+                            handler.sendEmptyMessage(CommonConstants.FLAG_GET_REG_MOBILEMGS_REGISTER_SUCCESS);//获取成功
+                        } else {
+                            //发送错误消息
+                            String errorMsg = JsonUtils.getString(_object, "Message");
+                            Log.e("errorMsg", errorMsg);
+                            CommonUtil.sendErrorMessage(errorMsg, handler);
+                            //拿到切换后的Pic路劲
+                            if (JsonUtils.getString(_object, "Datas") != null) {
+                                String _datas = JsonUtils.getString(_object, "Datas");
+                                JSONObject _PicPath = new JSONObject(_datas);
+                                mPicNextPath = JsonUtils.getString(_PicPath, "PicCodePath");
+                            }
+                            handler.sendEmptyMessage(CHANGE_PICNUMBER);
+                        }
                     } else {
-                        //获取错误代码，并查询出错误文字
-                        String errorMsg = jsonObj.getString("errorMsg");
-                        CommonUtil.sendErrorMessage(errorMsg, handler);
+                        //手机号码已经存在
+                        CommonUtil.sendErrorMessage("手号码已经注册过了", handler);
                     }
                 } catch (ConnectTimeoutException e) {
                     e.printStackTrace();
@@ -249,7 +359,7 @@ public class UserRegPhoneActivity extends Activity {
                     CommonUtil.sendErrorMessage(e.getMessage(), handler);
                 } catch (Exception e) {
                     //what = 0;sendmsg 0;
-                    CommonUtil.sendErrorMessage("注册-获取验证码：" + CommonConstants.MSG_GET_ERROR, handler);
+//                    CommonUtil.sendErrorMessage("服务器错误", handler);
                 }
             }
         }).start();
