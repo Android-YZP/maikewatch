@@ -12,6 +12,7 @@ public class User {
 	private String Portraits;//头像
 	private int Sex;//性别
 	private int Age;//年龄
+	private int Birthday;//年龄
 	private int Height;//身高
 	private int Weight;//体重
 	private int SportsTarget;//个人目标
@@ -142,7 +143,13 @@ public class User {
 	public void setAge(int age) {
 		Age = age;
 	}
+	public int getBirthday() {
+		return Birthday;
+	}
 
+	public void setBirthday(int birthday) {
+		Birthday = birthday;
+	}
 	@Override
 	public String toString() {
 		return "User{" +
@@ -161,4 +168,6 @@ public class User {
 				", battery=" + battery +
 				'}';
 	}
+
+
 }

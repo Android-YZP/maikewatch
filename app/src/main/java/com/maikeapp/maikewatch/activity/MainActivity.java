@@ -108,7 +108,7 @@ public class MainActivity extends FragmentActivity {
      */
     private void checkNewVersion() {
         mSP = getSharedPreferences("config", MODE_PRIVATE);
-        boolean isAotoUpdate = mSP.getBoolean("aotoUpdate", true);//默认自动跟新版本
+        boolean isAotoUpdate = mSP.getBoolean("autoUpdate", true);//默认自动跟新版本
         if (isAotoUpdate) {
             getVersionFromService(CommonUtil.getAppVersion(this).getVersionCode()+"","v" + CommonUtil.getAppVersion(this).getVersionName());
         }
@@ -126,12 +126,10 @@ public class MainActivity extends FragmentActivity {
                     JSONObject _object = new JSONObject(_serverResult);
                     Log.e("升级程序所用到的返回值", _serverResult);
                     Boolean success = JsonUtils.getBoolean(_object, "Success");
-                    Log.e("success", success + "YZP");
                     if (success) {//判断有版本更新
                         String _datas = JsonUtils.getString(_object, "Datas");
                         JSONObject _dataJson = new JSONObject(_datas);
                         mApkPath = "http://" + JsonUtils.getString(_dataJson, "Path");
-                        Log.e("mApkPath", mApkPath + "YZP");
                         handler.sendEmptyMessage(UPDATE_APP);
                     }
                 } catch (Exception e) {
@@ -318,6 +316,7 @@ public class MainActivity extends FragmentActivity {
         User mUser = CommonUtil.getUserInfo(this);
         if (mUser != null) {
             //用户已登录，判断该用户是否绑定手表，未绑定，跳转到绑定手表界面；已绑定，直接同步一次数据
+
             boolean isBindWatch = mUser.isBindWatch();
             if (isBindWatch) {
                 //同步手表数据（获取手表端数据，并上传到服务端，并在当前界面展示）

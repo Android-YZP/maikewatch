@@ -12,6 +12,12 @@ public interface IUserBusiness {
 	 * @return
 	 * @throws Exception
 	 */
+	public abstract String setInfoToServer(User mUser) throws Exception;
+	/**
+	 * 验证手机号码是否有效
+	 * @return
+	 * @throws Exception
+	 */
 	public abstract String getUpdateFromServer(String AppVersionName ,String AppVersionCode) throws Exception;
 	/**
 	 * 验证手机号码是否有效

@@ -21,6 +21,21 @@ import java.util.List;
 public  class UserBusinessImp implements IUserBusiness {
 
     @Override
+    public String setInfoToServer(User user) throws Exception {
+        String _result = null;
+        //封装成json数据
+        JSONObject _json_info = new JSONObject();
+        _json_info.put("sLoginName", user.getLoginName());
+        _json_info.put("sSex", ""+user.getSex());
+        _json_info.put("dtBirthday",user.getBirthday());
+        _json_info.put("iHeight", user.getHeight());
+        _json_info.put("iWeight", user.getWeight());
+        Log.e("yzp_getUserLogin",_json_info.toString());
+        _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SET_PERSONAL, _json_info.toString(), null);
+        return _result;
+    }
+
+    @Override
     public String getUpdateFromServer(String AppVersionName, String AppVersionCode) throws Exception {
         JSONObject _json_viewModel = new JSONObject();
         _json_viewModel.put("AppVersionName ", AppVersionName);
@@ -66,7 +81,7 @@ public  class UserBusinessImp implements IUserBusiness {
         Log.d(CommonConstants.LOGCAT_TAG_NAME + "_getUserLogin", _json_viewModel.toString());
         //添加头信息
         String _md5_value = ConvertUtil.getMD5("MAIKEWATCH");
-        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_md5_value", _md5_value.substring(0, 8));
+        Log.e(CommonConstants.LOGCAT_TAG_NAME + "_md5_value", _md5_value.substring(0, 8));
 
         _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.USER_LOGIN, _json_viewModel.toString(), _md5_value.substring(0, 8));
         return _result;

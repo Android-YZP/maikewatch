@@ -128,7 +128,13 @@ public class AboutUsActivity extends AppCompatActivity {
         mVersionName = "v" + CommonUtil.getAppVersion(this).getVersionName();
         mVersionCode = CommonUtil.getAppVersion(this).getVersionCode();
         mTvAppVersion.setText(mVersionName);
-        mCBIsAutoCheck.setChecked(true);//默认自动更新版本
+        //初始化CheckBok
+        boolean _autoUpdate = mSP.getBoolean("autoUpdate", true);
+        if (_autoUpdate){
+            mCBIsAutoCheck.setChecked(true);
+        }else {
+            mCBIsAutoCheck.setChecked(false);
+        }
     }
 
     private void setListener() {
@@ -153,10 +159,12 @@ public class AboutUsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     mSP.edit().putBoolean("autoUpdate",true).apply();
+                    mCBIsAutoCheck.setChecked(true);
                     Log.e("isChecked",isChecked+"");
                 }else {
                     mSP.edit().putBoolean("autoUpdate",false).apply();
                     Log.e("isChecked",isChecked+"");
+                    mCBIsAutoCheck.setChecked(false);
                 }
             }
         });

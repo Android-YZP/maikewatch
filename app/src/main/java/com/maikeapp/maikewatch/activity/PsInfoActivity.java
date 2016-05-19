@@ -1,7 +1,7 @@
 package com.maikeapp.maikewatch.activity;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -10,12 +10,10 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,16 +26,15 @@ import android.widget.Toast;
 
 import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.bean.User;
-import com.maikeapp.maikewatch.business.imp.UpDateToServer;
+import com.maikeapp.maikewatch.business.IUserBusiness;
+import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
 import com.maikeapp.maikewatch.util.NetWorkUtil;
-import com.maikeapp.maikewatch.util.ToastUtil;
 import com.maikeapp.maikewatch.view.CustomSmartImageView;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -47,7 +44,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
 public class PsInfoActivity extends AppCompatActivity {
     //男女性别状态
@@ -65,7 +61,8 @@ public class PsInfoActivity extends AppCompatActivity {
     private ImageView mIvCommonBack;//返回
     private TextView mTvCommonTitle;//标题
     private TextView mTvCommonAction;//编辑
-
+    //业务层
+    private IUserBusiness mUserBusiness = new UserBusinessImp();
     private CustomSmartImageView mUserHead;//用户头像
     private TextView mTvLoginName;//用户名
     private String m_title = "个人信息";
@@ -80,6 +77,7 @@ public class PsInfoActivity extends AppCompatActivity {
     private int mSax = 0;
     private RadioButton mRbMan, mRbWoman;
     private String mPhotoUrl;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,9 +114,6 @@ public class PsInfoActivity extends AppCompatActivity {
         mTvCommonTitle.setText(m_title);
         mTvCommonAction.setText(m_action);
         mUser = CommonUtil.getUserInfo(this);
-        mRbWoman.setChecked(true);//初始化女
-
-
         Bitmap bitmap = getLoacalBitmap(mPicPath + mpicName); //从本地取图片(在cdcard中获取)
         if (bitmap == null) {
             //设置头像,本地没有就用默认头像
@@ -141,7 +136,7 @@ public class PsInfoActivity extends AppCompatActivity {
                 mRbWoman.setChecked(true);
             }
             //填充其他信息
-            mEtAge.setText("" + mUser.getAge());
+            mEtAge.setText("" + mUser.getBirthday());
             mEtHeight.setText("" + mUser.getHeight());
             mEtWeight.setText("" + mUser.getWeight());
         }
@@ -149,7 +144,6 @@ public class PsInfoActivity extends AppCompatActivity {
 
     /**
      * 加载本地图片
-     *
      * @param url
      * @return
      */
@@ -176,7 +170,9 @@ public class PsInfoActivity extends AppCompatActivity {
         mTvCommonAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 setPersonUserData();
+                mProgressDialog = ProgressDialog.show(PsInfoActivity.this, "请稍等", "正在玩命设置中...", true, true);
             }
         });
         //男女选择事件
@@ -333,7 +329,7 @@ public class PsInfoActivity extends AppCompatActivity {
                 try {
                     File file = new File(mPicPath + mpicName);
                     String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName + ".jpg", mUser.getLoginName(), file);
-                    Log.e("_withPhoto", "yzp_" + _withPhoto);
+                    Log.e("上传图片的返回数据", "yzp_" + _withPhoto);
                 } catch (Exception e) {
                     e.printStackTrace();
 //                    Log.e("_withPhoto", mUser.getLoginName());
@@ -385,15 +381,20 @@ public class PsInfoActivity extends AppCompatActivity {
             public void run() {
                 //判断是否登录
                 if (mUser != null) {
-                    mUser.setAge(Integer.parseInt(mEtAge.getText().toString()));
+                    mUser.setBirthday(Integer.parseInt(mEtAge.getText().toString()));
                     mUser.setSex(mSax);
                     mUser.setHeight(Integer.parseInt(mEtHeight.getText().toString()));
                     mUser.setWeight(Integer.parseInt(mEtWeight.getText().toString()));
                     try {
                         CommonUtil.saveUserInfo(mUser, PsInfoActivity.this);//更新数据
+                        Log.e("user数据", mUser.toString()+"");
                         //上传数据到服务器
-                        String _set_result = new UpDateToServer().setInfoToServer(mUser);
-                        Log.e("服务端的数据", _set_result);
+                        String _set_result = mUserBusiness.setInfoToServer(mUser);
+                        //更新本地数据
+                        CommonUtil.saveUserInfo(mUser,PsInfoActivity.this);
+                        //加载到内存中
+                        mUser = CommonUtil.getUserInfo(PsInfoActivity.this);
+                        Log.e("上传个人信息返回的数据", _set_result);
                         JSONObject _json_result = new JSONObject(_set_result);
                         boolean _success = JsonUtils.getBoolean(_json_result, "Success");
                         if (_success) {
@@ -416,9 +417,6 @@ public class PsInfoActivity extends AppCompatActivity {
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-//            if(mProgressDialog!=null){
-//                mProgressDialog.dismiss();
-//            }
             int flag = msg.what;
             switch (flag) {
                 case 0:
@@ -431,6 +429,7 @@ public class PsInfoActivity extends AppCompatActivity {
                     break;
                 case CommonConstants.FLAG_SET_TARGET_SUCCESS:
                     //   setTargetCompleted();//操作完成
+                    mProgressDialog.dismiss();
                     Toast.makeText(PsInfoActivity.this, "操作完成", Toast.LENGTH_SHORT).show();
                     break;
                 default:

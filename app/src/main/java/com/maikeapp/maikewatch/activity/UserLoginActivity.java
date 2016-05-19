@@ -185,7 +185,7 @@ public class UserLoginActivity extends Activity {
 				public void run() {
 					try {
 						String result = mUserBusiness.getUserLogin(account,password);//获取网络数据
-						Log.e(CommonConstants.LOGCAT_TAG_NAME + "_result_getUserLogin", result);
+						Log.e("登录之后", result);
 						//解析result
 						JSONObject jsonObj = new JSONObject(result);
 						boolean Success = JsonUtils.getBoolean(jsonObj,"Success");
@@ -220,6 +220,5 @@ public class UserLoginActivity extends Activity {
 				}
 			}).start();
 		}
-		
 	}
 }

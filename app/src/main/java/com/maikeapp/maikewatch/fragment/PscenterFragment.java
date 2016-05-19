@@ -1,8 +1,12 @@
 package com.maikeapp.maikewatch.fragment;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -27,6 +31,7 @@ import com.maikeapp.maikewatch.activity.PsGlobalActivity;
 import com.maikeapp.maikewatch.activity.PsInfoActivity;
 import com.maikeapp.maikewatch.activity.UserLoginActivity;
 import com.maikeapp.maikewatch.bean.User;
+import com.maikeapp.maikewatch.receiver.PhoneStatReceiver;
 import com.maikeapp.maikewatch.util.CommonUtil;
 
 import java.io.FileInputStream;
@@ -55,6 +60,9 @@ public class PscenterFragment extends Fragment {
     private CheckBox mCbCallAlertIsOn;
 
     private User mUser;
+    private SharedPreferences mSP;
+    private ComponentName mName;
+    private PackageManager mPm;
 
     public PscenterFragment() {
         // Required empty public constructor
@@ -71,6 +79,7 @@ public class PscenterFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pscenter, container, false);
         findView(view);
+        mUser = CommonUtil.getUserInfo(getActivity());
         initView();
         return view;
     }
@@ -93,8 +102,8 @@ public class PscenterFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        initView();//初始化头像
-        mUser = CommonUtil.getUserInfo(getActivity());
+        initView();
+
         if (mUser != null) {
             //更新界面信息
             mLineUserLogout.setVisibility(View.VISIBLE);
@@ -157,14 +166,22 @@ public class PscenterFragment extends Fragment {
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Log.e("12345678", "1234567");
             return null;
         }
     }
 
     private void initData() {
+        mName = new ComponentName(getActivity(), PhoneStatReceiver.class);
+        mPm = getActivity().getPackageManager();//拿到包管理器用于动态注册和反注册广播
+        mSP = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
 
         mUser = CommonUtil.getUserInfo(getActivity());
+        boolean _callAlertIsOn = mSP.getBoolean("CallAlertIsOn", true);//默认打开来电提醒
+        if (_callAlertIsOn) {
+            mCbCallAlertIsOn.setChecked(true);
+        } else {
+            mCbCallAlertIsOn.setChecked(false);
+        }
     }
 
     private void setListener() {
@@ -178,12 +195,22 @@ public class PscenterFragment extends Fragment {
         if (mUser == null) {
             mIvUserLogin.setOnClickListener(new PsCenterOnClickListener());//用户登录
         }
-
+        //来电提醒事件监听操作
         mCbCallAlertIsOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-
+                    mSP.edit().putBoolean("CallAlertIsOn", true).apply();
+                    // 启用一个 manifest receiver
+                    mPm.setComponentEnabledSetting(mName,
+                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                            PackageManager.DONT_KILL_APP);
+                } else {
+                    mSP.edit().putBoolean("CallAlertIsOn", false).apply();
+                    // 禁用一个 manifest receiver
+                    mPm.setComponentEnabledSetting(mName,
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
                 }
             }
         });
@@ -243,7 +270,6 @@ public class PscenterFragment extends Fragment {
                 .setTitle("提示")
                 .setMessage("您确定退出登录吗？")
                 .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         CommonUtil.clearUserInfo(getActivity());//清除本地数据
