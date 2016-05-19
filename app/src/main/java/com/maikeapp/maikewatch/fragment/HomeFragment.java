@@ -496,7 +496,10 @@ public class HomeFragment extends Fragment {
                     updateUIAfterSync();//更新界面信息
                     break;
                 case CommonConstants.FLAG_HOME_GET_ONE_DAY_DATA_SUCCESS:
-                    updateUIOfOneDayData();//更新界面上一天的数据
+                    if(isAdded()){
+                        //Return true if the fragment is currently added to its activity.
+                        updateUIOfOneDayData();//更新界面上一天的数据
+                    }
                     break;
                 default:
                     break;
