@@ -21,9 +21,11 @@ import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
+import com.maikeapp.maikewatch.config.MyApplication;
 import com.maikeapp.maikewatch.exception.ServiceException;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
+import com.maikeapp.maikewatch.util.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -121,7 +123,7 @@ public class PsGlobalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (running){
-                    Toast.makeText(PsGlobalActivity.this,"正在设置中...,请耐心等待",Toast.LENGTH_SHORT).show();
+                    ToastUtil.showTipShort(PsGlobalActivity.this,"正在设置中...");
                     return;
                 }
 
@@ -132,7 +134,7 @@ public class PsGlobalActivity extends AppCompatActivity {
                     //设置个人目标信息
                     setWatchPsTarget(_sportsTarget);
                 }else{
-                    Toast.makeText(PsGlobalActivity.this,"您未登录",Toast.LENGTH_SHORT).show();
+                    ToastUtil.showTipShort(PsGlobalActivity.this,"您未登录");
                     return;
                 }
 
@@ -147,8 +149,7 @@ public class PsGlobalActivity extends AppCompatActivity {
     private void setWatchPsTarget(final String sportsTarget) {
         //初始化device
         try{
-            device = new Maike(this);
-
+            device = MyApplication.newMaikeInstance();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -156,16 +157,8 @@ public class PsGlobalActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String _macAddress = mUser.getMacAddress();
-                //连接某只手表mac
-                JSONObject objectMac = device.scanDevice(Global.TYPE_DEVICE_Wristband, _macAddress);
-                Log.i(CommonConstants.LOGCAT_TAG_NAME+"_reconnect", "objectMac，Result = " + objectMac);
-                if (objectMac==null){
-                    //同步失败，未连接手表
-                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
-                }else{
-                    setWatchTargetData(sportsTarget);//同步数据
-                }
+                //设置个人目标到手表并上传服务器
+                setWatchTargetData(sportsTarget);
             }
         }).start();
     }
@@ -175,81 +168,117 @@ public class PsGlobalActivity extends AppCompatActivity {
      * @param sportsTarget
      */
     private void setWatchTargetData(final String sportsTarget) {
-        //开启副线程-同步数据
+        //开启副线程-同步数据-设置个人目标
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
 
-                    running = true;
+                running = true;//正在运行
 
-                    JSONObject datetimeResult = device.setDateTime(Calendar.getInstance());	// 设置手环的日期和时间
-                    Log.i("sync", "datetimeResult = " + datetimeResult);		// 如果为result = 0，则成功，否则失败
+                //循环5次连接，若连接不成功给予用户提醒
+                for (int k = 0; k < 5; k++) {
+                    try {
+                        //暂时先沉睡2s
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Log.i(CommonConstants.LOGCAT_TAG_NAME + "_set_connect_no", "--------no = " + k);
+                        //连接手表mac
+                        JSONObject objectMac = device.scanDevice(Global.TYPE_DEVICE_Wristband,  mUser.getMacAddress());
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_conn_isSuc", "objectMac，Result = " + objectMac);
+                        if (objectMac == null) {
+                            //断开设备
+                            JSONObject object = device.disconnectDevice(false);        // 断开设备
+                            Log.i(CommonConstants.LOGCAT_TAG_NAME + "_set_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
+                            continue;
+                        }
 
-                    int _target = Integer.parseInt(sportsTarget);
-                    JSONObject targetResult = device.setTarget(_target);		// 设置手环的步数目标
-                    Log.i("sync", "targetResult = " + targetResult);			// 如果为result = 0，则成功，否则失败
-
-                    int _target_result = JsonUtils.getInt(targetResult,"result",-1);
-                    if (_target_result==0){
-                        // 表示同步成功
-                        mUser.setSportsTarget(_target);
-                        CommonUtil.saveUserInfo(mUser,PsGlobalActivity.this);//覆盖用户个人目标信息
-                        //上传信息到服务端
-                        String _set_result = mUserBusiness.setSportsTarget(mUser);
-                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_set_result",_set_result);
-                        JSONObject _json_result = new JSONObject(_set_result);
-                        boolean _success = JsonUtils.getBoolean(_json_result,"Success");
-                        if (_success){
-                            // 同步完成
-                            handler.sendEmptyMessage(CommonConstants.FLAG_SET_TARGET_SUCCESS);
-                        }else{
-                            CommonUtil.sendErrorMessage("设置个人目标失败，请检查网络",handler);
+                        //再沉睡0.5s
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
                         }
 
 
-                    }else{
-                        CommonUtil.sendErrorMessage("设置个人目标失败，请重试",handler);
+//》》设置个人目标的步数start
+
+                        int _target = Integer.parseInt(sportsTarget);
+                        JSONObject targetResult = device.setTarget(_target);        // 设置手环的步数目标
+                        Log.i("sync", "targetResult = " + targetResult);            // 如果为result = 0，则成功，否则失败
+
+                        int _target_result = JsonUtils.getInt(targetResult, "result", -1);
+                        if (_target_result == 0) {
+                            // 表示同步成功
+                            mUser.setSportsTarget(_target);
+                            CommonUtil.saveUserInfo(mUser, PsGlobalActivity.this);//覆盖用户个人目标信息
+
+
+                            //上传信息到服务端
+                            String _set_result = mUserBusiness.setSportsTarget(mUser);
+                            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_result", "set_result="+_set_result);
+                            JSONObject _json_result = new JSONObject(_set_result);
+                            boolean _success = JsonUtils.getBoolean(_json_result, "Success");
+                            if (_success) {
+                                // 同步完成
+                                handler.sendEmptyMessage(CommonConstants.FLAG_SET_TARGET_SUCCESS);
+
+                                //连接成功后断开设备
+                                JSONObject object = device.disconnectDevice(false);        // 断开设备
+                                Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
+
+                                running = false;//提前结束运行，不提示错误信息
+                                break;//结束循环
+
+                            } else {
+                                //提示服务端给出的错误信息
+                                String _errorMsg = JsonUtils.getString(_json_result,"Message");
+                                if (_errorMsg==null||_errorMsg.equals("")){
+                                    _errorMsg = "设置个人目标失败，请检查网络";
+                                }
+                                CommonUtil.sendErrorMessage(_errorMsg, handler);
+                            }
+
+
+                        } else {
+                            CommonUtil.sendErrorMessage("同步到手表失败，请重试", handler);
+                        }
+//》》设置个人目标的步数end
+
+                        //每次循环连接都断开设备
+                        JSONObject object = device.disconnectDevice(false);        // 断开设备
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
+
+                    } catch (NoConnectException e) {
+                        e.printStackTrace();
+                        //发现连接异常，结束本次循环，进入下一次连接
+                        continue;
+                    } catch (ServiceException e) {
+                        e.printStackTrace();
+                        CommonUtil.sendErrorMessage(e.getMessage(), handler);
+                        return;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        CommonUtil.sendErrorMessage("同步失败，数据异常，请重试", handler);
+                        return;
                     }
-
-                    // 设置手环同步完成
-                    device.setFinishSync();
-
-
-                } catch (NoConnectException e) {
-                    e.printStackTrace();
-                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
-                }catch (ServiceException e){
-                    e.printStackTrace();
-                    CommonUtil.sendErrorMessage(e.getMessage(),handler);
-                } catch (Exception e){
-                    e.printStackTrace();
-                    CommonUtil.sendErrorMessage("同步失败，数据异常，请重试",handler);
                 }
-                running = false;
-                //断开连接
-                disConnectWatch();
+                //循环5次依然没连上，提示错误信息，并running未false
+                if (running) {
+                    //设置个人目标失败
+                    String errorMsg = "设置个人目标失败";
+                    CommonUtil.sendErrorMessage(errorMsg, handler);
+                    running = false;//结束运行
+                }
+
             }
         }).start();
 
     }
 
-
-    /**
-     * 断开连接设备
-     */
-    private void disConnectWatch() {
-        try {
-            boolean isDestroy = true;
-            JSONObject object = device.disconnectDevice(isDestroy);		// 断开设备
-            Log.d("disconnect", "disconncet = " + object);		// 如果为result = 0，则成功，否则失败
-            device = null;
-        } catch (NoConnectException e) {
-            e.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     //处理消息队列
     private Handler handler = new Handler(){

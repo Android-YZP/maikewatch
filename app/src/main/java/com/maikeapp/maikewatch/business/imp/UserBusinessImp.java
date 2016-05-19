@@ -110,7 +110,7 @@ public  class UserBusinessImp implements IUserBusiness {
         _json_args.put("iSportsTarget", "" + (mUser.getSportsTarget() == 0 ? 2000 : mUser.getSportsTarget()));//默认目标2000
         _json_args.put("Height", "" + (mUser.getHeight() == 0 ? 175 : mUser.getHeight()));//没有值默认取175身高
         _json_args.put("Weight", "" + (mUser.getWeight() == 0 ? 70 : mUser.getWeight()));//没有值默认取70身高
-        _json_args.put("MacAddress", "" + mUser.getMacAddress());
+        _json_args.put("MacAddress",  mUser.getMacAddress());
         _json_args.put("ClientVersion", "1.0");
         _json_args.put("ClientType", "Phone");
 
