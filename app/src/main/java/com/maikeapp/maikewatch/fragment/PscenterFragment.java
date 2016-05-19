@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,7 @@ public class PscenterFragment extends Fragment {
     private CheckBox mCbCallAlertIsOn;
 
     private User mUser;
+
     public PscenterFragment() {
         // Required empty public constructor
     }
@@ -61,6 +63,7 @@ public class PscenterFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -73,12 +76,17 @@ public class PscenterFragment extends Fragment {
     }
 
     private void initView() {
-        //初始化头像
-        Bitmap bitmap = getLoacalBitmap(mPicPath+picName); //从本地取图片(在cdcard中获取)  //
-        if (bitmap == null){
-            mIvUserLogin.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
-        }else {
-            mIvUserLogin .setImageBitmap(bitmap); //设置Bitmap
+        //设置头像,本地没有就用网络头像,再用默认头像
+        Bitmap bitmap = getLoacalBitmap(mPicPath + picName); //从本地取图片(在cdcard中获取)
+        if (bitmap == null) {
+            //设置头像,本地没有就用默认头像
+            if (mUser != null) {
+                mIvUserLogin.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+            } else {
+                mIvUserLogin.setImageResource(R.drawable.pscenter_userinfo_headpic);
+            }
+        } else {
+            mIvUserLogin.setImageBitmap(bitmap); //设置Bitmap
         }
     }
 
@@ -87,47 +95,47 @@ public class PscenterFragment extends Fragment {
         super.onResume();
         initView();//初始化头像
         mUser = CommonUtil.getUserInfo(getActivity());
-        if (mUser!=null){
+        if (mUser != null) {
             //更新界面信息
             mLineUserLogout.setVisibility(View.VISIBLE);
             mTvUsername.setText(mUser.getLoginName());
 //            mIvUserLogin.setImageUrl(mUser.getPortraits(),R.drawable.pscenter_userinfo_headpic);
-            mTvGlobalStep.setText(""+mUser.getSportsTarget());
+            mTvGlobalStep.setText("" + mUser.getSportsTarget());
             int _battery = mUser.getBattery();
-            if(_battery >= 56){
+            if (_battery >= 56) {
                 mTvBatteryStatus.setText("充足");
-            }else if(_battery >= 5 && _battery <= 56){
+            } else if (_battery >= 5 && _battery <= 56) {
                 mTvBatteryStatus.setText("正常");
-            }else if (_battery < 5){
+            } else if (_battery < 5) {
                 mTvBatteryStatus.setText("- -");
             }
 
-            if (mUser.isBindWatch()){
+            if (mUser.isBindWatch()) {
                 //显示已绑定手表的图标
                 mIvBindWatchIsLock.setBackgroundResource(R.drawable.bangding_watch);
-            }else{
+            } else {
                 //显示未绑定手表的图标
                 mIvBindWatchIsLock.setBackgroundResource(R.drawable.pscenter_unbind_lock);
             }
-        }else{
+        } else {
             mLineUserLogout.setVisibility(View.GONE);
         }
     }
 
     private void findView(View view) {
-        mLineGlobal = (LinearLayout)view.findViewById(R.id.line_pscenter_global);
-        mLineBindWatch = (LinearLayout)view.findViewById(R.id.line_pscenter_bindwatch);
-        mLinePsInfo = (LinearLayout)view.findViewById(R.id.line_pscenter_psinfo);
-        mLineAlertAlarm = (LinearLayout)view.findViewById(R.id.line_pscenter_alertalarm);
-        mLineAboutUs = (LinearLayout)view.findViewById(R.id.line_pscenter_aboutus);
-        mLineUserLogout = (LinearLayout)view.findViewById(R.id.line_pscenter_login_out);
+        mLineGlobal = (LinearLayout) view.findViewById(R.id.line_pscenter_global);
+        mLineBindWatch = (LinearLayout) view.findViewById(R.id.line_pscenter_bindwatch);
+        mLinePsInfo = (LinearLayout) view.findViewById(R.id.line_pscenter_psinfo);
+        mLineAlertAlarm = (LinearLayout) view.findViewById(R.id.line_pscenter_alertalarm);
+        mLineAboutUs = (LinearLayout) view.findViewById(R.id.line_pscenter_aboutus);
+        mLineUserLogout = (LinearLayout) view.findViewById(R.id.line_pscenter_login_out);
         //用户登录
-        mIvUserLogin = (SmartImageView)view.findViewById(R.id.iv_pscenter_login);
-        mTvUsername = (TextView)view.findViewById(R.id.tv_pscenter_username);
-        mTvGlobalStep = (TextView)view.findViewById(R.id.tv_pscenter_global_step);
-        mTvBatteryStatus = (TextView)view.findViewById(R.id.tv_pscenter_battery_status);
+        mIvUserLogin = (SmartImageView) view.findViewById(R.id.iv_pscenter_login);
+        mTvUsername = (TextView) view.findViewById(R.id.tv_pscenter_username);
+        mTvGlobalStep = (TextView) view.findViewById(R.id.tv_pscenter_global_step);
+        mTvBatteryStatus = (TextView) view.findViewById(R.id.tv_pscenter_battery_status);
         //来电提醒
-        mCbCallAlertIsOn = (CheckBox)view.findViewById(R.id.cb_pscenter_calling);
+        mCbCallAlertIsOn = (CheckBox) view.findViewById(R.id.cb_pscenter_calling);
 
         //是否已绑定图标
         mIvBindWatchIsLock = (ImageView) view.findViewById(R.id.iv_pscenter_bindwatch_islock);
@@ -135,8 +143,10 @@ public class PscenterFragment extends Fragment {
         initData();
         setListener();
     }
+
     /**
      * 加载本地图片
+     *
      * @param url
      * @return
      */
@@ -147,10 +157,11 @@ public class PscenterFragment extends Fragment {
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Log.e("12345678","1234567");
+            Log.e("12345678", "1234567");
             return null;
         }
     }
+
     private void initData() {
 
         mUser = CommonUtil.getUserInfo(getActivity());
@@ -164,14 +175,14 @@ public class PscenterFragment extends Fragment {
         mLineAboutUs.setOnClickListener(new PsCenterOnClickListener());
         mLineUserLogout.setOnClickListener(new PsCenterOnClickListener());
         //未登录用户-需要登录
-        if (mUser==null){
+        if (mUser == null) {
             mIvUserLogin.setOnClickListener(new PsCenterOnClickListener());//用户登录
         }
 
         mCbCallAlertIsOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
 
                 }
             }
@@ -179,12 +190,12 @@ public class PscenterFragment extends Fragment {
     }
 
 
-    private class PsCenterOnClickListener implements View.OnClickListener{
+    private class PsCenterOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
             Intent _intent = null;
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.line_pscenter_global:
                     //个人目标
                     _intent = new Intent(getActivity(), PsGlobalActivity.class);

@@ -7,8 +7,19 @@ import java.util.List;
 
 
 public interface IUserBusiness {
-
-
+	/**
+	 * 验证手机号码是否有效
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract String getUpdateFromServer(String AppVersionName ,String AppVersionCode) throws Exception;
+	/**
+	 * 验证手机号码是否有效
+	 * @param Phone 需要验证的手机号吗
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract String getMobileNumberIsVaild(String Phone) throws Exception;
 	/**
 	 * 用户登录
 	 * @param pPhone
@@ -18,6 +29,7 @@ public interface IUserBusiness {
 	 */
 	public abstract String getUserLogin(String pPhone, String pPassword) throws Exception;
 
+	public abstract String getNumberPic(String token) throws Exception;
 	/**
 	 * 设置个人目标步数
 	 * @param mUser
@@ -72,11 +84,10 @@ public interface IUserBusiness {
 
 	/**
 	 * 获取手机短信验证码
-	 * @param phone
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract String getMobilemsgRegister(String phone) throws Exception;
+	public abstract String getMobilemsgRegister(String sMobileNumber, String sTokenID,String sPicCode) throws Exception;
 
 	/**
 	 * 获取手机短信验证码验证信息
@@ -89,14 +100,10 @@ public interface IUserBusiness {
 
 	/**
 	 * 用户注册
-	 * @param mPhone
-	 * @param mCode
-	 * @param username
-	 * @param password
 	 * @return
 	 */
-	public abstract String getUserRegister(String mPhone, String mCode,
-										   String username, String password) throws Exception;
+	public abstract String getUserRegister(String LoginName, String Mobile,
+										   String VerifyCode, String Password) throws Exception;
 
 
 
@@ -117,8 +124,8 @@ public interface IUserBusiness {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract String getUserForgotPasswordTwo(String mPhone,
-													String smsCode, String newpwd, String newpwdAgain) throws Exception;
+	public abstract String getUserForgotPasswordTwo(String Mobile,
+													String NewPassword, String VerifyCode) throws Exception;
 
 	/**
 	 * 获取用户登录后的用户详情：如用户名、头像、创意设计粉丝的数量

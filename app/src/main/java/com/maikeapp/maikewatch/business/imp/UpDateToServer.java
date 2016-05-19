@@ -21,7 +21,7 @@ public  class UpDateToServer  {
         _json_info.put("dtBirthday", ""+mUser.getAge());
         _json_info.put("iHeight", mUser.getHeight());
         _json_info.put("iWeight", mUser.getWeight());
-//        Log.e(CommonConstants.LOGCAT_TAG_NAME+"_getUserLogin",_json_info.toString());
+        Log.e("yzp_getUserLogin",_json_info.toString());
         _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SET_PERSONAL, _json_info.toString(), "");
         return _result;
     }

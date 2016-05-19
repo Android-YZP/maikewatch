@@ -55,7 +55,7 @@ public class PsInfoActivity extends AppCompatActivity {
     private static final int PERSON_WOMAN = 0;
     //头像选择相关变量
     private String mpicName = "touxiang";
-    private String mPicPath =Environment.getExternalStorageDirectory().getPath()+ "/maike/";
+    private String mPicPath = Environment.getExternalStorageDirectory().getPath() + "/maike/";
     private File tempFile = new File(Environment.getExternalStorageDirectory(),
             getPhotoFileName());
     private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
@@ -117,13 +117,20 @@ public class PsInfoActivity extends AppCompatActivity {
         mTvCommonAction.setText(m_action);
         mUser = CommonUtil.getUserInfo(this);
         mRbWoman.setChecked(true);//初始化女
-        //设置头像,本地没有就 用默认头像
-        Bitmap bitmap = getLoacalBitmap(mPicPath + mpicName); //从本地取图片(在cdcard中获取)  //
+
+
+        Bitmap bitmap = getLoacalBitmap(mPicPath + mpicName); //从本地取图片(在cdcard中获取)
         if (bitmap == null) {
-            mUserHead.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+            //设置头像,本地没有就用默认头像
+            if (mUser != null) {
+                mUserHead.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+            } else {
+                mUserHead.setImageResource(R.drawable.pscenter_userinfo_headpic);
+            }
         } else {
             mUserHead.setImageBitmap(bitmap); //设置Bitmap
         }
+
 
         if (mUser != null) {
             mTvLoginName.setText(mUser.getLoginName());
@@ -262,6 +269,7 @@ public class PsInfoActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     private void startPhotoZoom(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
@@ -324,8 +332,8 @@ public class PsInfoActivity extends AppCompatActivity {
             public void run() {
                 try {
                     File file = new File(mPicPath + mpicName);
-                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null,mpicName+".jpg",mUser.getLoginName(), file);
-                    Log.e("_withPhoto", "yzp_"+_withPhoto );
+                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName + ".jpg", mUser.getLoginName(), file);
+                    Log.e("_withPhoto", "yzp_" + _withPhoto);
                 } catch (Exception e) {
                     e.printStackTrace();
 //                    Log.e("_withPhoto", mUser.getLoginName());
@@ -333,8 +341,6 @@ public class PsInfoActivity extends AppCompatActivity {
                 }
             }
         }).start();
-
-
 
 
     }

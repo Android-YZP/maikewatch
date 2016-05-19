@@ -1,5 +1,9 @@
 package com.maikeapp.maikewatch.config;
 
+import android.os.Environment;
+
+import java.io.File;
+
 public class CommonConstants {
 	public static final String LOGCAT_APP_NAME = "maikewatch"  ;
 	public static final String LOGCAT_TAG_NAME = "jlj"  ;
@@ -37,7 +41,9 @@ public class CommonConstants {
 	public static final String TEST_ADDRESS = "http://192.168.0.203:8085/";
 	public static final String TRUE_ADDRESS = "#";
 	public static final String NOW_ADDRESS = TEST_ADDRESS;
-	
+
+	/** 应用缓存目录 */
+	public static final String CachePath =Environment.getExternalStorageDirectory().getPath()+ "/smzy-2.4.3.apk";
 
 	/**
 	 * 获取tokenID
@@ -49,7 +55,10 @@ public class CommonConstants {
 	 */
 	public static final String USER_LOGIN = NOW_ADDRESS + "WebServices/WatchServices/Login";
 
-
+	/**
+	 * 图片验证码
+	 */
+	public static final String PIC_LOCATION = NOW_ADDRESS ;
 
 	/**
 	 * 设置个人目标
@@ -142,6 +151,11 @@ public class CommonConstants {
 	 * 验证手机号码是否有效
 	 */
 	public static final String MOBILE_NUMBER_ISVAILD = NOW_ADDRESS + "WebServices/WatchServices/MobileNumberIsVaild";
+	/**
+	 * 版本检查更新
+	 */
+	public static final String UP_DATE_FROM_SERVER = NOW_ADDRESS + "WebServices/WatchServices/CheckWatchVersion";
+
 
 	/**
 	 * 忘记密码
@@ -170,14 +184,14 @@ public class CommonConstants {
 	//发送注册短信
 	public static final String MOBILEMSG_REGISTER = NOW_ADDRESS + "mobilemsg/register.json";
 	//验证注册短信
-	public static final String MOBILEMSG_VALIDATE = NOW_ADDRESS + "mobilemsg/validate.json";
+	public static final String MOBILEMSG_VALIDATE = NOW_ADDRESS + "WebServices/WatchServices/CheckCode";
 	//注册
-	public static final String USER_REGISTER = NOW_ADDRESS + "user/register.json";
+	public static final String USER_REGISTER = NOW_ADDRESS + "WebServices/WatchServices/Join";
 
 	//忘记密码第一步
-	public static final String USER_FORGOT_PASSWORD_ONE = NOW_ADDRESS + "user/forgot_password_one.json";
+	public static final String USER_FORGOT_PASSWORD_ONE = NOW_ADDRESS + "WebServices/WatchServices/ForgetPassword";
 	//忘记密码第二步
-	public static final String USER_FORGOT_PASSWORD_TWO = NOW_ADDRESS + "user/forgot_password_two.json";
+	public static final String USER_FORGOT_PASSWORD_TWO = NOW_ADDRESS + "WebServices/WatchServices/ForgetPassword";
 
 
 	//个人资料修改确认

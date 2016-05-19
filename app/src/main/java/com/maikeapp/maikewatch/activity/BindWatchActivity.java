@@ -115,7 +115,6 @@ public class BindWatchActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         mUser = CommonUtil.getUserInfo(this);
         if (mUser!=null){
             if (mUser.isBindWatch()){
@@ -131,8 +130,6 @@ public class BindWatchActivity extends AppCompatActivity {
             }
 
         }
-
-
     }
 
     /**
