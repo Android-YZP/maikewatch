@@ -121,9 +121,11 @@ public class PsInfoActivity extends AppCompatActivity {
         Bitmap bitmap = getLoacalBitmap(mPicPath + mpicName); //从本地取图片(在cdcard中获取)  //
         if (bitmap == null) {
             mUserHead.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+            mUserHead.setImageResource( R.drawable.pscenter_userinfo_headpic);
         } else {
             mUserHead.setImageBitmap(bitmap); //设置Bitmap
-        }
+       }
+
 
         if (mUser != null) {
             mTvLoginName.setText(mUser.getLoginName());

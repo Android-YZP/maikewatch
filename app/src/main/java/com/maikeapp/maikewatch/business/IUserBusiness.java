@@ -7,7 +7,12 @@ import java.util.List;
 
 
 public interface IUserBusiness {
-
+	/**
+	 * 验证手机号码是否有效
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract String getUpdateFromServer(String AppVersionName ,String AppVersionCode) throws Exception;
 	/**
 	 * 验证手机号码是否有效
 	 * @param Phone 需要验证的手机号吗

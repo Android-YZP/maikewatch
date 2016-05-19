@@ -185,7 +185,7 @@ public class UserLoginActivity extends Activity {
 				public void run() {
 					try {
 						String result = mUserBusiness.getUserLogin(account,password);//获取网络数据
-						Log.d(CommonConstants.LOGCAT_TAG_NAME + "_result_getUserLogin", result);
+						Log.e(CommonConstants.LOGCAT_TAG_NAME + "_result_getUserLogin", result);
 						//解析result
 						JSONObject jsonObj = new JSONObject(result);
 						boolean Success = JsonUtils.getBoolean(jsonObj,"Success");
@@ -213,10 +213,10 @@ public class UserLoginActivity extends Activity {
 				 */
 				private void fullUserInfo(JSONObject jsonObj) {
 					JSONObject _json_user = JsonUtils.getObj(jsonObj,"Datas");//把Datas里面的数据存于user对象
-					Log.d(CommonConstants.LOGCAT_TAG_NAME+"_json_user_datas",_json_user.toString());
+					Log.e(CommonConstants.LOGCAT_TAG_NAME+"_json_user_datas",_json_user.toString());
 					Gson gson = new Gson();
 					mUser = gson.fromJson(_json_user.toString(),User.class);
-					Log.d(CommonConstants.LOGCAT_TAG_NAME+"_user_info",mUser.toString());
+					Log.e("填充用户信息"+"_user_info",mUser.toString());
 				}
 			}).start();
 		}

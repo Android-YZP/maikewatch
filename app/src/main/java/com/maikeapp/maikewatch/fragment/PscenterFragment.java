@@ -76,8 +76,10 @@ public class PscenterFragment extends Fragment {
         //初始化头像
         Bitmap bitmap = getLoacalBitmap(mPicPath+picName); //从本地取图片(在cdcard中获取)  //
         if (bitmap == null){
-            mIvUserLogin.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+
+            mIvUserLogin.setImageResource( R.drawable.pscenter_userinfo_headpic);
         }else {
+//            mIvUserLogin.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
             mIvUserLogin .setImageBitmap(bitmap); //设置Bitmap
         }
     }

@@ -1,5 +1,9 @@
 package com.maikeapp.maikewatch.config;
 
+import android.os.Environment;
+
+import java.io.File;
+
 public class CommonConstants {
 	public static final String LOGCAT_APP_NAME = "maikewatch"  ;
 	public static final String LOGCAT_TAG_NAME = "jlj"  ;
@@ -37,7 +41,9 @@ public class CommonConstants {
 	public static final String TEST_ADDRESS = "http://192.168.0.203:8085/";
 	public static final String TRUE_ADDRESS = "#";
 	public static final String NOW_ADDRESS = TEST_ADDRESS;
-	
+
+	/** 应用缓存目录 */
+	public static final String CachePath =Environment.getExternalStorageDirectory().getPath()+ "/smzy-2.4.3.apk";
 
 	/**
 	 * 获取tokenID
@@ -145,6 +151,11 @@ public class CommonConstants {
 	 * 验证手机号码是否有效
 	 */
 	public static final String MOBILE_NUMBER_ISVAILD = NOW_ADDRESS + "WebServices/WatchServices/MobileNumberIsVaild";
+	/**
+	 * 版本检查更新
+	 */
+	public static final String UP_DATE_FROM_SERVER = NOW_ADDRESS + "WebServices/WatchServices/CheckWatchVersion";
+
 
 	/**
 	 * 忘记密码

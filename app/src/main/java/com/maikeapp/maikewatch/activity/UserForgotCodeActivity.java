@@ -53,7 +53,6 @@ public class UserForgotCodeActivity extends Activity {
 
     //业务层
     private IUserBusiness mUserBusiness = new UserBusinessImp();
-
     private static ProgressDialog mProgressDialog = null;
 
     //定义倒计时handler
