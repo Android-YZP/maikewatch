@@ -33,9 +33,11 @@ import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
+import com.maikeapp.maikewatch.config.MyApplication;
 import com.maikeapp.maikewatch.exception.ServiceException;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
+import com.maikeapp.maikewatch.util.ToastUtil;
 import com.maikeapp.maikewatch.view.CirclePercentView;
 
 import org.achartengine.ChartFactory;
@@ -115,24 +117,6 @@ public class HomeFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
 
-//        try {
-//            device = new Maike(getActivity());
-//            JSONObject objectMac = this.device.scanDevice(Global.TYPE_DEVICE_Wristband, mUser.getMacAddress());
-//            Log.i("reconnect", "objectMac，Result = " + objectMac);
-//
-//
-//
-//            boolean isDestroy = true;
-////            if (device!=null){
-//                JSONObject object = device.disconnectDevice(isDestroy);		// 断开设备
-//                Log.d("disconnect", "disconncet = " + object);		// 如果为result = 0，则成功，否则失败
-////            }
-//            device=null;
-//        } catch (NoConnectException e) {
-//            e.printStackTrace();
-//        } catch (Exception e){
-//            e.printStackTrace();
-//        }
     }
 
     void findView(View view) {
@@ -304,7 +288,7 @@ public class HomeFragment extends Fragment {
 
         //初始化device
         try{
-            device = new Maike(getActivity());
+            device = MyApplication.newMaikeInstance();
 
         }catch (Exception e){
             e.printStackTrace();
@@ -315,15 +299,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
                 String _macAddress = mUser.getMacAddress();
-                //连接某只手表mac
-                JSONObject objectMac = device.scanDevice(Global.TYPE_DEVICE_Wristband, _macAddress);
-                Log.i(CommonConstants.LOGCAT_TAG_NAME+"_reconnect", "objectMac，Result = " + objectMac);
-                if (objectMac==null){
-                    //同步失败，未连接手表
-                    CommonUtil.sendErrorMessage("同步失败，请重新开启蓝牙",handler);
-                }else{
-                    syncWatchData(_macAddress);//同步数据
-                }
+                //同步数据-并上传信息到服务器
+                syncWatchData(_macAddress);
 
             }
         }).start();
@@ -334,91 +311,130 @@ public class HomeFragment extends Fragment {
      * 同步数据
      */
     private void syncWatchData(final String macAddress) {
-        //连接设备
-//        connectWacth(macAddress);
-        //开启副线程-同步数据
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        running = true;//正在运行
+
+        //循环5次连接，若连接不成功给予用户提醒
+        for (int k = 0; k < 5; k++) {
+            try {
+                //暂时先沉睡2s
                 try {
-
-                    running = true;
-                    JSONObject boundInfoResult = device.getBoundInfo();	// 获取手环的绑定信息
-                    Log.d("sync", "boundInfoResult = " + boundInfoResult); 		// 如果result = 0，则未绑定，如果result = 1，则已绑定
-
-                    JSONObject datetimeResult = device.setDateTime(Calendar.getInstance());	// 设置手环的日期和时间
-                    Log.d("sync", "datetimeResult = " + datetimeResult);		// 如果为result = 0，则成功，否则失败
-
-                    JSONObject batteryResult = device.getBattery();		// 获取手环的电量
-                    Log.d("sync", "batteryResult= " + batteryResult);			// result 里面的数值就是电量
-                    mBattery = JsonUtils.getInt(batteryResult,"result",-1);
-                    if (mBattery!=-1){
-                        mUser.setBattery(mBattery);
-                        CommonUtil.saveUserInfo(mUser,getActivity());//覆盖用户电量
-                    }
-
-
-                    int count = 0;
-                    int sn = 0;
-
-                    if (running) {
-                        // 获取手环存储数据的总天数和当天数据所在的位置
-                        JSONObject objectCount = device.getActivityCount();
-                        count = objectCount.getInt("count");	// 总天数
-                        if (count>0){
-                            allDayData = new ArrayList<OneDayData>();
-                        }else{
-                            //无数据
-                            Log.d("sync", "no data");
-                            return;
-                        }
-
-                        sn = objectCount.getInt("sn");		// 当天数据所在的位置
-                        Log.d("sync", "count = " + count + ", sn = " + sn);
-                    }
-
-                    // 获取手环所有天数的步数，从最旧的日期开始获取，一直到最新的日期
-                    for (int i = 1; i <= count; i++) {
-                        if (running) {
-                            JSONObject objectActivity_0 = device.getActivityBySn((sn + i) % count, 0);
-                            parserActivityValue(objectActivity_0);
-                        }
-                        if (running) {
-                            JSONObject objectActivity_6 = device.getActivityBySn((sn + i) % count, 6);
-                            parserActivityValue(objectActivity_6);
-                        }
-                        if (running) {
-                            JSONObject objectActivity_12 = device.getActivityBySn((sn + i) % count, 12);
-                            parserActivityValue(objectActivity_12);
-                        }
-                        if (running) {
-                            JSONObject objectActivity_18 = device.getActivityBySn((sn + i) % count, 18);
-                            parserActivityValue(objectActivity_18);
-                        }
-                    }
-
-
-
-                    // 设置手环同步完成
-                    device.setFinishSync();
-                    // 同步完成
-                    handler.sendEmptyMessage(CommonConstants.FLAG_HOME_SYNC_SUCCESS);
-
-                } catch (NoConnectException e) {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
                     e.printStackTrace();
-                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
-                } catch (Exception e){
-                    e.printStackTrace();
-                    CommonUtil.sendErrorMessage("同步失败，请重试",handler);
                 }
-                running = false;
-                //断开连接
-                disConnectWatch();
+                Log.i(CommonConstants.LOGCAT_TAG_NAME + "_sync_connect_no", "--------no = " + k);
+                //连接手表mac
+                JSONObject objectMac = device.scanDevice(Global.TYPE_DEVICE_Wristband, macAddress);
+                Log.d(CommonConstants.LOGCAT_TAG_NAME + "_sync_conn_isSuc", "objectMac，Result = " + objectMac);
+                if (objectMac == null) {
+                    //断开设备
+                    JSONObject object = device.disconnectDevice(false);        // 断开设备
+                    Log.i(CommonConstants.LOGCAT_TAG_NAME + "_sync_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
+                    continue;
+                }
+
+                //再沉睡0.5s
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+
+//同步数据开始》》
+                JSONObject boundInfoResult = device.getBoundInfo();    // 获取手环的绑定信息
+                Log.d("sync", "boundInfoResult = " + boundInfoResult);        // 如果result = 0，则未绑定，如果result = 1，则已绑定
+
+                JSONObject datetimeResult = device.setDateTime(Calendar.getInstance());    // 设置手环的日期和时间
+                Log.d("sync", "datetimeResult = " + datetimeResult);        // 如果为result = 0，则成功，否则失败
+
+                JSONObject versionResult = this.device.getVersion();		// 获取手环的固件版本号
+                Log.i("sync", "versionResult = " + versionResult);			// result返回是一串字符，即版本号
+                String _version_str = JsonUtils.getString(versionResult,"result");
+                if (_version_str!=null&&_version_str.equals("")){
+                    mUser.setWatchVersion(_version_str);
+                }
+
+                JSONObject batteryResult = device.getBattery();        // 获取手环的电量
+                Log.d("sync", "batteryResult= " + batteryResult);            // result 里面的数值就是电量
+                mBattery = JsonUtils.getInt(batteryResult, "result", -1);
+                if (mBattery != -1) {
+                    mUser.setBattery(mBattery);
+                    CommonUtil.saveUserInfo(mUser, getActivity());//覆盖用户电量/用户固件版本号
+                }
+
+
+                int count = 0;
+                int sn = 0;
+
+                if (running) {
+                    // 获取手环存储数据的总天数和当天数据所在的位置
+                    JSONObject objectCount = device.getActivityCount();
+                    count = objectCount.getInt("count");    // 总天数
+                    if (count > 0) {
+                        allDayData = new ArrayList<OneDayData>();
+                    } else {
+                        //无数据
+                        Log.d("sync", "no data");
+                        return;
+                    }
+
+                    sn = objectCount.getInt("sn");        // 当天数据所在的位置
+                    Log.d("sync", "count = " + count + ", sn = " + sn);
+                }
+
+                // 获取手环所有天数的步数，从最旧的日期开始获取，一直到最新的日期
+                for (int i = 1; i <= count; i++) {
+                    if (running) {
+                        JSONObject objectActivity_0 = device.getActivityBySn((sn + i) % count, 0);
+                        parserActivityValue(objectActivity_0);
+                    }
+                    if (running) {
+                        JSONObject objectActivity_6 = device.getActivityBySn((sn + i) % count, 6);
+                        parserActivityValue(objectActivity_6);
+                    }
+                    if (running) {
+                        JSONObject objectActivity_12 = device.getActivityBySn((sn + i) % count, 12);
+                        parserActivityValue(objectActivity_12);
+                    }
+                    if (running) {
+                        JSONObject objectActivity_18 = device.getActivityBySn((sn + i) % count, 18);
+                        parserActivityValue(objectActivity_18);
+                    }
+                }
+
+                // 设置手环同步完成
+                device.setFinishSync();
+//同步数据结束》》
+
+                // 同步完成
+                handler.sendEmptyMessage(CommonConstants.FLAG_HOME_SYNC_SUCCESS);
+                //每次循环连接都断开设备
+                JSONObject object = device.disconnectDevice(false);        // 断开设备
+                Log.d(CommonConstants.LOGCAT_TAG_NAME + "_sync_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
+                running = false;//提前结束运行，不提示错误信息
+                break;//结束循环
+
+            } catch (NoConnectException e) {
+                e.printStackTrace();
+                //发现连接异常，结束本次循环，进入下一次连接
+                continue;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                CommonUtil.sendErrorMessage("同步失败，数据异常", handler);
+            } catch (Exception e) {
+                e.printStackTrace();
+                CommonUtil.sendErrorMessage("同步失败，服务端异常", handler);
             }
-        }).start();
+        }
+        //循环5次依然没连上，提示错误信息，并running未false
+        if (running) {
+            //解绑失败
+            String errorMsg = "同步失败，请重试";
+            CommonUtil.sendErrorMessage(errorMsg, handler);
+            running = false;//结束运行
+        }
+
 
 
     }
@@ -459,21 +475,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    /**
-     * 断开连接设备
-     */
-    private void disConnectWatch() {
-        try {
-            boolean isDestroy = true;
-            JSONObject object = device.disconnectDevice(isDestroy);		// 断开设备
-            Log.d("disconnect", "disconncet = " + object);		// 如果为result = 0，则成功，否则失败
-            device = null;
-        } catch (NoConnectException e) {
-            e.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     //处理消息队列
     private Handler handler = new Handler(){
@@ -540,6 +541,8 @@ public class HomeFragment extends Fragment {
      */
     private void updateUIAfterSync() {
 
+        ToastUtil.showTipLong(getActivity(),"正在同步中...");
+
          Collections.sort(allDayData, new Comparator<OneDayData>() {
             @Override
             public int compare(OneDayData lhs, OneDayData rhs) {
@@ -596,7 +599,8 @@ public class HomeFragment extends Fragment {
         mCirclePercentView.setPercent(Integer.parseInt(percent) + 1);
 
         lineView(_todayData);//更新折线图
-        Toast.makeText(getActivity(),"同步已完成", Toast.LENGTH_SHORT).show();
+
+        ToastUtil.showTipShort(getActivity(),"同步已完成");
 
         //上传当天以及最近7天的所有数据到服务端
         uploadAllDataToServer(CommonUtil.formatData(Double.valueOf(_calories),2),CommonUtil.formatData(Double.valueOf(_distance),2));
