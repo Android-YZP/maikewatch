@@ -28,6 +28,7 @@ public class CommonConstants {
 	public static final int FLAG_GET_RECENT_DATAS_FOR_WEEK_SUCCESS = 23;
 	public static final int FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS = 24;
 	public static final int FLAG_GET_MAC_NONE = 25;
+	public static final int FLAG_SET_ALARM_SUCCESS = 26;
 
 	
 	public static final String MSG_GET_ERROR = "服务端数据异常";

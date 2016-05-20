@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.maikeapp.maikewatch.activity.AlertAlarmActivity">
 
-    <include layout="@layout/layout_common_topbar" />
+    <include layout="@layout/layout_common_topbar_action" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -43,11 +43,21 @@
 
             <TextView
                 android:id="@+id/tv_alert_alarm_date1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_date1_show"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
                 android:layout_weight="1"
-                android:text="一，二，三"
+                android:text="00000001"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />
 
@@ -85,11 +95,21 @@
 
             <TextView
                 android:id="@+id/tv_alert_alarm_date2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_date2_show"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
                 android:layout_weight="1"
-                android:text="一，二，三"
+                android:text="00000001"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />
 
@@ -127,11 +147,20 @@
 
             <TextView
                 android:id="@+id/tv_alert_alarm_date3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
+                android:textColor="@color/common_content_dark_text_font_color"
+                android:textSize="@dimen/common_content_text_font_size"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_alert_alarm_date3_show"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/alert_alarm_list_item_dates_margin_left"
                 android:layout_weight="1"
-                android:text="一，二，三"
+                android:text="00000001"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />
 

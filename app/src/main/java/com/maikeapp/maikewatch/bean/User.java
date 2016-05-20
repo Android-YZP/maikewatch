@@ -19,10 +19,39 @@ public class User {
 	private boolean isBindWatch;//是否绑定手表
 	private boolean isCallAlertOn;//是否开启手表来电提醒
 
+	//闹钟
+	private String clickOne;//闹钟1
+	private String clickTwo;//闹钟2
+	private String clickThree;//闹钟3
+
 	private String macAddress;//mac地址
 	private String mToken;//保存Token
 	private String watchVersion;//手表固件版本号
 	private int battery;// 目前电量
+
+	public String getClickOne() {
+		return clickOne;
+	}
+
+	public void setClickOne(String clickOne) {
+		this.clickOne = clickOne;
+	}
+
+	public String getClickTwo() {
+		return clickTwo;
+	}
+
+	public void setClickTwo(String clickTwo) {
+		this.clickTwo = clickTwo;
+	}
+
+	public String getClickThree() {
+		return clickThree;
+	}
+
+	public void setClickThree(String clickThree) {
+		this.clickThree = clickThree;
+	}
 
 	public String getmToken() {
 		return mToken;

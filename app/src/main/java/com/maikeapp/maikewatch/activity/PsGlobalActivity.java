@@ -269,7 +269,7 @@ public class PsGlobalActivity extends AppCompatActivity {
                 //循环5次依然没连上，提示错误信息，并running未false
                 if (running) {
                     //设置个人目标失败
-                    String errorMsg = "设置个人目标失败";
+                    String errorMsg = "设置个人目标失败，请重试";
                     CommonUtil.sendErrorMessage(errorMsg, handler);
                     running = false;//结束运行
                 }

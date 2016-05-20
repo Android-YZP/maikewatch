@@ -64,6 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <CheckBox
+                    android:id="@+id/cb_one_alarm_sunday"
                     android:layout_width="@dimen/one_alarm_week_one_width"
                     android:layout_height="@dimen/one_alarm_week_one_height"
                     android:gravity="center"
@@ -86,6 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/one_alarm_week_one_margin_left_or_right">
                 <CheckBox
+                    android:id="@+id/cb_one_alarm_monday"
                     android:layout_width="@dimen/one_alarm_week_one_width"
                     android:layout_height="@dimen/one_alarm_week_one_height"
                     android:gravity="center"
@@ -109,6 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/one_alarm_week_one_margin_left_or_right">
                 <CheckBox
+                    android:id="@+id/cb_one_alarm_tuesday"
                     android:layout_width="@dimen/one_alarm_week_one_width"
                     android:layout_height="@dimen/one_alarm_week_one_height"
                     android:gravity="center"
@@ -131,6 +134,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/one_alarm_week_one_margin_left_or_right">
                 <CheckBox
+                    android:id="@+id/cb_one_alarm_wednesday"
                     android:layout_width="@dimen/one_alarm_week_one_width"
                     android:layout_height="@dimen/one_alarm_week_one_height"
                     android:gravity="center"
@@ -153,6 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/one_alarm_week_one_margin_left_or_right">
                 <CheckBox
+                    android:id="@+id/cb_one_alarm_thusday"
                     android:layout_width="@dimen/one_alarm_week_one_width"
                     android:layout_height="@dimen/one_alarm_week_one_height"
                     android:gravity="center"
@@ -175,6 +180,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/one_alarm_week_one_margin_left_or_right">
                 <CheckBox
+                    android:id="@+id/cb_one_alarm_friday"
                     android:layout_width="@dimen/one_alarm_week_one_width"
                     android:layout_height="@dimen/one_alarm_week_one_height"
                     android:gravity="center"
@@ -197,6 +203,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/one_alarm_week_one_margin_left_or_right">
                 <CheckBox
+                    android:id="@+id/cb_one_alarm_satarday"
                     android:layout_width="@dimen/one_alarm_week_one_width"
                     android:layout_height="@dimen/one_alarm_week_one_height"
                     android:gravity="center"
@@ -215,6 +222,7 @@
         </LinearLayout>
 
         <TimePicker
+            android:id="@+id/tp_one_alarm_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ps_global_step_margin_top"></TimePicker>
