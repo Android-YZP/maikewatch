@@ -109,7 +109,7 @@ public class PscenterFragment extends Fragment {
             mLineUserLogout.setVisibility(View.VISIBLE);
             mTvUsername.setText(mUser.getLoginName());
 //            mIvUserLogin.setImageUrl(mUser.getPortraits(),R.drawable.pscenter_userinfo_headpic);
-            mTvGlobalStep.setText("" + mUser.getSportsTarget());
+            mTvGlobalStep.setText("" + (mUser.getSportsTarget()==0?2000:mUser.getSportsTarget()));
             int _battery = mUser.getBattery();
             if (_battery >= 56) {
                 mTvBatteryStatus.setText("充足");

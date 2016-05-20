@@ -351,7 +351,7 @@ public class HomeFragment extends Fragment {
                 JSONObject versionResult = this.device.getVersion();		// 获取手环的固件版本号
                 Log.i("sync", "versionResult = " + versionResult);			// result返回是一串字符，即版本号
                 String _version_str = JsonUtils.getString(versionResult,"result");
-                if (_version_str!=null&&_version_str.equals("")){
+                if (_version_str!=null&&!_version_str.equals("")){
                     mUser.setWatchVersion(_version_str);
                 }
 
@@ -516,7 +516,12 @@ public class HomeFragment extends Fragment {
     private void updateUIOfOneDayData() {
         if (m_day_datas!=null&&m_day_datas.size()>0){
             OneDayData _head_one_day_data = m_day_datas.get(0);
-            mCirclePercentView.setPercent(_head_one_day_data.getCompletedPercent()+1);
+
+            int _percent= _head_one_day_data.getCompletedPercent();
+            if (_percent > 100){
+                _percent = 100;
+            }
+            mCirclePercentView.setPercent(_percent+1);
             mTvSportsTarget.setText("目标:"+_head_one_day_data.getTargetSteps());
             mTvSumSteps.setText(_head_one_day_data.getCompletedSteps()+"步");
             mTvSumCarolies.setText(_head_one_day_data.getKcal()+"千卡");
@@ -589,14 +594,21 @@ public class HomeFragment extends Fragment {
         Log.d("jlj_height_and_weight",_height+","+_weight);
         double _distance = ((0.45*_height*_sum_step)/100)/1000;//里程数
 //        double _calories = 0.53*_height+0.58*_weight+0.04*_sum_step-135;//热量
-        double _calories = _weight*_distance*1.036;//热量
-        String percent = CommonUtil.calcPercent(_sum_step,mUser.getSportsTarget());//百分比
+//        double _calories2 = _weight*_distance*1.036;//热量
+        double _calories = _sum_step*_weight*0.0006564;//热量
+        String percent = CommonUtil.calcPercent(_sum_step, mUser.getSportsTarget()==0?2000:mUser.getSportsTarget());//百分比(个人目标没有，默认取2000)
         Log.d(CommonConstants.LOGCAT_TAG_NAME+"_result","总步数："+_sum_step+",百分比："+percent+",热量："+_calories+",里程数："+_distance);
         //更新界面
         mTvSumSteps.setText(_sum_step+"步");
         mTvSumCarolies.setText(CommonUtil.formatData(Double.valueOf(_calories),2)+"千卡");
         mTvSumDistance.setText(CommonUtil.formatData(Double.valueOf(_distance),2)+"公里");
-        mCirclePercentView.setPercent(Integer.parseInt(percent) + 1);
+
+
+        int _percent = Integer.parseInt(percent);
+        if (_percent>100){
+            _percent = 100;
+        }
+        mCirclePercentView.setPercent(_percent + 1);
 
         lineView(_todayData);//更新折线图
 

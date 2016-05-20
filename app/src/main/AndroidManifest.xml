@@ -30,7 +30,8 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activity.AlertAlarmActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".activity.AboutUsActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

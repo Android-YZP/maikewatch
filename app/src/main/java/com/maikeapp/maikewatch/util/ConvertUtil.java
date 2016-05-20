@@ -77,4 +77,19 @@ public class ConvertUtil {
 
     }
 
+    /**
+     * 转换时间如果小于10补0操作
+     * @param click_one_str
+     * @return
+     */
+    public static String convertTimeToShow(String click_one_str) {
+        int _time_data = Integer.parseInt(click_one_str);
+        if (_time_data<10){
+            return "0"+_time_data;
+
+        }else{
+            return ""+_time_data;
+
+        }
+    }
 }
