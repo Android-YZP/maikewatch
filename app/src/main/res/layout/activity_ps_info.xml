@@ -168,9 +168,9 @@
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />
 
-            \
 
-            <EditText
+
+            <TextView
                 android:id="@+id/et_ps_info_age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -206,7 +206,7 @@
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />
 
-            <EditText
+            <TextView
                 android:id="@+id/et_ps_info_height"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -243,7 +243,7 @@
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />
 
-            <EditText
+            <TextView
                 android:id="@+id/et_ps_info_weight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

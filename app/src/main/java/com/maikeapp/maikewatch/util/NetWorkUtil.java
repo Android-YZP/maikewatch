@@ -40,7 +40,6 @@ public class NetWorkUtil {
             String urlconn, String jsonargs,
             String fileName, String LoginName, File mFile) throws Exception {
         String result = null;
-
         InputStream in = null;
         URL url = null;
         HttpURLConnection urlConnection = null;
@@ -78,8 +77,6 @@ public class NetWorkUtil {
             out.write(endData);
             out.flush();
             out.close();
-
-
             int statusCode = urlConnection.getResponseCode();
             Log.d(CommonConstants.LOGCAT_TAG_NAME + "_url_status", urlconn + ",status = "+statusCode);
             if (statusCode != HttpURLConnection.HTTP_OK) {

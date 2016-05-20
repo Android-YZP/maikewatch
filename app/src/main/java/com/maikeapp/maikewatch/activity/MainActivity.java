@@ -272,7 +272,6 @@ public class MainActivity extends FragmentActivity {
     }
     /**
      * 判断蓝牙是否开启
-     *
      * @return
      */
     private void checkBlueTooth() {
