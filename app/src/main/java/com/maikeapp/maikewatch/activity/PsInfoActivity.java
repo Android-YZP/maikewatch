@@ -2,6 +2,7 @@ package com.maikeapp.maikewatch.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -14,11 +15,13 @@ import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -70,14 +73,15 @@ public class PsInfoActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private User mUser;
     //用户信息
-    private EditText mEtAge;
-    private EditText mEtHeight;
-    private EditText mEtWeight;
+    private TextView mEtAge;
+    private TextView mEtHeight;
+    private TextView mEtWeight;
     private RadioGroup mRgSax;
     private int mSax = 0;
     private RadioButton mRbMan, mRbWoman;
     private String mPhotoUrl;
     private ProgressDialog mProgressDialog;
+    private NumberPicker mNpselect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +108,9 @@ public class PsInfoActivity extends AppCompatActivity {
         mRbWoman = (RadioButton) findViewById(R.id.rb_ps_info_woman);
         mUserHead = (CustomSmartImageView) findViewById(R.id.iv_ps_info_userhead);
         mTvLoginName = (TextView) findViewById(R.id.tv_ps_info_loginname);
-        mEtAge = (EditText) findViewById(R.id.et_ps_info_age);
-        mEtHeight = (EditText) findViewById(R.id.et_ps_info_height);
-        mEtWeight = (EditText) findViewById(R.id.et_ps_info_weight);
+        mEtAge = (TextView) findViewById(R.id.et_ps_info_age);
+        mEtHeight = (TextView) findViewById(R.id.et_ps_info_height);
+        mEtWeight = (TextView) findViewById(R.id.et_ps_info_weight);
     }
 
     private void initData() {
@@ -114,18 +118,12 @@ public class PsInfoActivity extends AppCompatActivity {
         mTvCommonTitle.setText(m_title);
         mTvCommonAction.setText(m_action);
         mUser = CommonUtil.getUserInfo(this);
-        Bitmap bitmap = getLoacalBitmap(mPicPath + mpicName); //从本地取图片(在cdcard中获取)
-        if (bitmap == null) {
             //设置头像,本地没有就用默认头像
             if (mUser != null) {
                 mUserHead.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
             } else {
                 mUserHead.setImageResource(R.drawable.pscenter_userinfo_headpic);
             }
-        } else {
-            mUserHead.setImageBitmap(bitmap); //设置Bitmap
-        }
-
 
         if (mUser != null) {
             mTvLoginName.setText(mUser.getLoginName());
@@ -142,21 +140,22 @@ public class PsInfoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 加载本地图片
-     * @param url
-     * @return
-     */
-    public static Bitmap getLoacalBitmap(String url) {
-        try {
-            FileInputStream fis = new FileInputStream(url);
-            return BitmapFactory.decodeStream(fis);  ///把流转化为Bitmap图片
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    /**
+//     * 加载本地图片
+//     *
+//     * @param url
+//     * @return
+//     */
+//    public static Bitmap getLoacalBitmap(String url) {
+//        try {
+//            FileInputStream fis = new FileInputStream(url);
+//            return BitmapFactory.decodeStream(fis);  ///把流转化为Bitmap图片
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
     private void setListener() {
         //通用控件
@@ -196,10 +195,63 @@ public class PsInfoActivity extends AppCompatActivity {
                 showOptionDialog();
             }
         });
+        //选择年龄
+        mEtAge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSelectDialog(18, 120, 8, "岁");
+            }
+        });
+        //选择身高
+        mEtHeight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSelectDialog(170, 250, 80, "厘米");
+            }
+        });
+        //选择体重吧
+        mEtWeight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSelectDialog(50, 150, 30, "千克");
+            }
+        });
+    }
+
+    /**
+     * 弹出选择框
+     */
+    private void showSelectDialog(int CurrentValue, int MaxValue, int MinValue, final String unit) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(PsInfoActivity.this);
+        final LayoutInflater inflater = LayoutInflater.from(PsInfoActivity.this);
+        View v = inflater.inflate(R.layout.num_picker_dialog, null);
+        mNpselect = (NumberPicker) v.findViewById(R.id.np_select);
+        TextView textView = (TextView) v.findViewById(R.id.tv_unit);
+        mNpselect.setMinValue(MinValue);//初始化设置属性
+        mNpselect.setMaxValue(MaxValue);
+        mNpselect.setValue(CurrentValue);
+        textView.setText(unit);
+        builder.setView(v);
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                int value = mNpselect.getValue();
+                if (unit.contains("厘米")) {
+                    mEtHeight.setText(value+"");
+                }else if (unit.contains("岁")){
+                    mEtAge.setText(value+"");
+                }else if (unit.contains("千克")){
+                    mEtWeight.setText(value+"");
+                }
+            }
+        });
+        builder.create().show();
     }
 
     Dialog alertDialog;
-
     private void showOptionDialog() {
         // 取得自定义View
         LayoutInflater layoutInflater = LayoutInflater.from(this);
@@ -232,7 +284,6 @@ public class PsInfoActivity extends AppCompatActivity {
                 alertDialog.dismiss();
             }
         });
-
         //取消事件
         _cancle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -246,7 +297,10 @@ public class PsInfoActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    //处理图片的剪辑
+    /**
+     *  处理图片的剪辑
+     */
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PHOTO_REQUEST_TAKEPHOTO:// 当选择拍照时调用
@@ -287,9 +341,9 @@ public class PsInfoActivity extends AppCompatActivity {
         Bundle bundle = picdata.getExtras();
         if (bundle != null) {
             Bitmap photo = bundle.getParcelable("data");
+            saveBitmap(photo);  //保存BitMap到本地
             //上传图片到服务器
             sendPicToServer();
-            saveBitmap(photo);  //保存BitMap到本地
             if (photo == null) {
                 mUserHead.setImageResource(R.drawable.pscenter_userinfo_headpic);
             } else {
@@ -302,11 +356,6 @@ public class PsInfoActivity extends AppCompatActivity {
                 photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] photodata = baos.toByteArray();
                 System.out.println(photodata.toString());
-                // Intent intent = new Intent();
-                // intent.setClass(RegisterActivity.this, ShowActivity.class);
-                // intent.putExtra("photo", photodata);
-                // startActivity(intent);
-                // finish();
             } catch (Exception e) {
                 e.getStackTrace();
             } finally {
@@ -329,7 +378,8 @@ public class PsInfoActivity extends AppCompatActivity {
                 try {
                     File file = new File(mPicPath + mpicName);
                     String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName + ".jpg", mUser.getLoginName(), file);
-                    Log.e("上传图片的返回数据", "yzp_" + _withPhoto);
+                    Log.e("上传图片的返回数据", "yzp_" + _withPhoto+mPicPath + mpicName+ mUser.getLoginName());
+
                 } catch (Exception e) {
                     e.printStackTrace();
 //                    Log.e("_withPhoto", mUser.getLoginName());
@@ -387,11 +437,11 @@ public class PsInfoActivity extends AppCompatActivity {
                     mUser.setWeight(Integer.parseInt(mEtWeight.getText().toString()));
                     try {
                         CommonUtil.saveUserInfo(mUser, PsInfoActivity.this);//更新数据
-                        Log.e("user数据", mUser.toString()+"");
+                        Log.e("user数据", mUser.toString() + "");
                         //上传数据到服务器
                         String _set_result = mUserBusiness.setInfoToServer(mUser);
                         //更新本地数据
-                        CommonUtil.saveUserInfo(mUser,PsInfoActivity.this);
+                        CommonUtil.saveUserInfo(mUser, PsInfoActivity.this);
                         //加载到内存中
                         mUser = CommonUtil.getUserInfo(PsInfoActivity.this);
                         Log.e("上传个人信息返回的数据", _set_result);
