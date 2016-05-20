@@ -53,8 +53,8 @@ public class PsInfoActivity extends AppCompatActivity {
     private static final int PERSON_MAN = 1;
     private static final int PERSON_WOMAN = 0;
     //头像选择相关变量
-    private String mpicName = "touxiang";
-    private String mPicPath = Environment.getExternalStorageDirectory().getPath() + "/maike/";
+    private String mpicName = "touxiang.jpg";
+    private String mPicPath = Environment.getExternalStorageDirectory().getPath()+"/";
     private File tempFile = new File(Environment.getExternalStorageDirectory(),
             getPhotoFileName());
     private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
@@ -82,6 +82,7 @@ public class PsInfoActivity extends AppCompatActivity {
     private String mPhotoUrl;
     private ProgressDialog mProgressDialog;
     private NumberPicker mNpselect;
+    private String mUserimagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -329,8 +330,8 @@ public class PsInfoActivity extends AppCompatActivity {
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
         // outputX,outputY 是剪裁图片的宽高
-        intent.putExtra("outputX", 300);
-        intent.putExtra("outputY", 300);
+        intent.putExtra("outputX", 150);
+        intent.putExtra("outputY", 150);
         intent.putExtra("return-data", true);
         intent.putExtra("noFaceDetection", true);
         startActivityForResult(intent, PHOTO_REQUEST_CUT);
@@ -370,16 +371,24 @@ public class PsInfoActivity extends AppCompatActivity {
         }
     }
 
-    //上传图片到服务器
+    /**
+     * 上传图片到服务器
+     */
     private void sendPicToServer() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     File file = new File(mPicPath + mpicName);
-                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName + ".jpg", mUser.getLoginName(), file);
-                    Log.e("上传图片的返回数据", "yzp_" + _withPhoto+mPicPath + mpicName+ mUser.getLoginName());
-
+                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName, mUser.getLoginName(), file);
+                   //解析出上传图片的地址
+                    JSONObject _result =new JSONObject(_withPhoto);
+                    String _datas = JsonUtils.getString(_result, "Datas");
+                    JSONObject _userimage = new JSONObject(_datas);
+                    String _userimagePath =  JsonUtils.getString(_userimage, "userimage");
+                    mUser.setPortraits(_userimagePath);
+                    CommonUtil.saveUserInfo(mUser,PsInfoActivity.this);//更新本地信息
+//                    Log.e("上传图片的返回数据", "yzp_" + _withPhoto+mPicPath + mpicName+ mUser.getLoginName());
                 } catch (Exception e) {
                     e.printStackTrace();
 //                    Log.e("_withPhoto", mUser.getLoginName());
@@ -399,7 +408,7 @@ public class PsInfoActivity extends AppCompatActivity {
     }
 
     /**
-     * 保存方法
+     * 保存bitmap为File文件
      */
     public void saveBitmap(Bitmap bm) {
         File f = new File(mPicPath, mpicName);

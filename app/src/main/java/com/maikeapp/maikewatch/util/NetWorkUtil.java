@@ -31,9 +31,6 @@ import java.util.Map;
 public class NetWorkUtil {
     /**
      * 上传照片
-     * @param urlconn
-     * @param mFile
-     * @return
      * @throws Exception
      */
     public static String getResultFromUrlConnectionWithPhoto(
@@ -63,6 +60,7 @@ public class NetWorkUtil {
                     "multipart/form-data; boundary=" + BOUNDARY);
             urlConnection.setRequestProperty("fileName", fileName);
             urlConnection.setRequestProperty("LoginName", LoginName);
+
             urlConnection.connect();
 
             out = new DataOutputStream(urlConnection.getOutputStream());
@@ -84,7 +82,7 @@ public class NetWorkUtil {
             }
             in = new BufferedInputStream(urlConnection.getInputStream());
             result = getStrFromInputSteam(in);
-
+            Log.e("上传图片的返回数据", "yzp_" + result);
         } catch (ConnectException e) {
             e.printStackTrace();
             throw new ServiceException("连接出错，请检查您的网络");
@@ -96,19 +94,17 @@ public class NetWorkUtil {
             throw new ServiceException("服务器响应超时...");
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e("数据错误", "yzp_" + result);
         } finally {
             if (out != null) {
                 out.close();
             }
-
             if (in1 != null) {
                 in1.close();
             }
-
             if (in != null) {
                 in.close();
             }
-
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -128,8 +124,6 @@ public class NetWorkUtil {
         HttpURLConnection urlConnection = null;
         OutputStream out = null;
         byte[] data = null;
-
-
         try {
             data = jsonargs.getBytes();
             url = new URL(urlconn);

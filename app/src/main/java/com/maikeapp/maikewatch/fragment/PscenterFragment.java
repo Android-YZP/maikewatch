@@ -39,9 +39,6 @@ import java.io.FileNotFoundException;
 
 
 public class PscenterFragment extends Fragment {
-    //头像路径
-    String picName = "touxiang";
-    String mPicPath = "/sdcard/maike/";
     //个人目标、绑定手表、个人信息、设置闹钟、关于我们、退出登录
     private LinearLayout mLineGlobal;
     private LinearLayout mLineBindWatch;
