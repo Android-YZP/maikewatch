@@ -40,7 +40,8 @@ public class CommonConstants {
 	 * 测试地址
 	 */
 //	public static final String TEST_ADDRESS = "http://192.168.0.77:8016/";
-	public static final String TEST_ADDRESS = "http://192.168.0.97:8017/";
+	public static final String TEST_ADDRESS = "http://192.168.0.203:8085/";
+//	public static final String TEST_ADDRESS = "http://192.168.0.97:8017/";
 	public static final String TRUE_ADDRESS = "#";
 	public static final String NOW_ADDRESS = TEST_ADDRESS;
 

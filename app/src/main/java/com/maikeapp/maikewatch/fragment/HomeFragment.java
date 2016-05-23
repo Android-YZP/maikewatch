@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -220,6 +221,14 @@ public class HomeFragment extends Fragment {
         mCirclePercentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mUser==null){
+                    ToastUtil.showTipShort(getActivity(),"请先登录");
+                    return;
+                }
+                if (!mUser.isBindWatch()){
+                    ToastUtil.showTipShort(getActivity(),"请先绑定手表");
+                    return;
+                }
                 //弹出加载进度条
                 mProgressDialog = ProgressDialog.show(getActivity(), "请稍等", "正在玩命同步中...",true,true);
                 //初始化日期
@@ -235,6 +244,10 @@ public class HomeFragment extends Fragment {
         mIvHistoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mUser==null){
+                    ToastUtil.showTipShort(getActivity(),"请先登录");
+                    return;
+                }
                 Log.d(CommonConstants.LOGCAT_TAG_NAME+"_onclick_history","click_history");
                 Intent _intent = new Intent(getActivity(), HistoryDataActivity.class);
                 getActivity().startActivity(_intent);
@@ -247,6 +260,10 @@ public class HomeFragment extends Fragment {
         mTvDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mUser==null){
+                    ToastUtil.showTipShort(getActivity(),"请先登录");
+                    return;
+                }
                 showDatePickerDialogToQueryOneDayData();
             }
         });
@@ -530,7 +547,12 @@ public class HomeFragment extends Fragment {
             lineView(m_day_datas);
         }else{
             mCirclePercentView.setPercent(0+1);
-            mTvSportsTarget.setText("目标:0");
+
+            if (mUser!=null){
+                mTvSportsTarget.setText("目标:"+(mUser.getSportsTarget()==0?2000:mUser.getSportsTarget()));
+            }else{
+                mTvSportsTarget.setText("目标:0");
+            }
             mTvSumSteps.setText("0步");
             mTvSumCarolies.setText("0千卡");
             mTvSumDistance.setText("0公里");

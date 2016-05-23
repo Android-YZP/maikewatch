@@ -2,6 +2,7 @@ package com.maikeapp.maikewatch.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -73,18 +74,23 @@ public class BindWatchActivity extends AppCompatActivity {
     private IUserBusiness mUserBusiness = new UserBusinessImp();
 
     private User mUser;//用户信息
+
+    //加载进度条
+    private static ProgressDialog mProgressDialog = null;
     //sdk
     private Maike device = null;
+    /**
+     * 是否正在同步
+     */
+    private boolean running;
+
     //同步时获取每天的数据
     private List<OneDayData> allDayData;
     private int mTargetStep;//个人目标
     private String mWatchVersion;//固件版本号
     private int mBattery;//电量数值
 
-    /**
-     * 是否正在同步
-     */
-    private boolean running;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,7 +182,8 @@ public class BindWatchActivity extends AppCompatActivity {
                     ToastUtil.showTipShort(BindWatchActivity.this,"正在绑定中...");
                     return;
                 }
-
+                //弹出加载进度条
+                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, "请稍等", "正在玩命绑定中...",true,true);
                 //绑定某只手表
                 WatchMac _watch_mac = mWatchMacs.get(position - 1);
                 Log.d(CommonConstants.LOGCAT_TAG_NAME + "_watch_mac", _watch_mac.getMac());
@@ -202,6 +209,8 @@ public class BindWatchActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
+                                //弹出加载进度条
+                                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, "请稍等", "正在玩命解绑中...",true,true);
                                 String _macAddress = mUser.getMacAddress();
                                 //进行解绑
                                 unBindWatch(_macAddress);
@@ -209,11 +218,11 @@ public class BindWatchActivity extends AppCompatActivity {
                             }
                         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }).show();
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }).show();
 
             }
         });
@@ -460,7 +469,9 @@ public class BindWatchActivity extends AppCompatActivity {
 
         @Override
         public void handleMessage(Message msg) {
-
+            if(mProgressDialog!=null){
+                mProgressDialog.dismiss();
+            }
             int flag = msg.what;
             switch (flag) {
                 case 0:
