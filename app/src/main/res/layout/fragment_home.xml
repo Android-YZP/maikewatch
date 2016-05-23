@@ -73,6 +73,7 @@
                         android:src="@drawable/nav_share"
                         android:paddingRight="@dimen/home_topbar_nav_share_padding"
                         android:paddingLeft="@dimen/home_topbar_nav_share_padding"
+                        android:visibility="gone"
                         />
 
                 </RelativeLayout>

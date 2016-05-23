@@ -181,6 +181,11 @@ public interface IUserBusiness {
 
 	public abstract String checkAppUpdate() throws Exception;
 
-
-
+	/**
+	 * 检查mac地址
+	 * @param macAddress
+	 * @return
+	 * @throws Exception
+     */
+	public abstract String checkMacAddress(String macAddress) throws Exception;
 }

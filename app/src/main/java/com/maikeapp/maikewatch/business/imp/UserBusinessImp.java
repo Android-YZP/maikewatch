@@ -405,4 +405,29 @@ public  class UserBusinessImp implements IUserBusiness {
         _result = NetWorkUtil.getResultFromUrlConnectionWithGet(CommonConstants.CHECK_APP_VERSION, _json_args.toString(), _md5_value.substring(0, 8));
         return _result;
     }
+
+    /**
+     * 检查mac地址
+     * @param macAddress
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public String checkMacAddress(String macAddress) throws Exception {
+        String _result = null;
+        //封装成json数据
+        JSONObject _json_args = new JSONObject();
+        _json_args.put("MacAddress", macAddress);
+
+        _json_args.put("ClientVersion", "1.0");
+        _json_args.put("ClientType", "Phone");
+
+        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_checkMacAddress", _json_args.toString());
+        //添加头信息
+        String _md5_value = ConvertUtil.getMD5("MAIKEWATCH");
+        Log.e(CommonConstants.LOGCAT_TAG_NAME + "_md5_value", _md5_value.substring(0, 8));
+
+        _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.CHECK_MAC_ADDRESS_EXIST, _json_args.toString(), _md5_value.substring(0, 8));
+        return _result;
+    }
 }

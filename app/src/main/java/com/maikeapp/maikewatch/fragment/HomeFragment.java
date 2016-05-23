@@ -311,6 +311,16 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
         }
 
+        //开启副线程-上传一次mac地址
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String _macAddress = mUser.getMacAddress();
+                //上传mac信息到服务器
+                uploadMacAddress(_macAddress);
+            }
+        }).start();
+
         //开启副线程-同步数据
         new Thread(new Runnable() {
             @Override
@@ -321,6 +331,33 @@ public class HomeFragment extends Fragment {
 
             }
         }).start();
+    }
+
+    /**
+     *
+     * @param macAddress
+     */
+    private void uploadMacAddress(String macAddress) {
+
+        try {
+            String _check_mac_Result = mUserBusiness.checkMacAddress(macAddress);
+            Log.d(CommonConstants.LOGCAT_TAG_NAME,"_check_mac_Result is "+_check_mac_Result);
+            JSONObject _json_result = new JSONObject(_check_mac_Result);
+            boolean Success = true;
+            try{
+                Success = _json_result.getBoolean("Success");
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (!Success){
+                // 数据异常
+                handler.sendEmptyMessage(CommonConstants.FLAG_HOME_DATA_EXCEPTION_SUCCESS);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -519,6 +556,9 @@ public class HomeFragment extends Fragment {
                         updateUIOfOneDayData();//更新界面上一天的数据
                     }
                     break;
+                case CommonConstants.FLAG_HOME_DATA_EXCEPTION_SUCCESS:
+                    disableApp();//app不可用
+                    break;
                 default:
                     break;
             }
@@ -526,6 +566,13 @@ public class HomeFragment extends Fragment {
 
 
     };
+
+    /**
+     * app不可用
+     */
+    private void disableApp() {
+        ToastUtil.showTipShort(getActivity(),"数据异常");
+    }
 
     /**
      * 更新UI-一天的数据

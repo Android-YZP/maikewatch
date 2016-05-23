@@ -104,7 +104,7 @@ public class HistoryDataActivity extends AppCompatActivity {
                     if (_Success){
                         String _json_datas = JsonUtils.getString(_json_obj_result,"Datas");
                         m_day_datas_for_month = new Gson().fromJson(_json_datas,new TypeToken<List<OneDayData>>(){}.getType());
-                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_day30_datas",m_day_datas_for_week.toString());
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_day30_datas",m_day_datas_for_month.toString());
                         // 同步完成
                         handler.sendEmptyMessage(CommonConstants.FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS);
                     }else{
