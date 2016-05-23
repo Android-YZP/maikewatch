@@ -88,7 +88,7 @@ public class PscenterFragment extends Fragment {
             //设置头像,本地没有就用默认头像
             if (mUser != null) {
                 mIvUserLogin.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
-                Log.e("mUser.getPortraits()",mUser.getPortraits());
+
             } else {
                 mIvUserLogin.setImageResource(R.drawable.pscenter_userinfo_headpic);
             }

@@ -60,7 +60,7 @@ public class NetWorkUtil {
             urlConnection.setRequestProperty("Content-Type",
                     "multipart/form-data; boundary=" + BOUNDARY);
             urlConnection.setRequestProperty("fileName", fileName);
-            urlConnection.setRequestProperty("LoginName", LoginName);
+            urlConnection.setRequestProperty("vertifyCode", LoginName);
             urlConnection.connect();
             out = new DataOutputStream(urlConnection.getOutputStream());
             in1 = new DataInputStream(new FileInputStream(mFile));
