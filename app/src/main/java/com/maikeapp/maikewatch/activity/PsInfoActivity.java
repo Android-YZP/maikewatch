@@ -380,7 +380,7 @@ public class PsInfoActivity extends AppCompatActivity {
             public void run() {
                 try {
                     File file = new File(mPicPath + mpicName);
-                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName, "25852", file);
+                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName, mUser.getLoginVerifyCode(), file);
                    //解析出上传图片的地址
                     JSONObject _result =new JSONObject(_withPhoto);
                     String _datas = JsonUtils.getString(_result, "Datas");
