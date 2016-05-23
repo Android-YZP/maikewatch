@@ -83,6 +83,23 @@ public class PscenterFragment extends Fragment {
 
 
 
+    private void initView() {
+        //设置头像,本地没有就用网络头像,再用默认头像
+//        Bitmap bitmap = getLoacalBitmap(mPicPath + picName); //从本地取图片(在cdcard中获取)
+//        if (bitmap == null) {
+            //设置头像,本地没有就用默认头像
+            if (mUser != null) {
+                mIvUserLogin.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+
+            } else {
+                mIvUserLogin.setImageResource(R.drawable.pscenter_userinfo_headpic);
+            }
+//        } else {
+//            mIvUserLogin.setImageBitmap(bitmap); //设置Bitmap
+//        }
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();

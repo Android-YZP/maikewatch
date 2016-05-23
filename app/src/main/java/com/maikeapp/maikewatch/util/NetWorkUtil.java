@@ -31,6 +31,7 @@ import java.util.Map;
 public class NetWorkUtil {
     /**
      * 上传照片
+     * @return
      * @throws Exception
      */
     public static String getResultFromUrlConnectionWithPhoto(
@@ -59,10 +60,8 @@ public class NetWorkUtil {
             urlConnection.setRequestProperty("Content-Type",
                     "multipart/form-data; boundary=" + BOUNDARY);
             urlConnection.setRequestProperty("fileName", fileName);
-            urlConnection.setRequestProperty("LoginName", LoginName);
-
+            urlConnection.setRequestProperty("vertifyCode", LoginName);
             urlConnection.connect();
-
             out = new DataOutputStream(urlConnection.getOutputStream());
             in1 = new DataInputStream(new FileInputStream(mFile));
             int bytes = 0;
@@ -124,6 +123,8 @@ public class NetWorkUtil {
         HttpURLConnection urlConnection = null;
         OutputStream out = null;
         byte[] data = null;
+
+
         try {
             data = jsonargs.getBytes();
             url = new URL(urlconn);

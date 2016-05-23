@@ -330,8 +330,8 @@ public class PsInfoActivity extends AppCompatActivity {
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
         // outputX,outputY 是剪裁图片的宽高
-        intent.putExtra("outputX", 150);
-        intent.putExtra("outputY", 150);
+        intent.putExtra("outputX", 100);
+        intent.putExtra("outputY", 100);
         intent.putExtra("return-data", true);
         intent.putExtra("noFaceDetection", true);
         startActivityForResult(intent, PHOTO_REQUEST_CUT);
@@ -380,7 +380,7 @@ public class PsInfoActivity extends AppCompatActivity {
             public void run() {
                 try {
                     File file = new File(mPicPath + mpicName);
-                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName, mUser.getLoginName(), file);
+                    String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName, "25852", file);
                    //解析出上传图片的地址
                     JSONObject _result =new JSONObject(_withPhoto);
                     String _datas = JsonUtils.getString(_result, "Datas");
