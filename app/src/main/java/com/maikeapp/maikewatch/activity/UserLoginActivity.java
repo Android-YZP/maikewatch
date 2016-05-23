@@ -216,6 +216,7 @@ public class UserLoginActivity extends Activity {
 					Log.e(CommonConstants.LOGCAT_TAG_NAME+"_json_user_datas",_json_user.toString());
 					Gson gson = new Gson();
 					mUser = gson.fromJson(_json_user.toString(),User.class);
+					CommonUtil.saveUserInfo(mUser,UserLoginActivity.this);
 					Log.e("填充用户信息"+"_user_info",mUser.toString());
 				}
 			}).start();
