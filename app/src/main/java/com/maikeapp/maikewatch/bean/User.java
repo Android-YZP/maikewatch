@@ -19,6 +19,7 @@ public class User {
 	private boolean isBindWatch;//是否绑定手表
 	private boolean isCallAlertOn;//是否开启手表来电提醒
 
+	private String LoginVerifyCode;//登录时获取，作为头像上传用
 	//闹钟
 	private String clickOne;//闹钟1
 	private String clickTwo;//闹钟2
@@ -28,6 +29,14 @@ public class User {
 	private String mToken;//保存Token
 	private String watchVersion;//手表固件版本号
 	private int battery;// 目前电量
+
+	public String getLoginVerifyCode() {
+		return LoginVerifyCode;
+	}
+
+	public void setLoginVerifyCode(String loginVerifyCode) {
+		LoginVerifyCode = loginVerifyCode;
+	}
 
 	public String getClickOne() {
 		return clickOne;
@@ -179,6 +188,7 @@ public class User {
 	public void setBirthday(int birthday) {
 		Birthday = birthday;
 	}
+
 	@Override
 	public String toString() {
 		return "User{" +
@@ -188,15 +198,20 @@ public class User {
 				", Portraits='" + Portraits + '\'' +
 				", Sex=" + Sex +
 				", Age=" + Age +
+				", Birthday=" + Birthday +
 				", Height=" + Height +
 				", Weight=" + Weight +
 				", SportsTarget=" + SportsTarget +
 				", isBindWatch=" + isBindWatch +
+				", isCallAlertOn=" + isCallAlertOn +
+				", LoginVerifyCode='" + LoginVerifyCode + '\'' +
+				", clickOne='" + clickOne + '\'' +
+				", clickTwo='" + clickTwo + '\'' +
+				", clickThree='" + clickThree + '\'' +
 				", macAddress='" + macAddress + '\'' +
+				", mToken='" + mToken + '\'' +
 				", watchVersion='" + watchVersion + '\'' +
 				", battery=" + battery +
 				'}';
 	}
-
-
 }

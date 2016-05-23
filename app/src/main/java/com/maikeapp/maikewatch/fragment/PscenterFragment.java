@@ -33,6 +33,7 @@ import com.maikeapp.maikewatch.activity.UserLoginActivity;
 import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.receiver.PhoneStatReceiver;
 import com.maikeapp.maikewatch.util.CommonUtil;
+import com.maikeapp.maikewatch.util.ToastUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -76,10 +77,11 @@ public class PscenterFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pscenter, container, false);
         findView(view);
-        mUser = CommonUtil.getUserInfo(getActivity());
-        initView();
+
         return view;
     }
+
+
 
     private void initView() {
         //设置头像,本地没有就用网络头像,再用默认头像
@@ -97,12 +99,15 @@ public class PscenterFragment extends Fragment {
 //        }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
-        initView();
+        mUser = CommonUtil.getUserInfo(getActivity());
 
         if (mUser != null) {
+            mIvUserLogin.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+            Log.e("mUser.getPortraits()",mUser.getPortraits());
             //更新界面信息
             mLineUserLogout.setVisibility(View.VISIBLE);
             mTvUsername.setText(mUser.getLoginName());
@@ -126,6 +131,7 @@ public class PscenterFragment extends Fragment {
             }
         } else {
             mLineUserLogout.setVisibility(View.GONE);
+            mIvUserLogin.setImageResource(R.drawable.pscenter_userinfo_headpic);
         }
     }
 
@@ -222,21 +228,45 @@ public class PscenterFragment extends Fragment {
             Intent _intent = null;
             switch (v.getId()) {
                 case R.id.line_pscenter_global:
+                    if (mUser==null){
+                        ToastUtil.showTipShort(getActivity(),"请先登录");
+                        return;
+                    }
+                    if (!mUser.isBindWatch()){
+                        ToastUtil.showTipShort(getActivity(),"请先绑定手表");
+                        return;
+                    }
                     //个人目标
                     _intent = new Intent(getActivity(), PsGlobalActivity.class);
                     startActivity(_intent);
                     break;
                 case R.id.line_pscenter_bindwatch:
+                    if (mUser==null){
+                        ToastUtil.showTipShort(getActivity(),"请先登录");
+                        return;
+                    }
                     //绑定手表
                     _intent = new Intent(getActivity(), BindWatchActivity.class);
                     startActivity(_intent);
                     break;
                 case R.id.line_pscenter_psinfo:
+                    if (mUser==null){
+                        ToastUtil.showTipShort(getActivity(),"请先登录");
+                        return;
+                    }
                     //个人信息
                     _intent = new Intent(getActivity(), PsInfoActivity.class);
                     startActivity(_intent);
                     break;
                 case R.id.line_pscenter_alertalarm:
+                    if (mUser==null){
+                        ToastUtil.showTipShort(getActivity(),"请先登录");
+                        return;
+                    }
+                    if (!mUser.isBindWatch()){
+                        ToastUtil.showTipShort(getActivity(),"请先绑定手表");
+                        return;
+                    }
                     //智能闹钟
                     _intent = new Intent(getActivity(), AlertAlarmActivity.class);
                     startActivity(_intent);

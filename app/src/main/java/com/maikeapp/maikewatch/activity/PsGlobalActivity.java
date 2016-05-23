@@ -60,6 +60,7 @@ public class PsGlobalActivity extends AppCompatActivity {
      */
     private boolean running;
 
+    private int mBattery;//电量
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,9 @@ public class PsGlobalActivity extends AppCompatActivity {
         mTvCommonAction.setText(m_action);
 
         mUser = CommonUtil.getUserInfo(this);
+        if (mUser!=null){
+            mTvSportsTarget.setText("" + (mUser.getSportsTarget()==0?2000:mUser.getSportsTarget()));
+        }
 
     }
 
@@ -210,11 +214,25 @@ public class PsGlobalActivity extends AppCompatActivity {
                         JSONObject targetResult = device.setTarget(_target);        // 设置手环的步数目标
                         Log.i("sync", "targetResult = " + targetResult);            // 如果为result = 0，则成功，否则失败
 
+                        JSONObject versionResult = device.getVersion();		// 获取手环的固件版本号
+                        Log.i("sync", "versionResult = " + versionResult);			// result返回是一串字符，即版本号
+                        String _version_str = JsonUtils.getString(versionResult,"result");
+                        if (_version_str!=null&&!_version_str.equals("")){
+                            mUser.setWatchVersion(_version_str);
+                        }
+
+                        JSONObject batteryResult = device.getBattery();        // 获取手环的电量
+                        Log.d("sync", "batteryResult= " + batteryResult);            // result 里面的数值就是电量
+                        mBattery = JsonUtils.getInt(batteryResult, "result", -1);
+                        if (mBattery != -1) {
+                            mUser.setBattery(mBattery);
+                        }
+
                         int _target_result = JsonUtils.getInt(targetResult, "result", -1);
                         if (_target_result == 0) {
                             // 表示同步成功
                             mUser.setSportsTarget(_target);
-                            CommonUtil.saveUserInfo(mUser, PsGlobalActivity.this);//覆盖用户个人目标信息
+                            CommonUtil.saveUserInfo(mUser, PsGlobalActivity.this);//覆盖用户个人目标信息/覆盖用户电量/用户固件版本号
 
 
                             //上传信息到服务端
