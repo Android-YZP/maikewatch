@@ -97,14 +97,14 @@ public class HistoryDataActivity extends AppCompatActivity {
             public void run() {
                 try {
                     String _days_data_result = mUserBusiness.queryRecentlySportsData(mUser,30);
-                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_days7_result",_days_data_result);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_days30_result",_days_data_result);
 
                     JSONObject _json_obj_result = new JSONObject(_days_data_result);
                     boolean _Success = JsonUtils.getBoolean(_json_obj_result,"Success");
                     if (_Success){
                         String _json_datas = JsonUtils.getString(_json_obj_result,"Datas");
                         m_day_datas_for_month = new Gson().fromJson(_json_datas,new TypeToken<List<OneDayData>>(){}.getType());
-                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_day7_datas",m_day_datas_for_week.toString());
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_day30_datas",m_day_datas_for_week.toString());
                         // 同步完成
                         handler.sendEmptyMessage(CommonConstants.FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS);
                     }else{
