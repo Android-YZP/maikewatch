@@ -131,8 +131,10 @@ public class PsInfoActivity extends AppCompatActivity {
             //SAX判断
             if (mUser.getSex() == PERSON_MAN) {
                 mRbMan.setChecked(true);
+                mSax = PERSON_MAN;
             } else {
                 mRbWoman.setChecked(true);
+                mSax = PERSON_WOMAN;
             }
             //填充其他信息
             mEtAge.setText("" + mUser.getBirthday());
