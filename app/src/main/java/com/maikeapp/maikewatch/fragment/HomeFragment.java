@@ -311,54 +311,43 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
         }
 
-        //开启副线程-上传一次mac地址
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String _macAddress = mUser.getMacAddress();
-                //上传mac信息到服务器
-                uploadMacAddress(_macAddress);
-            }
-        }).start();
-
         //开启副线程-同步数据
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String _macAddress = mUser.getMacAddress();
-                //同步数据-并上传信息到服务器
-                syncWatchData(_macAddress);
+                //检查是否通过
+                boolean Success = true;
+                try {
+                    String _check_mac_Result = mUserBusiness.checkMacAddress(_macAddress);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME,"_check_mac_Result is "+_check_mac_Result);
+                    JSONObject _json_result = new JSONObject(_check_mac_Result);
+                    try{
+                        Success = _json_result.getBoolean("Success");
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (!Success){
+                        // 数据异常
+                        String errorMsg = _json_result.getString("Message");
+                        CommonUtil.sendErrorMessage(errorMsg,handler);
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //通过
+                if (Success){
+                    //同步数据-并上传信息到服务器
+                    syncWatchData(_macAddress);
+                }
+
 
             }
         }).start();
     }
 
-    /**
-     *
-     * @param macAddress
-     */
-    private void uploadMacAddress(String macAddress) {
-
-        try {
-            String _check_mac_Result = mUserBusiness.checkMacAddress(macAddress);
-            Log.d(CommonConstants.LOGCAT_TAG_NAME,"_check_mac_Result is "+_check_mac_Result);
-            JSONObject _json_result = new JSONObject(_check_mac_Result);
-            boolean Success = true;
-            try{
-                Success = _json_result.getBoolean("Success");
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (!Success){
-                // 数据异常
-                handler.sendEmptyMessage(CommonConstants.FLAG_HOME_DATA_EXCEPTION_SUCCESS);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     /**
