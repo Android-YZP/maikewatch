@@ -575,7 +575,7 @@ public class HomeFragment extends Fragment {
                 _percent = 100;
             }
             mCirclePercentView.setPercent(_percent+1);
-            mTvSportsTarget.setText("目标:"+_head_one_day_data.getTargetSteps());
+            mTvSportsTarget.setText("目标:"+(_head_one_day_data.getTargetSteps()==0?mUser.getSportsTarget():_head_one_day_data.getTargetSteps()));
             mTvSumSteps.setText(_head_one_day_data.getCompletedSteps()+"步");
             mTvSumCarolies.setText(_head_one_day_data.getKcal()+"千卡");
             mTvSumDistance.setText(_head_one_day_data.getiKils()+"公里");
@@ -584,11 +584,7 @@ public class HomeFragment extends Fragment {
         }else{
             mCirclePercentView.setPercent(0+1);
 
-            if (mUser!=null){
-                mTvSportsTarget.setText("目标:"+(mUser.getSportsTarget()==0?2000:mUser.getSportsTarget()));
-            }else{
-                mTvSportsTarget.setText("目标:0");
-            }
+            mTvSportsTarget.setText("目标:"+(mUser.getSportsTarget()==0?2000:mUser.getSportsTarget()));
             mTvSumSteps.setText("0步");
             mTvSumCarolies.setText("0千卡");
             mTvSumDistance.setText("0公里");
