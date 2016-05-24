@@ -97,14 +97,14 @@ public class HistoryDataActivity extends AppCompatActivity {
             public void run() {
                 try {
                     String _days_data_result = mUserBusiness.queryRecentlySportsData(mUser,30);
-                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_days7_result",_days_data_result);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_days30_result",_days_data_result);
 
                     JSONObject _json_obj_result = new JSONObject(_days_data_result);
                     boolean _Success = JsonUtils.getBoolean(_json_obj_result,"Success");
                     if (_Success){
                         String _json_datas = JsonUtils.getString(_json_obj_result,"Datas");
                         m_day_datas_for_month = new Gson().fromJson(_json_datas,new TypeToken<List<OneDayData>>(){}.getType());
-                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_day7_datas",m_day_datas_for_week.toString());
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_day30_datas",m_day_datas_for_month.toString());
                         // 同步完成
                         handler.sendEmptyMessage(CommonConstants.FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS);
                     }else{
@@ -199,8 +199,8 @@ public class HistoryDataActivity extends AppCompatActivity {
         mRenderer.setLegendTextSize(20);//设置图例文本大小
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
-        mRenderer.setYAxisMax(600);//y轴最大值600
-        mRenderer.setYLabels(3);//设置Y轴刻度个数（貌似不太准确）
+        mRenderer.setYAxisMax(5000);//y轴最大值600
+        mRenderer.setYLabels(5);//设置Y轴刻度个数（貌似不太准确）
         mRenderer.setXAxisMax(pAllData.size());//x轴刻度的个数
         mRenderer.setShowGrid(true);//显示网格
 
@@ -234,8 +234,8 @@ public class HistoryDataActivity extends AppCompatActivity {
         mRenderer.setMarginsColor(Color.WHITE);//设置周边背景色
         mRenderer.setAxesColor(getResources().getColor(R.color.common_content_gray_text_font_color));
 
-        mRenderer.setLegendHeight(60);//设置图例高度
-        mRenderer.setPanEnabled(false);//设置xy轴是否可以拖动
+        mRenderer.setLegendHeight(100);//设置图例高度
+        mRenderer.setPanEnabled(true);//设置xy轴是否可以拖动
         mRenderer.setZoomEnabled(true);
 
 

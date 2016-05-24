@@ -316,12 +316,38 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
                 String _macAddress = mUser.getMacAddress();
-                //同步数据-并上传信息到服务器
-                syncWatchData(_macAddress);
+                //检查是否通过
+                boolean Success = true;
+                try {
+                    String _check_mac_Result = mUserBusiness.checkMacAddress(_macAddress);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME,"_check_mac_Result is "+_check_mac_Result);
+                    JSONObject _json_result = new JSONObject(_check_mac_Result);
+                    try{
+                        Success = _json_result.getBoolean("Success");
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (!Success){
+                        // 数据异常
+                        String errorMsg = _json_result.getString("Message");
+                        CommonUtil.sendErrorMessage(errorMsg,handler);
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //通过
+                if (Success){
+                    //同步数据-并上传信息到服务器
+                    syncWatchData(_macAddress);
+                }
+
 
             }
         }).start();
     }
+
 
 
     /**
@@ -519,6 +545,9 @@ public class HomeFragment extends Fragment {
                         updateUIOfOneDayData();//更新界面上一天的数据
                     }
                     break;
+                case CommonConstants.FLAG_HOME_DATA_EXCEPTION_SUCCESS:
+                    disableApp();//app不可用
+                    break;
                 default:
                     break;
             }
@@ -526,6 +555,13 @@ public class HomeFragment extends Fragment {
 
 
     };
+
+    /**
+     * app不可用
+     */
+    private void disableApp() {
+        ToastUtil.showTipShort(getActivity(),"数据异常");
+    }
 
     /**
      * 更新UI-一天的数据
@@ -743,7 +779,7 @@ public class HomeFragment extends Fragment {
         mRenderer.setLegendTextSize(20);//设置图例文本大小
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
-        mRenderer.setYAxisMax(600);//y轴最大值600
+        mRenderer.setYAxisMax(2000);//y轴最大值600
         mRenderer.setYLabels(3);//设置Y轴刻度个数（貌似不太准确）
         mRenderer.setXAxisMax(23);
         mRenderer.setShowGrid(true);//显示网格
@@ -776,7 +812,8 @@ public class HomeFragment extends Fragment {
         mRenderer.setAxesColor(getResources().getColor(R.color.common_content_gray_text_font_color));
 
         mRenderer.setLegendHeight(60);//设置图例高度
-	        mRenderer.setPanEnabled(false);//设置xy轴是否可以拖动
+	        mRenderer.setPanEnabled(true);//设置xy轴是否可以拖动
+        mRenderer.setInScroll(true);//解决与ScrollView焦点冲突
         mRenderer.setZoomEnabled(true);
 
 //	        XYSeriesRenderer rTwo = new XYSeriesRenderer();//(类似于一条线对象)

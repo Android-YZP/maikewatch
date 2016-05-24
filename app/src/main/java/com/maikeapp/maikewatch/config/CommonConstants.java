@@ -29,6 +29,7 @@ public class CommonConstants {
 	public static final int FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS = 24;
 	public static final int FLAG_GET_MAC_NONE = 25;
 	public static final int FLAG_SET_ALARM_SUCCESS = 26;
+	public static final int FLAG_HOME_DATA_EXCEPTION_SUCCESS = 27;
 
 	
 	public static final String MSG_GET_ERROR = "服务端数据异常";
@@ -123,6 +124,11 @@ public class CommonConstants {
 	 * 修改闹钟
 	 */
 	public static final String MODIFY_CLOCK = NOW_ADDRESS + "WebServices/WatchServices/ModifyClock";
+
+	/**
+	 * 检查mac地址是否通过
+	 */
+	public static final String CHECK_MAC_ADDRESS_EXIST = NOW_ADDRESS + "WebServices/WatchServices/CheckMacAddressExist";
 
 	/**
 	 * 同步运动数据(操作之前先调用设置运动目标和最新身高体重接口)
