@@ -32,6 +32,7 @@ import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
+import com.maikeapp.maikewatch.exception.ServiceException;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
 import com.maikeapp.maikewatch.util.NetWorkUtil;
@@ -142,23 +143,6 @@ public class PsInfoActivity extends AppCompatActivity {
             mEtWeight.setText("" + mUser.getWeight());
         }
     }
-
-//    /**
-//     * 加载本地图片
-//     *
-//     * @param url
-//     * @return
-//     */
-//    public static Bitmap getLoacalBitmap(String url) {
-//        try {
-//            FileInputStream fis = new FileInputStream(url);
-//            return BitmapFactory.decodeStream(fis);  ///把流转化为Bitmap图片
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
 
     private void setListener() {
         //通用控件
@@ -386,15 +370,19 @@ public class PsInfoActivity extends AppCompatActivity {
                    //解析出上传图片的地址
                     JSONObject _result =new JSONObject(_withPhoto);
                     String _datas = JsonUtils.getString(_result, "Datas");
+                    String _message = JsonUtils.getString(_result, "Message");
                     JSONObject _userimage = new JSONObject(_datas);
                     String _userimagePath =  JsonUtils.getString(_userimage, "userimage");
                     mUser.setPortraits(_userimagePath);
                     CommonUtil.saveUserInfo(mUser,PsInfoActivity.this);//更新本地信息
-//                    Log.e("上传图片的返回数据", "yzp_" + _withPhoto+mPicPath + mpicName+ mUser.getLoginName());
-                } catch (Exception e) {
+                    CommonUtil.sendErrorMessage(_message, handler);
+
+                } catch (ServiceException e) {
                     e.printStackTrace();
-//                    Log.e("_withPhoto", mUser.getLoginName());
-                    CommonUtil.sendErrorMessage("上传图片失败，请检查网络", handler);
+                    CommonUtil.sendErrorMessage(e.getMessage(), handler);
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    CommonUtil.sendErrorMessage("上传图片失败，数据异常", handler);
                 }
             }
         }).start();
