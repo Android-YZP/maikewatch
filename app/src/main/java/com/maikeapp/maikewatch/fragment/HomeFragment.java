@@ -779,7 +779,7 @@ public class HomeFragment extends Fragment {
         mRenderer.setLegendTextSize(20);//设置图例文本大小
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
-        mRenderer.setYAxisMax(600);//y轴最大值600
+        mRenderer.setYAxisMax(2000);//y轴最大值600
         mRenderer.setYLabels(3);//设置Y轴刻度个数（貌似不太准确）
         mRenderer.setXAxisMax(23);
         mRenderer.setShowGrid(true);//显示网格
@@ -812,7 +812,8 @@ public class HomeFragment extends Fragment {
         mRenderer.setAxesColor(getResources().getColor(R.color.common_content_gray_text_font_color));
 
         mRenderer.setLegendHeight(60);//设置图例高度
-	        mRenderer.setPanEnabled(false);//设置xy轴是否可以拖动
+	        mRenderer.setPanEnabled(true);//设置xy轴是否可以拖动
+        mRenderer.setInScroll(true);//解决与ScrollView焦点冲突
         mRenderer.setZoomEnabled(true);
 
 //	        XYSeriesRenderer rTwo = new XYSeriesRenderer();//(类似于一条线对象)

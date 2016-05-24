@@ -199,8 +199,8 @@ public class HistoryDataActivity extends AppCompatActivity {
         mRenderer.setLegendTextSize(20);//设置图例文本大小
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
-        mRenderer.setYAxisMax(600);//y轴最大值600
-        mRenderer.setYLabels(3);//设置Y轴刻度个数（貌似不太准确）
+        mRenderer.setYAxisMax(5000);//y轴最大值600
+        mRenderer.setYLabels(5);//设置Y轴刻度个数（貌似不太准确）
         mRenderer.setXAxisMax(pAllData.size());//x轴刻度的个数
         mRenderer.setShowGrid(true);//显示网格
 
@@ -234,8 +234,8 @@ public class HistoryDataActivity extends AppCompatActivity {
         mRenderer.setMarginsColor(Color.WHITE);//设置周边背景色
         mRenderer.setAxesColor(getResources().getColor(R.color.common_content_gray_text_font_color));
 
-        mRenderer.setLegendHeight(60);//设置图例高度
-        mRenderer.setPanEnabled(false);//设置xy轴是否可以拖动
+        mRenderer.setLegendHeight(100);//设置图例高度
+        mRenderer.setPanEnabled(true);//设置xy轴是否可以拖动
         mRenderer.setZoomEnabled(true);
 
 
