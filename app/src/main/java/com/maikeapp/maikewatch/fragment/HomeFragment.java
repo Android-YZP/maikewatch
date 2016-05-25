@@ -442,7 +442,7 @@ public class HomeFragment extends Fragment {
                     e1.printStackTrace();
                 }
 
-//同步数据开始》》
+                //同步数据开始》》
                 JSONObject boundInfoResult = device.getBoundInfo();    // 获取手环的绑定信息
                 Log.d("sync", "boundInfoResult = " + boundInfoResult);        // 如果result = 0，则未绑定，如果result = 1，则已绑定
 

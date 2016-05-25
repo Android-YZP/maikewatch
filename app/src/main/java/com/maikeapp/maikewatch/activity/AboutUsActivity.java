@@ -86,21 +86,23 @@ public class AboutUsActivity extends AppCompatActivity {
                 showUpDateDialog();
             } else if (flag == NO_UPDATA_APP) {
                 showNoUpDateTip();
-            }else if (flag == UPDATE_PROGRESS){
+            } else if (flag == UPDATE_PROGRESS) {
                 // 更新进度情况
                 mProgressBar.setProgress(progress);
-            }else if (flag == UPDATE_COMPLETE){
+            } else if (flag == UPDATE_COMPLETE) {
                 mProgressBar.setVisibility(View.INVISIBLE);
                 // 安装apk文件
                 installApk();
             }
         }
     };
+    private String mSize;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_us);
-        mSP = getSharedPreferences("config",MODE_PRIVATE);
+        mSP = getSharedPreferences("config", MODE_PRIVATE);
         initView();
         initData();
         setListener();
@@ -130,9 +132,9 @@ public class AboutUsActivity extends AppCompatActivity {
         mTvAppVersion.setText(mVersionName);
         //初始化CheckBok
         boolean _autoUpdate = mSP.getBoolean("autoUpdate", true);
-        if (_autoUpdate){
+        if (_autoUpdate) {
             mCBIsAutoCheck.setChecked(true);
-        }else {
+        } else {
             mCBIsAutoCheck.setChecked(false);
         }
     }
@@ -150,20 +152,20 @@ public class AboutUsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //弹出加载进度条
                 getVersionFromService(mVersionCode + "", mVersionName);
-                mProgressDialog = ProgressDialog.show(AboutUsActivity.this, "请稍等", "正在玩命提交中...", true, true);
+                mProgressDialog = ProgressDialog.show(AboutUsActivity.this, "请稍等", "正在玩命检查中...", true, true);
             }
         });
         //设置是否自动更新
         mCBIsAutoCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    mSP.edit().putBoolean("autoUpdate",true).apply();
+                if (isChecked) {
+                    mSP.edit().putBoolean("autoUpdate", true).apply();
                     mCBIsAutoCheck.setChecked(true);
-                    Log.e("isChecked",isChecked+"");
-                }else {
-                    mSP.edit().putBoolean("autoUpdate",false).apply();
-                    Log.e("isChecked",isChecked+"");
+                    Log.e("isChecked", isChecked + "");
+                } else {
+                    mSP.edit().putBoolean("autoUpdate", false).apply();
+                    Log.e("isChecked", isChecked + "");
                     mCBIsAutoCheck.setChecked(false);
                 }
             }
@@ -177,7 +179,7 @@ public class AboutUsActivity extends AppCompatActivity {
     private void showUpDateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(AboutUsActivity.this);
         builder.setTitle("版本更新");
-        builder.setMessage("有新版本更新了");
+        builder.setMessage("有新版本更新了,总大小为"+mSize);
         builder.setPositiveButton("下载", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -216,18 +218,20 @@ public class AboutUsActivity extends AppCompatActivity {
         //下载apk
         downloadApk();
     }
+
     /**
      * 下载apk
      */
-    private void downloadApk(){
+    private void downloadApk() {
         //开启另一线程下载
         Thread downLoadThread = new Thread(downApkRunnable);
         downLoadThread.start();
     }
+
     /**
      * 从服务器下载新版apk的线程
      */
-    private Runnable downApkRunnable = new Runnable(){
+    private Runnable downApkRunnable = new Runnable() {
         @Override
         public void run() {
             if (!android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
@@ -243,16 +247,16 @@ public class AboutUsActivity extends AppCompatActivity {
                 });
                 builder.show();
                 return;
-            }else{
+            } else {
                 try {
                     //服务器上新版apk地址
                     URL url = new URL(mApkPath);
-                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.connect();
                     int length = conn.getContentLength();
                     InputStream is = conn.getInputStream();
                     File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-                    if(!file.exists()){
+                    if (!file.exists()) {
                         //如果文件夹不存在,则创建
                         file.mkdir();
                     }
@@ -262,20 +266,20 @@ public class AboutUsActivity extends AppCompatActivity {
                     FileOutputStream fos = new FileOutputStream(ApkFile);
                     int count = 0;
                     byte buf[] = new byte[1024];
-                    do{
+                    do {
                         int numRead = is.read(buf);
                         count += numRead;
                         //更新进度条
                         progress = (int) (((float) count / length) * 100);
                         handler.sendEmptyMessage(UPDATE_PROGRESS);
-                        if(numRead <= 0){
+                        if (numRead <= 0) {
                             //下载完成通知安装
                             handler.sendEmptyMessage(UPDATE_COMPLETE);
                             break;
                         }
-                        fos.write(buf,0,numRead);
+                        fos.write(buf, 0, numRead);
                         //当点击取消时，则停止下载
-                    }while(!isInterceptDownload);
+                    } while (!isInterceptDownload);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -284,12 +288,13 @@ public class AboutUsActivity extends AppCompatActivity {
             }
         }
     };
+
     /**
      * 安装apk
      */
     private void installApk() {
         // 获取当前sdcard存储路径
-        File apkfile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()  + "/new.apk");
+        File apkfile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/new.apk");
 //        if (!apkfile.exists()) {
 //            return;
 //        }
@@ -310,14 +315,16 @@ public class AboutUsActivity extends AppCompatActivity {
             public void run() {
                 try {
                     String _serverResult = mUserBusiness.getUpdateFromServer(VersionName, VersionCode);
+                    if (_serverResult == null){
+                        handler.sendEmptyMessage(NO_UPDATA_APP);
+                    }
                     JSONObject _object = new JSONObject(_serverResult);
-                    Log.e("升级程序所用到的返回值", _serverResult);
                     Boolean success = JsonUtils.getBoolean(_object, "Success");
-                    Log.e("success", success + "YZP");
                     if (success) {//判断有版本更新
                         String _datas = JsonUtils.getString(_object, "Datas");
                         JSONObject _dataJson = new JSONObject(_datas);
                         mApkPath = "http://" + JsonUtils.getString(_dataJson, "Path");
+                        mSize = JsonUtils.getString(_dataJson,"FileSize");
                         Log.e("mApkPath", mApkPath + "YZP");
                         handler.sendEmptyMessage(UPDATE_APP);
                     } else {
