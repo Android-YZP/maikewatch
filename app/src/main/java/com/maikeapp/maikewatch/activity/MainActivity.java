@@ -96,7 +96,7 @@ public class MainActivity extends FragmentActivity {
         initView();
         initData();
         setListener();
-//        checkNewVersion();/////////////////////////////////////////////////////////////////////////////////////////////////////////
+        checkNewVersion();
         //1-判断是否开启了蓝牙；未开启蓝牙，弹出是否开启蓝牙；已开启蓝牙，判断用户是否登录
         //2-已登录用户：判断用户是否绑定过手表，未绑定过，跳转到手表绑定界面（绑定之后把绑定的手表mac地址，上传服务端），
         //3-若已绑定手表，在首页直接同步一次数据，并上传服务器
@@ -140,7 +140,6 @@ public class MainActivity extends FragmentActivity {
     }
     /**
      * 提示更新对话框
-     * <p/>
      * 版本信息对象
      */
     private void showUpdateDialog() {
@@ -181,8 +180,10 @@ public class MainActivity extends FragmentActivity {
                 isInterceptDownload = true;
             }
         });
+//        Log.e("12345567","124324523");
         builder.create().show();
         //下载apk
+
         downloadApk();
     }
 
@@ -193,6 +194,7 @@ public class MainActivity extends FragmentActivity {
         //开启另一线程下载
         Thread downLoadThread = new Thread(downApkRunnable);
         downLoadThread.start();
+//        Log.e("12345567","124324523");
     }
 
     /**
@@ -338,8 +340,6 @@ public class MainActivity extends FragmentActivity {
 
     /**
      * 弹出提示信息
-     *
-     * @param text
      */
     private void showToast(String text) {
         if (mToast == null) {

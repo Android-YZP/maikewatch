@@ -70,9 +70,10 @@ public class MyApplication extends Application{
     public void onCreate() {
         super.onCreate();
         myApplication = this;
-//        //jpush
-//        JPushInterface.setDebugMode(true);
-//        JPushInterface.init(this);
+        /**
+         * 初始化有盟的设置
+         */
+
     }
 
     /**
