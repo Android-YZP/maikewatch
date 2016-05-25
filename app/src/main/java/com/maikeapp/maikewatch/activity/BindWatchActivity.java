@@ -51,6 +51,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 绑定手表dev
+ */
 public class BindWatchActivity extends AppCompatActivity {
 
     private ImageView mIvCommonBack;//返回
