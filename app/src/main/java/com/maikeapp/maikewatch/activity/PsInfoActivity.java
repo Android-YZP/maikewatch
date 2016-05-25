@@ -49,6 +49,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * dev-test2
+ */
 public class PsInfoActivity extends AppCompatActivity {
     //男女性别状态
     private static final int PERSON_MAN = 1;
