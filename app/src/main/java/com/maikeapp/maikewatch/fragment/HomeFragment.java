@@ -76,7 +76,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
-    private static final int SCREEN_SHOT_SUCCESS = 25;
+    private static final int SCREEN_SHOT_SUCCESS = 150;
     private CirclePercentView mCirclePercentView;//总进度
     private TextView mTvDate;//日期
 
@@ -330,10 +330,8 @@ public class HomeFragment extends Fragment {
                         msg.what = SCREEN_SHOT_SUCCESS;
                         handler.sendMessage(msg);
                     }
-                });
+                }).start();
                 mProgressDialog = ProgressDialog.show(getActivity(), "请稍等", "正在玩命截屏中...", true, true);
-
-
 
             }
         });
