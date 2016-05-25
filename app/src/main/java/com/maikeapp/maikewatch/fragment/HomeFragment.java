@@ -327,8 +327,6 @@ public class HomeFragment extends Fragment {
                         Message msg = Message.obtain();
                         File file = new File(mPicPath);
                         ScreenShotUtil.shoot(getActivity(),file);
-                        CommonUtil.sendErrorMessage("剪切完成",handler);
-
                         msg.what = SCREEN_SHOT_SUCCESS;
                         handler.sendMessage(msg);
                     }
