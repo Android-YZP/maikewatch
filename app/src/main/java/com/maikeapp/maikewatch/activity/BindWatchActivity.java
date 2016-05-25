@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.gzgamut.sdk.global.Global;
 import com.gzgamut.sdk.helper.NoConnectException;
 import com.gzgamut.sdk.model.Maike;
@@ -31,6 +33,7 @@ import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
 import com.maikeapp.maikewatch.config.MyApplication;
+import com.maikeapp.maikewatch.exception.ServiceException;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
 import com.maikeapp.maikewatch.util.ToastUtil;
@@ -40,8 +43,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -543,7 +548,43 @@ public class BindWatchActivity extends AppCompatActivity {
         //显示已绑定状态下布局，隐藏未绑定状态下布局
         mLineBinded.setVisibility(View.VISIBLE);
         mPullToRefreshListView.setVisibility(View.GONE);
+        deleteSportDataToday();
+    }
 
+    /**
+     * 删除服务端今天的运动数据
+     */
+    private void deleteSportDataToday() {
+        //开启副线程-删除当天的数据
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Date _today_date = new Date();
+                    SimpleDateFormat _sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String _today_date_str = _sdf.format(_today_date);
+                    String _delete_today_result = mUserBusiness.deleteSportDataToday(mUser,_today_date_str);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME+"_delete_result",_delete_today_result);
+
+                    JSONObject _json_obj_result = new JSONObject(_delete_today_result);
+                    boolean _Success = JsonUtils.getBoolean(_json_obj_result,"Success");
+                    if (_Success){
+                        // 删除成功
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME+"_delete_success","success");
+                    }else{
+                        String _Message = JsonUtils.getString(_json_obj_result,"Message");
+                        CommonUtil.sendErrorMessage(_Message,handler);
+                    }
+
+                }catch (ServiceException e){
+                    e.printStackTrace();
+                    CommonUtil.sendErrorMessage(e.getMessage(),handler);
+                }catch(Exception e){
+                    e.printStackTrace();
+                    CommonUtil.sendErrorMessage(CommonConstants.MSG_GET_ERROR,handler);
+                }
+            }
+        }).start();
     }
 
     /**
