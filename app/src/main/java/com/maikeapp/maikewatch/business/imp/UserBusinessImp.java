@@ -40,8 +40,8 @@ public  class UserBusinessImp implements IUserBusiness {
         JSONObject _json_viewModel = new JSONObject();
         _json_viewModel.put("AppVersionName ", AppVersionName);
         _json_viewModel.put("AppVersionCode ", AppVersionCode);
-        Log.e("版本检查更新", _json_viewModel.toString() + "YZP");
         String s = NetWorkUtil.getResultFromUrlConnection(CommonConstants.UP_DATE_FROM_SERVER, _json_viewModel.toString(), "087c96eb");
+        Log.e("版本检查更新", _json_viewModel.toString() + s);
         return s;
     }
 
