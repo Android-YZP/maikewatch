@@ -149,8 +149,8 @@ public class AboutUsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //弹出加载进度条
-                mProgressDialog = ProgressDialog.show(AboutUsActivity.this, "请稍等", "正在玩命提交中...", true, true);
                 getVersionFromService(mVersionCode + "", mVersionName);
+                mProgressDialog = ProgressDialog.show(AboutUsActivity.this, "请稍等", "正在玩命提交中...", true, true);
             }
         });
         //设置是否自动更新
