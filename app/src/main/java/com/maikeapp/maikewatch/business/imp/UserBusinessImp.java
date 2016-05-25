@@ -331,80 +331,6 @@ public  class UserBusinessImp implements IUserBusiness {
     }
 
 
-    @Override
-    public String getUserDetail(int userid) throws Exception {
-        String _result = null;
-        //封装成json数据
-        JSONObject _json_args = new JSONObject();
-        _json_args.put("id", userid);
-        _json_args.put("clientVersion", "1.0");
-        _json_args.put("clientType", "Phone");
-        //添加头信息
-        String _md5_value = ConvertUtil.getMD5("MAIKEJIA");
-        _result = NetWorkUtil.getResultFromUrlConnectionWithGet(CommonConstants.USER_DETAIL, _json_args.toString(), _md5_value.substring(0, 8));
-        return _result;
-    }
-
-
-    @Override
-    public String updateUserPwd(String oldpwd, String newpwd, String againpwd,
-                                User mUser) throws Exception {
-        String _result = null;
-        //封装成json数据
-        JSONObject _json_args = new JSONObject();
-        _json_args.put("oldpwd", oldpwd);
-        _json_args.put("pwd", newpwd);
-        _json_args.put("repwd", againpwd);
-        _json_args.put("clientVersion", "1.0");
-        _json_args.put("clientType", "Phone");
-        //头信息-verifyCode保存在用户信息中
-        _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.MEMBER_PWD, _json_args.toString(), null);
-        return _result;
-    }
-
-    @Override
-    public String getUserSettingSecurityPhoneUpdate(String mPhone,
-                                                    String smsCode, User mUser) throws Exception {
-        String _result = null;
-        //封装成json数据
-        JSONObject _json_args = new JSONObject();
-        _json_args.put("mobile", mPhone);
-        _json_args.put("captcha", smsCode);
-        _json_args.put("clientVersion", "1.0");
-        _json_args.put("clientType", "Phone");
-        //头信息-verifyCode保存在用户信息中
-        _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.MEMBER_SECURITY_MOBILE_BIND, _json_args.toString(), null);
-        return _result;
-    }
-
-
-    @Override
-    public String updateUserSettingPsInfo(String _usersign,
-                                          User mUser) throws Exception {
-        String _result = null;
-        //封装成json数据
-        JSONObject _json_args = new JSONObject();
-        _json_args.put("userSignature", _usersign);
-        _json_args.put("clientVersion", "1.0");
-        _json_args.put("clientType", "Phone");
-        //头信息-verifyCode保存在用户信息中
-        _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.MEMBER_PROFILE_UPDATE, _json_args.toString(), null);
-        return _result;
-    }
-
-
-    @Override
-    public String checkAppUpdate() throws Exception {
-        String _result = null;
-        //封装成json数据
-        JSONObject _json_args = new JSONObject();
-        _json_args.put("clientVersion", "1.0");
-        _json_args.put("clientType", "Phone");
-        //添加头信息
-        String _md5_value = ConvertUtil.getMD5("MAIKEJIA");
-        _result = NetWorkUtil.getResultFromUrlConnectionWithGet(CommonConstants.CHECK_APP_VERSION, _json_args.toString(), _md5_value.substring(0, 8));
-        return _result;
-    }
 
     /**
      * 检查mac地址
@@ -428,6 +354,24 @@ public  class UserBusinessImp implements IUserBusiness {
         Log.e(CommonConstants.LOGCAT_TAG_NAME + "_md5_value", _md5_value.substring(0, 8));
 
         _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.CHECK_MAC_ADDRESS_EXIST, _json_args.toString(), _md5_value.substring(0, 8));
+        return _result;
+    }
+
+    @Override
+    public String deleteSportDataToday(User mUser, String today_date_str) throws Exception {
+        String _result = null;
+        //封装成json数据
+        JSONObject _json_args = new JSONObject();
+        _json_args.put("sLoginName", mUser.getLoginName());
+        _json_args.put("sMacAddress", mUser.getMacAddress());
+        _json_args.put("DayTime", today_date_str);
+
+        _json_args.put("ClientVersion", "1.0");
+        _json_args.put("ClientType", "Phone");
+
+        Log.d(CommonConstants.LOGCAT_TAG_NAME,"deleteSportDataToday is "  + _json_args.toString());
+
+        _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.DELETE_SPORT_DATA_TODAY, _json_args.toString(), "");
         return _result;
     }
 }

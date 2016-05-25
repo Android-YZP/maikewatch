@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface IUserBusiness {
 	/**
-	 * 验证手机号码是否有效
+	 * 上传个人信息到服务端
 	 * @return
 	 * @throws Exception
 	 */
 	public abstract String setInfoToServer(User mUser) throws Exception;
 	/**
-	 * 验证手机号码是否有效
+	 * 获取版本号
 	 * @return
 	 * @throws Exception
 	 */
@@ -133,53 +133,6 @@ public interface IUserBusiness {
 	public abstract String getUserForgotPasswordTwo(String Mobile,
 													String NewPassword, String VerifyCode) throws Exception;
 
-	/**
-	 * 获取用户登录后的用户详情：如用户名、头像、创意设计粉丝的数量
-	 * @param userid
-	 * @return
-	 * @throws Exception
-	 */
-	public abstract String getUserDetail(int userid) throws Exception;
-
-
-	/**
-	 * 用户修改密码
-	 * @param oldpwd
-	 * @param newpwd
-	 * @param againpwd
-	 * @param mUser
-	 * @return
-	 * @throws Exception
-	 */
-	public abstract String updateUserPwd(String oldpwd, String newpwd,
-										 String againpwd, User mUser) throws Exception;
-
-
-
-	/**
-	 * 用户设置-安全中心修改绑定手机
-	 * @param mPhone
-	 * @param smsCode
-	 * @param mUser
-	 * @return
-	 * @throws Exception
-	 */
-	public abstract String getUserSettingSecurityPhoneUpdate(String mPhone,
-															 String smsCode, User mUser) throws Exception;
-
-
-
-	/**
-	 * 用户设置-修改用户信息
-	 * @param _usersign
-	 * @param mUser
-	 * @return
-	 * @throws Exception
-	 */
-	public abstract String updateUserSettingPsInfo(
-			String _usersign, User mUser) throws Exception;
-
-	public abstract String checkAppUpdate() throws Exception;
 
 	/**
 	 * 检查mac地址
@@ -188,4 +141,13 @@ public interface IUserBusiness {
 	 * @throws Exception
      */
 	public abstract String checkMacAddress(String macAddress) throws Exception;
+
+	/**
+	 * 删除当天的数据
+	 * @param mUser
+	 * @param today_date_str
+	 * @return
+	 * @throws Exception
+     */
+	public abstract String deleteSportDataToday(User mUser, String today_date_str) throws Exception;
 }

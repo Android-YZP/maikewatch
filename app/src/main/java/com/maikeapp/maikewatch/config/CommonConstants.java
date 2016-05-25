@@ -190,12 +190,12 @@ public class CommonConstants {
 	 */
 	public static final String SYNC_SPORTS_DATATODAY = NOW_ADDRESS + "WebServices/WatchServices/SyncSportsDataToday";
 
-
-    /**
-	 * 下面的不用看，是上一个项目拷贝过来的
+	/**
+	 * 删除当天的运动数据
 	 */
-	//发送注册短信
-	public static final String MOBILEMSG_REGISTER = NOW_ADDRESS + "mobilemsg/register.json";
+	public static final String DELETE_SPORT_DATA_TODAY = NOW_ADDRESS + "WebServices/WatchServices/DeleteSportDataToday";
+
+
 	//验证注册短信
 	public static final String MOBILEMSG_VALIDATE = NOW_ADDRESS + "WebServices/WatchServices/CheckCode";
 	//注册
@@ -206,20 +206,6 @@ public class CommonConstants {
 	//忘记密码第二步
 	public static final String USER_FORGOT_PASSWORD_TWO = NOW_ADDRESS + "WebServices/WatchServices/ForgetPassword";
 
-
-	//个人资料修改确认
-	public static final String MEMBER_PROFILE_UPDATE = NOW_ADDRESS + "member/profile/update.json";
-
-	//安全中心修改密码member/pwd.json
-	public static final String MEMBER_PWD = NOW_ADDRESS + "member/pwd.json";
-
-	//安全中心修改绑定手机//获取的验证码与需要绑定的手机匹配成功则绑定手机成功member/security/mobile/bind.json
-	public static final String MEMBER_SECURITY_MOBILE_BIND = NOW_ADDRESS + "member/security/mobile/bind.json";
-
-	//用户详情
-	public static final String USER_DETAIL = NOW_ADDRESS + "user/detail.json";
-	//检查更新
-	public static final String CHECK_APP_VERSION = NOW_ADDRESS + "version.json";
 
 
 
