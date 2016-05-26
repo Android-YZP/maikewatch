@@ -91,8 +91,7 @@ public class UserRegUserNameActivity extends Activity {
 
             @Override
             public void onClick(View view) {
-                //弹出加载进度条
-                mProgressDialog = ProgressDialog.show(UserRegUserNameActivity.this, "请稍等", "正在玩命获取中...", true, true);
+
                 String username = mEtUsername.getText().toString();
                 String password = mEtPassword.getText().toString();
                 String passagain = mEtPassAgain.getText().toString();
@@ -122,6 +121,8 @@ public class UserRegUserNameActivity extends Activity {
                     return;
                 }
                 mPassword = password;//全局变量
+                //弹出加载进度条
+                mProgressDialog = ProgressDialog.show(UserRegUserNameActivity.this, null, "正在玩命注册中...", true, true);
                 userRegisterFromNet(username, password);//用户注册
             }
 

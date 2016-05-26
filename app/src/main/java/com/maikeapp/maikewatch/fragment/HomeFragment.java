@@ -226,6 +226,8 @@ public class HomeFragment extends Fragment {
      * 从网络获取某个日期的数据
      */
     private void getOnedayDataFromNetWork(final String _day_time) {
+        //弹出加载进度条
+        mProgressDialog = ProgressDialog.show(getActivity(), null, "正在获取数据中...", true, true);
         //开启副线程-从网络查询某个日期的数据
         new Thread(new Runnable() {
             @Override
@@ -277,7 +279,7 @@ public class HomeFragment extends Fragment {
                     return;
                 }
                 //弹出加载进度条
-                mProgressDialog = ProgressDialog.show(getActivity(), "请稍等", "正在玩命同步中...", true, true);
+                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在玩命同步中...", true, true);
                 //初始化日期
                 Date _today = new Date();
                 setTodayDate(_today);
@@ -331,7 +333,7 @@ public class HomeFragment extends Fragment {
                         handler.sendMessage(msg);
                     }
                 }).start();
-                mProgressDialog = ProgressDialog.show(getActivity(), "请稍等", "正在玩命截屏中...", true, true);
+                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在玩命截屏中...", true, true);
 
             }
         });

@@ -111,7 +111,7 @@ public class UserForgotPhoneActivity extends Activity {
                     }
 
                     //弹出加载进度条
-                    mProgressDialog = ProgressDialog.show(UserForgotPhoneActivity.this, "请稍等", "正在玩命获取中...", true, true);
+                    mProgressDialog = ProgressDialog.show(UserForgotPhoneActivity.this, null, "正在玩命获取中...", true, true);
 
                     //开启副线程-检查手机号码是否存在
                     checkPhoneFromNet(mPhone);

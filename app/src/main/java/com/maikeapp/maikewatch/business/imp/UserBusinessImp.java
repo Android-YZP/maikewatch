@@ -358,12 +358,12 @@ public  class UserBusinessImp implements IUserBusiness {
     }
 
     @Override
-    public String deleteSportDataToday(User mUser, String today_date_str) throws Exception {
+    public String deleteSportDataToday(User mUser, String mac_address, String today_date_str) throws Exception {
         String _result = null;
         //封装成json数据
         JSONObject _json_args = new JSONObject();
         _json_args.put("sLoginName", mUser.getLoginName());
-        _json_args.put("sMacAddress", mUser.getMacAddress());
+        _json_args.put("MacAddress", mac_address);
         _json_args.put("DayTime", today_date_str);
 
         _json_args.put("ClientVersion", "1.0");
