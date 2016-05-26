@@ -79,6 +79,9 @@ public class HistoryDataActivity extends AppCompatActivity {
         mTvCommonTitle.setText(m_title);
         //用户信息
         mUser = CommonUtil.getUserInfo(this);
+
+        //弹出加载进度条
+        mProgressDialog = ProgressDialog.show(HistoryDataActivity.this, null, "正在玩命加载中...",true,true);
         //查询最近7天的数据
         queryRecentlySportDataForWeekFromNetWork();
         //查询最近30天的数据

@@ -122,7 +122,7 @@ public class UserForgotCodeActivity extends Activity {
             @Override
             public void run() {
                 int i;
-                for (i = 60; i >= 0; i--) {
+                for (i = 119; i >= 0; i--) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -216,7 +216,7 @@ public class UserForgotCodeActivity extends Activity {
                     return;
                 }
                 //弹出加载进度条
-                mProgressDialog = ProgressDialog.show(UserForgotCodeActivity.this, "请稍等", "正在玩命提交中...", true, true);
+                mProgressDialog = ProgressDialog.show(UserForgotCodeActivity.this, null, "正在玩命提交中...", true, true);
 
                 //开启副线程-提交重置密码
                 UserForgotPwdUpdateFromNet(mSmsCode, newpwd);

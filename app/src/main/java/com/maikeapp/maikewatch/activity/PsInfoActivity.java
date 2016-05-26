@@ -161,7 +161,7 @@ public class PsInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 setPersonUserData();
-                mProgressDialog = ProgressDialog.show(PsInfoActivity.this, "请稍等", "正在玩命设置中...", true, true);
+                mProgressDialog = ProgressDialog.show(PsInfoActivity.this, null, "正在玩命设置中...", true, true);
             }
         });
         //男女选择事件

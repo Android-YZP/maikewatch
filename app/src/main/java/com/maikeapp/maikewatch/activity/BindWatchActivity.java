@@ -140,6 +140,8 @@ public class BindWatchActivity extends AppCompatActivity {
                 mLineBinded.setVisibility(View.GONE);
 
                 if (device != null) {
+                    //弹出加载进度条
+                    mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命扫描中...",true,true);
                     initVisibleWatchMacList();//初始化mac列表
 
                 }
@@ -170,12 +172,14 @@ public class BindWatchActivity extends AppCompatActivity {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase refreshView) {
                 //加载数据
+                ToastUtil.showTipLong(BindWatchActivity.this,"正在搜索手表，请耐心等待...");
                 initVisibleWatchMacList();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase refreshView) {
                 //加载数据
+                ToastUtil.showTipLong(BindWatchActivity.this,"正在搜索手表，请耐心等待...");
                 initVisibleWatchMacList();
             }
 
@@ -191,7 +195,7 @@ public class BindWatchActivity extends AppCompatActivity {
                     return;
                 }
                 //弹出加载进度条
-                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, "请稍等", "正在玩命绑定中...",true,true);
+                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命绑定中,手表灯亮时,请双击表盘进行绑定...",true,true);
                 //绑定某只手表
                 WatchMac _watch_mac = mWatchMacs.get(position - 1);
                 Log.d(CommonConstants.LOGCAT_TAG_NAME + "_watch_mac", _watch_mac.getMac());
@@ -218,7 +222,7 @@ public class BindWatchActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
 
                                 //弹出加载进度条
-                                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, "请稍等", "正在玩命解绑中...",true,true);
+                                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命解绑中...",true,true);
                                 String _macAddress = mUser.getMacAddress();
                                 //进行解绑
                                 unBindWatch(_macAddress);
@@ -240,7 +244,7 @@ public class BindWatchActivity extends AppCompatActivity {
      * 初始化mac列表
      */
     private void initVisibleWatchMacList() {
-        Toast.makeText(this, "正在搜索手表，请耐心等待...", Toast.LENGTH_LONG).show();
+
         //开启副线程-获取mac列表
         new Thread(new Runnable() {
             @Override
@@ -282,7 +286,6 @@ public class BindWatchActivity extends AppCompatActivity {
      * @param macAddress
      */
     private void bindWatch(final String macAddress) {
-        Toast.makeText(this, "手表灯亮时，请双击表盘进行绑定", Toast.LENGTH_LONG).show();
         //开启副线程-进行绑定操作
         new Thread(new Runnable() {
             @Override
@@ -424,11 +427,8 @@ public class BindWatchActivity extends AppCompatActivity {
                                 String result = setBoundResult.getString("result");
                                 if (result.equals("0")) {
 
-                                    //覆盖用户信息
-                                    mUser.setBindWatch(false);
-                                    mUser.setMacAddress("");
-                                    CommonUtil.saveUserInfo(mUser, BindWatchActivity.this);
-                                    //绑定成功
+
+                                    //解绑成功
                                     handler.sendEmptyMessage(CommonConstants.FLAG_UNBIND_MAC_ADDRESS_SUCCESS);
                                     //连接成功后断开设备
                                     JSONObject object = device.disconnectDevice(false);        // 断开设备
@@ -551,13 +551,14 @@ public class BindWatchActivity extends AppCompatActivity {
         //显示已绑定状态下布局，隐藏未绑定状态下布局
         mLineBinded.setVisibility(View.VISIBLE);
         mPullToRefreshListView.setVisibility(View.GONE);
-        deleteSportDataToday();
+
     }
 
     /**
      * 删除服务端今天的运动数据
+     * @param _mac_address
      */
-    private void deleteSportDataToday() {
+    private void deleteSportDataToday(final String _mac_address) {
         //开启副线程-删除当天的数据
         new Thread(new Runnable() {
             @Override
@@ -566,7 +567,7 @@ public class BindWatchActivity extends AppCompatActivity {
                     Date _today_date = new Date();
                     SimpleDateFormat _sdf = new SimpleDateFormat("yyyy-MM-dd");
                     String _today_date_str = _sdf.format(_today_date);
-                    String _delete_today_result = mUserBusiness.deleteSportDataToday(mUser,_today_date_str);
+                    String _delete_today_result = mUserBusiness.deleteSportDataToday(mUser,_mac_address,_today_date_str);
                     Log.d(CommonConstants.LOGCAT_TAG_NAME+"_delete_result",_delete_today_result);
 
                     JSONObject _json_obj_result = new JSONObject(_delete_today_result);
@@ -595,9 +596,15 @@ public class BindWatchActivity extends AppCompatActivity {
      */
     private void updateUIForUnBindSuccess() {
         ToastUtil.showTipShort(BindWatchActivity.this,"解绑成功");
+        String _mac_address = mUser.getMacAddress();
+        //覆盖用户信息
+        mUser.setBindWatch(false);
+        mUser.setMacAddress("");
+        CommonUtil.saveUserInfo(mUser, BindWatchActivity.this);
         //显示已绑定状态下布局，隐藏未绑定状态下布局
         mLineBinded.setVisibility(View.GONE);
         mPullToRefreshListView.setVisibility(View.VISIBLE);
+        deleteSportDataToday(_mac_address);
     }
 
 

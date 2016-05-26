@@ -160,7 +160,7 @@ public class UserRegCodeActivity extends Activity {
             @Override
             public void run() {
                 int i;
-                for (i = 59; i >= 0; i--) {
+                for (i = 119; i >= 0; i--) {
                     try {
                         if (mStopThread) {
                             break;
@@ -211,7 +211,7 @@ public class UserRegCodeActivity extends Activity {
                 mSmsCode = mEtSmsCode.getText().toString();
                 if (mSmsCode != null && !mSmsCode.equals("")) {
                     //弹出加载进度条
-                    mProgressDialog = ProgressDialog.show(UserRegCodeActivity.this, "请稍等", "正在玩命提交中...", true, true);
+                    mProgressDialog = ProgressDialog.show(UserRegCodeActivity.this, null, "正在玩命提交中...", true, true);
 
                     //开启副线程-验证是否是该手机收到了验证码
                     checkSmsCodeFromNet(mSmsCode);

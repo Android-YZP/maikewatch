@@ -158,7 +158,7 @@ public class UserLoginActivity extends Activity {
 				}
 				
 				//弹出加载进度条
-				mProgressDialog = ProgressDialog.show(UserLoginActivity.this, "请稍等", "正在玩命登录中...",true,true);
+				mProgressDialog = ProgressDialog.show(UserLoginActivity.this, null, "正在玩命登录中...",true,true);
 				//开启副线程-发起登录
 				userLoginFromNet(account,password);
 				break;

@@ -149,5 +149,5 @@ public interface IUserBusiness {
 	 * @return
 	 * @throws Exception
      */
-	public abstract String deleteSportDataToday(User mUser, String today_date_str) throws Exception;
+	public abstract String deleteSportDataToday(User mUser,String mac_address, String today_date_str) throws Exception;
 }
