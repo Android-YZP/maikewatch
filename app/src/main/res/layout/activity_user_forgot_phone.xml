@@ -2,27 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/common_bg_color"
-     >
-    <include 
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/common_topbar_height"
+    android:orientation="vertical">
+
+    <include
         layout="@layout/layout_common_topbar_maikejia"
-        />
-    
-    <EditText 
-        android:id="@+id/et_user_forgot_phone"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_topbar_height" />
+
+    <EditText
+        android:id="@+id/et_user_reg_phone2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/user_reg_phone_et_phone_height"
-        android:paddingLeft="@dimen/user_reg_phone_et_phone_text_padding_left"
         android:layout_marginTop="@dimen/user_reg_phone_et_phone_margin_top"
-        android:inputType="phone"
-        android:hint="请输入手机号"
-        android:textColor="@color/common_et_text_font_color"
-        android:textSize="@dimen/common_et_text_font_size"
         android:background="@drawable/bg_border_common_et"
-        />
+        android:hint="请输入手机号"
+        android:inputType="phone"
+        android:paddingLeft="@dimen/user_reg_phone_et_phone_text_padding_left"
+        android:textColor="@color/common_et_text_font_color"
+        android:textSize="@dimen/common_et_text_font_size" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,18 +48,37 @@
             android:layout_marginTop="@dimen/user_reg_phone_et_phone_margin_top"
             android:layout_weight="1" />
     </LinearLayout>
-    <Button 
-        android:id="@+id/btn_user_forgot_getcode_phone_commit"
+
+    <Button
+        android:id="@+id/btn_user_reg_getcode_phone_commit2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/user_reg_phone_btn_getcode_height"
-        android:text="获取验证码"
-        android:textSize="@dimen/user_login_commit_text_font_size"
-        android:textColor="@color/common_white_color"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/user_reg_phone_btn_getcode_margin_top"
         android:layout_marginLeft="@dimen/user_reg_phone_btn_getcode_margin_left_or_right"
         android:layout_marginRight="@dimen/user_reg_phone_btn_getcode_margin_left_or_right"
+        android:layout_marginTop="@dimen/user_reg_phone_btn_getcode_margin_top"
         android:background="@drawable/selector_btn_user_login"
-        />
-    
+        android:gravity="center"
+        android:text="获取验证码"
+        android:textColor="@color/common_white_color"
+        android:textSize="@dimen/user_login_commit_text_font_size" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/user_reg_phone_text_read_protocal_margin_top"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cb_user_reg_phone_ischecked2"
+            style="@style/CustomCheckboxTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+
+
+    </LinearLayout>
+
+
 </LinearLayout>

@@ -97,6 +97,7 @@ public class AboutUsActivity extends AppCompatActivity {
         }
     };
     private String mSize;
+    private String mVersionName1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +180,7 @@ public class AboutUsActivity extends AppCompatActivity {
     private void showUpDateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(AboutUsActivity.this);
         builder.setTitle("版本更新");
-        builder.setMessage("有新版本更新了,总大小为"+mSize);
+        builder.setMessage("新版本:"+mVersionName1+" , 文件大小:"+mSize);
         builder.setPositiveButton("下载", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -325,6 +326,7 @@ public class AboutUsActivity extends AppCompatActivity {
                         JSONObject _dataJson = new JSONObject(_datas);
                         mApkPath = "http://" + JsonUtils.getString(_dataJson, "Path");
                         mSize = JsonUtils.getString(_dataJson,"FileSize");
+                        mVersionName1 = JsonUtils.getString(_dataJson,"AppVersionName");
                         Log.e("mApkPath", mApkPath + "YZP");
                         handler.sendEmptyMessage(UPDATE_APP);
                     } else {

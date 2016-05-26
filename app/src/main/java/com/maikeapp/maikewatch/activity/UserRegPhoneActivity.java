@@ -166,7 +166,6 @@ public class UserRegPhoneActivity extends Activity {
         mSivPicNumber.setOnClickListener(new UserRegPhoneOnClickListener());
     }
 
-
     public class MyHandler extends Handler {
         private final WeakReference<Activity> mActivity;
 
