@@ -63,7 +63,10 @@ public class MainActivity extends FragmentActivity {
     private int progress = 0;    //进度条显示数值
     private ProgressBar mProgressBar;
     private IUserBusiness mUserBusiness = new UserBusinessImp();
-
+    //APP服务器版本信息
+    private String mApkPath;
+    private String mSize;
+    private String mVersionName;
     /**
      * 声明一个handler来跟进进度条
      */
@@ -87,8 +90,6 @@ public class MainActivity extends FragmentActivity {
             }
         }
     };
-    private String mApkPath;
-    private String mSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +133,7 @@ public class MainActivity extends FragmentActivity {
                         JSONObject _dataJson = new JSONObject(_datas);
                         mApkPath = "http://" + JsonUtils.getString(_dataJson, "Path");
                         mSize = JsonUtils.getString(_dataJson,"FileSize");
+                        mVersionName = JsonUtils.getString(_dataJson,"AppVersionName");
                         handler.sendEmptyMessage(UPDATE_APP);
                     }
                 } catch (Exception e) {
@@ -147,7 +149,7 @@ public class MainActivity extends FragmentActivity {
     private void showUpdateDialog() {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
         builder.setTitle("版本更新");
-        builder.setMessage("有新版本更新了,总大小为"+mSize);
+        builder.setMessage("新版本:"+mVersionName+" , 文件大小:"+mSize);
         builder.setPositiveButton("下载", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
