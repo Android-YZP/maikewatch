@@ -164,9 +164,14 @@ public class HomeFragment extends Fragment {
         mUser = CommonUtil.getUserInfo(getActivity());
         if (mUser != null) {
             mTvSportsTarget.setText("目标:" + mUser.getSportsTarget());
-            //从服务端初始化当日同步前的数据
-            String _day_time = new SimpleDateFormat("yyyy-MM-dd").format(_today);
-            getOnedayDataFromNetWork(_day_time);
+            if (mUser.isBindWatch()){
+                //从服务端初始化当日同步前的数据
+                String _day_time = new SimpleDateFormat("yyyy-MM-dd").format(_today);
+                getOnedayDataFromNetWork(_day_time);
+            }else{
+                ToastUtil.showTipShort(getActivity(),"请先绑定手表");
+            }
+
         } else {
             mTvSportsTarget.setText("");
             mTvSumSteps.setText("0步");
