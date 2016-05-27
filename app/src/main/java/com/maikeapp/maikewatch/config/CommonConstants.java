@@ -46,8 +46,8 @@ public class CommonConstants {
 	public static final String TEST_ADDRESS = "http://192.168.0.203:8085/";
 
 
-//	public static final String TRUE_ADDRESS = "https://cloud.maikejia.com:8081";
-	public static final String NOW_ADDRESS = TEST_ADDRESS;
+	public static final String TRUE_ADDRESS = "https://cloud.maikejia.com:8081/";
+	public static final String NOW_ADDRESS = TRUE_ADDRESS;
 
 	/** 应用缓存目录 */
 	public static final String CachePath =Environment.getExternalStorageDirectory().getPath()+ "/smzy-2.4.3.apk";

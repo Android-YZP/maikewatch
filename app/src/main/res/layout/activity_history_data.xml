@@ -7,6 +7,10 @@
     tools:context="com.maikeapp.maikewatch.activity.HistoryDataActivity">
 
     <include layout="@layout/layout_common_topbar" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/common_bg_line_border" />
 
 
     <LinearLayout
@@ -20,18 +24,13 @@
             android:layout_height="1px"
             android:background="@color/pscenter_bg_border_color" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/home_line_oneday_bg_border"
-            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/history_data_week_str"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/home_today_data_str_margin_top"
+            android:layout_marginTop="5dp"
             />
         <LinearLayout
             android:id="@+id/line_history_data_chart_week"
@@ -57,7 +56,7 @@
             android:layout_height="wrap_content"
             android:text="@string/history_data_month_str"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/home_today_data_str_margin_top"
+            android:layout_marginTop="5dp"
             />
         <LinearLayout
             android:id="@+id/line_history_data_chart_month"
