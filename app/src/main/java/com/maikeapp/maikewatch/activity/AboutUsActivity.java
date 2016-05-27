@@ -52,6 +52,7 @@ public class AboutUsActivity extends AppCompatActivity {
     private static final int NO_UPDATA_APP = 46;
     private static final int UPDATE_COMPLETE = 47;
     private static final int UPDATE_PROGRESS = 48;
+    private static final int ISVALID = 49;
     private ImageView mIvCommonBack;//返回
     private TextView mTvCommonTitle;//标题
     private String m_title = "关于软件";
@@ -93,6 +94,8 @@ public class AboutUsActivity extends AppCompatActivity {
                 mProgressBar.setVisibility(View.INVISIBLE);
                 // 安装apk文件
                 installApk();
+            }else if (flag == ISVALID){
+                Toast.makeText(AboutUsActivity.this, "当前版本不可用请尽快更新", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -321,9 +324,16 @@ public class AboutUsActivity extends AppCompatActivity {
                     }
                     JSONObject _object = new JSONObject(_serverResult);
                     Boolean success = JsonUtils.getBoolean(_object, "Success");
+
                     if (success) {//判断有版本更新
                         String _datas = JsonUtils.getString(_object, "Datas");
                         JSONObject _dataJson = new JSONObject(_datas);
+                        //判断当前版本是否可用
+                        String IsValid = JsonUtils.getString(_dataJson,"IsValid");
+                        if (IsValid.contains("0")){
+                            handler.sendEmptyMessage(ISVALID);
+                        }
+
                         mApkPath = "http://" + JsonUtils.getString(_dataJson, "Path");
                         mSize = JsonUtils.getString(_dataJson,"FileSize");
                         mVersionName1 = JsonUtils.getString(_dataJson,"AppVersionName");
@@ -338,6 +348,4 @@ public class AboutUsActivity extends AppCompatActivity {
             }
         }).start();
     }
-
-
 }
