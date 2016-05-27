@@ -131,7 +131,7 @@ public class MainActivity extends FragmentActivity {
                     if (success) {//判断有版本更新
                         String _datas = JsonUtils.getString(_object, "Datas");
                         JSONObject _dataJson = new JSONObject(_datas);
-                        mApkPath = "http://" + JsonUtils.getString(_dataJson, "Path");
+                        mApkPath = "https://" + JsonUtils.getString(_dataJson, "Path");
                         mSize = JsonUtils.getString(_dataJson,"FileSize");
                         mVersionName = JsonUtils.getString(_dataJson,"AppVersionName");
                         handler.sendEmptyMessage(UPDATE_APP);
