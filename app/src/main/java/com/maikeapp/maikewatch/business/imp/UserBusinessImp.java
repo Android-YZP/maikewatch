@@ -25,11 +25,11 @@ public  class UserBusinessImp implements IUserBusiness {
         String _result = null;
         //封装成json数据
         JSONObject _json_info = new JSONObject();
-        _json_info.put("sLoginName", user.getLoginName());
-        _json_info.put("sSex", ""+user.getSex());
+        _json_info.put("sLoginName",user.getLoginName());
+        _json_info.put("sSex",""+user.getSex());
         _json_info.put("dtBirthday",user.getBirthday());
-        _json_info.put("iHeight", user.getHeight());
-        _json_info.put("iWeight", user.getWeight());
+        _json_info.put("iHeight",user.getHeight());
+        _json_info.put("iWeight",user.getWeight());
         Log.e("yzp_getUserLogin",_json_info.toString());
         _result = NetWorkUtil.getResultFromUrlConnection(CommonConstants.SET_PERSONAL, _json_info.toString(), null);
         return _result;
@@ -38,10 +38,10 @@ public  class UserBusinessImp implements IUserBusiness {
     @Override
     public String getUpdateFromServer(String AppVersionName, String AppVersionCode) throws Exception {
         JSONObject _json_viewModel = new JSONObject();
-        _json_viewModel.put("AppVersionName ", AppVersionName);
-        _json_viewModel.put("AppVersionCode ", AppVersionCode);
-        String s = NetWorkUtil.getResultFromUrlConnection(CommonConstants.UP_DATE_FROM_SERVER, _json_viewModel.toString(), "087c96eb");
-        Log.e("版本检查更新", _json_viewModel.toString() + s);
+        _json_viewModel.put("AppVersionName",AppVersionName);
+        _json_viewModel.put("AppVersionCode",AppVersionCode);
+        String s = NetWorkUtil.getResultFromUrlConnection(CommonConstants.UP_DATE_FROM_SERVER,_json_viewModel.toString(), "087c96eb");
+        Log.e("版本检查更新",_json_viewModel.toString() + s);
         return s;
     }
 

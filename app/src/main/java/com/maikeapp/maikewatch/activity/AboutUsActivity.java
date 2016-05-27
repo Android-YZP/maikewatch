@@ -323,18 +323,19 @@ public class AboutUsActivity extends AppCompatActivity {
                         handler.sendEmptyMessage(NO_UPDATA_APP);
                     }
                     JSONObject _object = new JSONObject(_serverResult);
-                    Boolean success = JsonUtils.getBoolean(_object, "Success");
+                    Boolean success = JsonUtils.getBoolean(_object,"Success");
+//                    Boolean Message = JsonUtils.getBoolean(_object, "Message");
 
                     if (success) {//判断有版本更新
-                        String _datas = JsonUtils.getString(_object, "Datas");
+                        String _datas = JsonUtils.getString(_object,"Datas");
                         JSONObject _dataJson = new JSONObject(_datas);
+
 //                        //判断当前版本是否可用
 //                        String IsValid = JsonUtils.getString(_dataJson,"IsValid");
 //                        if (IsValid.contains("0")){
 //                            handler.sendEmptyMessage(ISVALID);
 //                        }
-
-                        mApkPath = "https://" + JsonUtils.getString(_dataJson, "Path");
+                        mApkPath = "https://" + JsonUtils.getString(_dataJson,"Path");
                         mSize = JsonUtils.getString(_dataJson,"FileSize");
                         mVersionName1 = JsonUtils.getString(_dataJson,"AppVersionName");
                         Log.e("mApkPath", mApkPath + "YZP");
