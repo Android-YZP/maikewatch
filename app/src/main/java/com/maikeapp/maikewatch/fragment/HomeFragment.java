@@ -193,23 +193,23 @@ public class HomeFragment extends Fragment {
         /**
          * 初始化分享平台
          */
-        //参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.////qq初始化
-        UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), "100424468",
-                "c7394704798a158208a74ab60104f0ba");
+        //参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.////qq初始化OK
+        UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), "1105372474",
+                "Rp6xFMrsPiMZj35a");
         qqSsoHandler.addToSocialSDK();
 
-        //参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.//qq空间初始化
-        QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(getActivity(), "100424468",
-                "c7394704798a158208a74ab60104f0ba");
+        //参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.//qq空间初始化OK
+        QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(getActivity(), "1105372474",
+                "Rp6xFMrsPiMZj35a");
         qZoneSsoHandler.addToSocialSDK();
 
-        //微信初始化
-        UMWXHandler umwxHandler = new UMWXHandler(getActivity(), "100424468",
-                "c7394704798a158208a74ab60104f0ba");
+        //微信初始化OK。
+        UMWXHandler umwxHandler = new UMWXHandler(getActivity(), "wx827cc5ed5072bcde",
+                "6946df73f1e5c25e8a751749090d973d ");
         umwxHandler.addToSocialSDK();
 
-        //微信朋友圈初始化
-        UMWXHandler wxCircleHandler = new UMWXHandler(getActivity(), "你的AppID", "你的AppSecret");
+        //微信朋友圈初始化OK
+        UMWXHandler wxCircleHandler = new UMWXHandler(getActivity(), "wx827cc5ed5072bcde", "6946df73f1e5c25e8a751749090d973d");
         wxCircleHandler.setToCircle(true);
         wxCircleHandler.addToSocialSDK();
 
