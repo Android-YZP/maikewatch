@@ -128,6 +128,14 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        //再次初始化界面数据
+        initData();
+        lineView(null);//显示折线图
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -135,8 +143,6 @@ public class HomeFragment extends Fragment {
 
     void findView(View view) {
         initView(view);
-        initData();
-        lineView(null);//显示折线图
         setListener();
     }
 
@@ -179,42 +185,13 @@ public class HomeFragment extends Fragment {
             mTvSumDistance.setText("0公里");
             mCirclePercentView.setPercent(0);
         }
-        /**
-         * 设置分享的数据
-         */
-        // 首先在您的Activity中添加如下成员变量
-        mController = UMServiceFactory.getUMSocialService("com.umeng.share");
-        // 设置分享图片, 参数2为图片的url地址
-        mController.setShareMedia(new UMImage(getActivity(),
-                mPicPath));
-        mController.getConfig().removePlatform(SHARE_MEDIA.RENREN, SHARE_MEDIA.DOUBAN);
-
-
-        /**
-         * 初始化分享平台
-         */
-        //参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.////qq初始化OK
-        UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), "1105372474",
-                "Rp6xFMrsPiMZj35a");
-        qqSsoHandler.addToSocialSDK();
-
-        //参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.//qq空间初始化OK
-        QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(getActivity(), "1105372474",
-                "Rp6xFMrsPiMZj35a");
-        qZoneSsoHandler.addToSocialSDK();
-
-        //微信初始化OK。
-        UMWXHandler umwxHandler = new UMWXHandler(getActivity(), "wx827cc5ed5072bcde",
-                "6946df73f1e5c25e8a751749090d973d ");
-        umwxHandler.addToSocialSDK();
-
-        //微信朋友圈初始化OK
-        UMWXHandler wxCircleHandler = new UMWXHandler(getActivity(), "wx827cc5ed5072bcde", "6946df73f1e5c25e8a751749090d973d");
-        wxCircleHandler.setToCircle(true);
-        wxCircleHandler.addToSocialSDK();
+        //社会化分享
+        socialShare();
 
 
     }
+
+
 
     /**
      * 设置今日日期
@@ -903,5 +880,45 @@ public class HomeFragment extends Fragment {
 //	        setContentView(view);
         mLinearChart.removeAllViews();
         mLinearChart.addView(view);
+    }
+
+
+    /**
+     * 社会化分享
+     */
+    private void socialShare() {
+        /**
+         * 设置分享的数据
+         */
+        // 首先在您的Activity中添加如下成员变量
+        mController = UMServiceFactory.getUMSocialService("com.umeng.share");
+        // 设置分享图片, 参数2为图片的url地址
+        mController.setShareMedia(new UMImage(getActivity(),
+                mPicPath));
+        mController.getConfig().removePlatform(SHARE_MEDIA.RENREN, SHARE_MEDIA.DOUBAN);
+
+
+        /**
+         * 初始化分享平台
+         */
+        //参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.////qq初始化OK
+        UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), "1105372474",
+                "Rp6xFMrsPiMZj35a");
+        qqSsoHandler.addToSocialSDK();
+
+        //参数1为当前Activity，参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.//qq空间初始化OK
+        QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(getActivity(), "1105372474",
+                "Rp6xFMrsPiMZj35a");
+        qZoneSsoHandler.addToSocialSDK();
+
+        //微信初始化OK。
+        UMWXHandler umwxHandler = new UMWXHandler(getActivity(), "wx827cc5ed5072bcde",
+                "6946df73f1e5c25e8a751749090d973d ");
+        umwxHandler.addToSocialSDK();
+
+        //微信朋友圈初始化OK
+        UMWXHandler wxCircleHandler = new UMWXHandler(getActivity(), "wx827cc5ed5072bcde", "6946df73f1e5c25e8a751749090d973d");
+        wxCircleHandler.setToCircle(true);
+        wxCircleHandler.addToSocialSDK();
     }
 }

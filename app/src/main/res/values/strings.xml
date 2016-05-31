@@ -29,7 +29,7 @@
     <string name="tv_bind_help_question1">手表是否在手机附近？</string>
     <string name="tv_bind_help_answer1">手表离手机越近越容易连接上蓝牙，请确认手表在手机附近。</string>
     <string name="tv_bind_help_question2">手表电池是否耗尽？</string>
-    <string name="tv_bind_help_answer2">如果手表和手机距离很近还是没有连上，可能手表没电了，请双击手表玻璃面，LED灯不停地闪烁时，表示手表快没电了，需要更换电池。</string>
+    <string name="tv_bind_help_answer2">如果手表和手机距离很近还是没有连上，可能手表没电了，请更换电池。</string>
     <string name="tv_bind_help_question3">手表与其他手机绑定？</string>
     <string name="tv_bind_help_answer3">如果你的手表已绑定其他手机，并且绑定的手机在手表附近，这时你需要关闭已绑定手机的蓝牙功能，或者在该手机上解绑手表，然后重新使用要绑定的手机与手表绑定。</string>
     <string name="one_alarm_set_alarm_time_str">设置闹钟时间</string>
@@ -44,4 +44,6 @@
     <string name="user_login_creative_live">创意生活</string>
     <string name="history_data_week_str">最近7天数据</string>
     <string name="history_data_month_str">最近30天数据</string>
+    <string name="tv_bind_help_question4">手表同步不了数据？</string>
+    <string name="tv_bind_help_answer4">如果多次点击同步，同步不了数据时，1-请检查电池是否有电，并确保电池安装正确；手表重新安装电池，会亮灯几秒后熄灭，表示安装成功。2-检查是否打开蓝牙和WiFi。</string>
 </resources>

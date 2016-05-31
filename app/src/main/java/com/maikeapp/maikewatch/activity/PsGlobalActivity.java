@@ -89,7 +89,10 @@ public class PsGlobalActivity extends AppCompatActivity {
 
         mUser = CommonUtil.getUserInfo(this);
         if (mUser!=null){
-            mTvSportsTarget.setText("" + (mUser.getSportsTarget()==0?2000:mUser.getSportsTarget()));
+            int _step = (mUser.getSportsTarget()==0)?2000:(mUser.getSportsTarget());
+            mTvSportsTarget.setText("" + _step);
+            int _progress = (_step-2000)/1000;
+            mSbSportsTarget.setProgress(_progress);
         }
 
     }
@@ -107,7 +110,7 @@ public class PsGlobalActivity extends AppCompatActivity {
         mSbSportsTarget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.d(CommonConstants.LOGCAT_TAG_NAME+"_progress",""+progress);
+                Log.d(CommonConstants.LOGCAT_TAG_NAME+"_progress",""+progress);//0~28
                 mTvSportsTarget.setText((2000 + progress*1000)+"");
             }
 
