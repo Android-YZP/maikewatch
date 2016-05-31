@@ -177,13 +177,18 @@ public class HistoryDataActivity extends AppCompatActivity {
         //同样是需要数据dataset和视图渲染器renderer
         XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
         XYSeries series = new XYSeries("步数");
+        int _max = 0;
         //再画每个时刻的步数
         if (pAllData!=null&&pAllData.size()>0){
             for (int i = 0; i <pAllData.size() ; i++) {
                 OneDayData _one_day_data = (OneDayData) pAllData.get(i);
 //                int hour = _one_day_data.getCompleteHour();
                 //小时，步数
-                series.add(i,_one_day_data.getCompletedSteps());
+                int _steps = _one_day_data.getCompletedSteps();
+                if (_max<_steps){
+                    _max = _steps;
+                }
+                series.add(i,_steps);
 
             }
         }
@@ -202,7 +207,8 @@ public class HistoryDataActivity extends AppCompatActivity {
         mRenderer.setLegendTextSize(20);//设置图例文本大小
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
-        mRenderer.setYAxisMax(5000);//y轴最大值600
+        int _y_value = (_max/1000)*1000+1000;
+        mRenderer.setYAxisMax(_y_value);//y轴最大值600
         mRenderer.setYLabels(5);//设置Y轴刻度个数（貌似不太准确）
         mRenderer.setXAxisMax(pAllData.size());//x轴刻度的个数
         mRenderer.setShowGrid(true);//显示网格

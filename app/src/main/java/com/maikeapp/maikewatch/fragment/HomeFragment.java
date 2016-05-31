@@ -42,6 +42,7 @@ import com.maikeapp.maikewatch.util.JsonUtils;
 import com.maikeapp.maikewatch.util.ScreenShotUtil;
 import com.maikeapp.maikewatch.util.ToastUtil;
 import com.maikeapp.maikewatch.view.CirclePercentView;
+import com.maikeapp.maikewatch.view.LineChartView;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
@@ -132,7 +133,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         //再次初始化界面数据
         initData();
-        lineView(null);//显示折线图
+
     }
 
     @Override
@@ -176,6 +177,11 @@ public class HomeFragment extends Fragment {
                 getOnedayDataFromNetWork(_day_time);
             }else{
                 ToastUtil.showTipShort(getActivity(),"请先绑定手表");
+                //显示折线图
+                LineChartView _line_chart_view = new LineChartView(getActivity());
+                _line_chart_view.setmListDatas(null);
+                mLinearChart.removeAllViews();
+                mLinearChart.addView(_line_chart_view);
             }
 
         } else {
@@ -184,6 +190,11 @@ public class HomeFragment extends Fragment {
             mTvSumCarolies.setText("0千卡");
             mTvSumDistance.setText("0公里");
             mCirclePercentView.setPercent(0);
+            //显示折线图
+            LineChartView _line_chart_view = new LineChartView(getActivity());
+            _line_chart_view.setmListDatas(null);
+            mLinearChart.removeAllViews();
+            mLinearChart.addView(_line_chart_view);
         }
         //社会化分享
         socialShare();
@@ -547,8 +558,8 @@ public class HomeFragment extends Fragment {
                         _one_day_data.setCompletedSteps(0);//服务端要求
                         allDayData.add(_one_day_data);
 
-                        Log.i("sync", "data = " + object);
-                        Log.i("sync", date + ", " + time + ", " + value + ", " + type);
+//                        Log.i("sync", "data = " + object);
+//                        Log.i("sync", date + ", " + time + ", " + value + ", " + type);
                     }
                 }
 
@@ -624,7 +635,12 @@ public class HomeFragment extends Fragment {
             mTvSumCarolies.setText(_head_one_day_data.getKcal() + "千卡");
             mTvSumDistance.setText(_head_one_day_data.getiKils() + "公里");
 
-            lineView(m_day_datas);
+            //显示折线图
+            LineChartView _line_chart_view = new LineChartView(getActivity());
+            _line_chart_view.setmListDatas(m_day_datas);
+            mLinearChart.removeAllViews();
+            mLinearChart.addView(_line_chart_view);
+//            lineView(m_day_datas);
         } else {
             mCirclePercentView.setPercent(0 + 1);
 
@@ -633,7 +649,12 @@ public class HomeFragment extends Fragment {
             mTvSumCarolies.setText("0千卡");
             mTvSumDistance.setText("0公里");
 
-            lineView(null);
+//            lineView(null);
+            //显示折线图
+            LineChartView _line_chart_view = new LineChartView(getActivity());
+            _line_chart_view.setmListDatas(null);
+            mLinearChart.removeAllViews();
+            mLinearChart.addView(_line_chart_view);
         }
 
 
@@ -700,7 +721,7 @@ public class HomeFragment extends Fragment {
         mTvSumSteps.setText(_sum_step + "步");
         mTvSumCarolies.setText(CommonUtil.formatData(Double.valueOf(_calories), 2) + "千卡");
         mTvSumDistance.setText(CommonUtil.formatData(Double.valueOf(_distance), 2) + "公里");
-
+        mTvSportsTarget.setText("目标:" + (mUser.getSportsTarget() == 0 ? 2000 : mUser.getSportsTarget()));
 
         int _percent = Integer.parseInt(percent);
         if (_percent > 100) {
@@ -708,7 +729,11 @@ public class HomeFragment extends Fragment {
         }
         mCirclePercentView.setPercent(_percent + 1);
 
-        lineView(_todayData);//更新折线图
+        //显示折线图
+        LineChartView _line_chart_view = new LineChartView(getActivity());
+        _line_chart_view.setmListDatas(_todayData);
+        mLinearChart.removeAllViews();
+        mLinearChart.addView(_line_chart_view);
 
         ToastUtil.showTipShort(getActivity(), "同步已完成");
 
@@ -775,111 +800,6 @@ public class HomeFragment extends Fragment {
 
         }).start();
 
-    }
-
-
-    //折线图
-    public void lineView(List pTodayData) {
-        //同样是需要数据dataset和视图渲染器renderer
-        XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
-        XYSeries series = new XYSeries("步数");
-//        //先画所有的数据为0
-//        for (int i = 0; i <24 ; i++) {
-//            series.add(i, MathHelper.NULL_VALUE);
-//        }
-        //再画每个时刻的步数
-        if (pTodayData != null && pTodayData.size() > 0) {
-            for (int i = 0; i < pTodayData.size(); i++) {
-                OneDayData _one_day_data = (OneDayData) pTodayData.get(i);
-                int hour = _one_day_data.getCompleteHour();
-                //小时，步数
-                series.add(hour, _one_day_data.getSteps());
-
-            }
-        }
-
-
-        mDataset.addSeries(series);
-//	        XYSeries  seriesTwo = new XYSeries("第二条线");
-//	        seriesTwo.add(1, 4);
-//	        seriesTwo.add(2, 6);
-//	        seriesTwo.add(3, 3);
-//	        seriesTwo.add(4, 7);
-//	        mDataset.addSeries(seriesTwo);
-
-
-        XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-        //设置图表的X轴的当前方向
-        mRenderer.setOrientation(XYMultipleSeriesRenderer.Orientation.HORIZONTAL);
-        mRenderer.setXTitle("小时");//设置为X轴的标题
-        mRenderer.setYTitle("步数");//设置y轴的标题
-        mRenderer.setAxisTitleTextSize(20);//设置轴标题文本大小
-//			mRenderer.setChartTitle("今日数据");//设置图表标题
-//			mRenderer.setChartTitleTextSize(30);//设置图表标题文字的大小
-        mRenderer.setLabelsTextSize(18);//设置标签的文字大小
-        mRenderer.setLegendTextSize(20);//设置图例文本大小
-        mRenderer.setPointSize(10f);//设置点的大小
-        mRenderer.setYAxisMin(0);//设置y轴最小值是0
-        mRenderer.setYAxisMax(2000);//y轴最大值600
-        mRenderer.setYLabels(3);//设置Y轴刻度个数（貌似不太准确）
-        mRenderer.setXAxisMax(23);
-        mRenderer.setShowGrid(true);//显示网格
-
-
-        //将x标签栏目显示如：1,2,3,4替换为显示1月，2月，3月，4月
-        for (int i = 0; i < 24; i++) {
-            mRenderer.addXTextLabel(i, String.valueOf(i));
-        }
-
-        mRenderer.setXLabels(0);//设置只显示如1月，2月等替换后的东西，不显示1,2,3等
-        mRenderer.setMargins(new int[]{20, 30, 15, 20});//设置视图位置
-
-        XYSeriesRenderer r = new XYSeriesRenderer();//(类似于一条线对象)
-        r.setColor(Color.RED);//设置颜色
-        r.setPointStyle(PointStyle.CIRCLE);//设置点的样式
-        r.setFillPoints(true);//填充点（显示的点是空心还是实心）
-        r.setDisplayChartValues(true);//将点的值显示出来
-        r.setChartValuesSpacing(20);//显示的点的值与图的距离
-        r.setChartValuesTextSize(25);//点的值的文字大小
-
-        //  r.setFillBelowLine(true);//是否填充折线图的下方
-        //  r.setFillBelowLineColor(Color.GREEN);//填充的颜色，如果不设置就默认与线的颜色一致
-        r.setLineWidth(3);//设置线宽
-        mRenderer.addSeriesRenderer(r);
-
-        mRenderer.setApplyBackgroundColor(true);//必须设置为true，颜色值才生效
-        mRenderer.setBackgroundColor(Color.WHITE);//设置表格背景色
-        mRenderer.setMarginsColor(Color.WHITE);//设置周边背景色
-        mRenderer.setAxesColor(getResources().getColor(R.color.common_content_gray_text_font_color));
-
-        mRenderer.setLegendHeight(60);//设置图例高度
-        mRenderer.setPanEnabled(true);//设置xy轴是否可以拖动
-        mRenderer.setInScroll(true);//解决与ScrollView焦点冲突
-        mRenderer.setZoomEnabled(true);
-
-//	        XYSeriesRenderer rTwo = new XYSeriesRenderer();//(类似于一条线对象)
-//	        rTwo.setColor(Color.GRAY);//设置颜色
-//	        rTwo.setPointStyle(PointStyle.CIRCLE);//设置点的样式
-//	        rTwo.setFillPoints(true);//填充点（显示的点是空心还是实心）
-//	        rTwo.setDisplayChartValues(true);//将点的值显示出来
-//	        rTwo.setChartValuesSpacing(10);//显示的点的值与图的距离
-//	        rTwo.setChartValuesTextSize(25);//点的值的文字大小
-//
-//	      //  rTwo.setFillBelowLine(true);//是否填充折线图的下方
-//	      //  rTwo.setFillBelowLineColor(Color.GREEN);//填充的颜色，如果不设置就默认与线的颜色一致
-//	        rTwo.setLineWidth(3);//设置线宽
-//
-//	        mRenderer.addSeriesRenderer(rTwo);
-
-
-        GraphicalView view = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
-        view.setBackgroundColor(Color.WHITE);
-        view.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 500));
-
-
-//	        setContentView(view);
-        mLinearChart.removeAllViews();
-        mLinearChart.addView(view);
     }
 
 
