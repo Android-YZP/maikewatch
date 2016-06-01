@@ -81,7 +81,7 @@ public class LineChartView extends LinearLayout{
         mRenderer.setLegendTextSize(20);//设置图例文本大小
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
-        Log.d(CommonConstants.LOGCAT_TAG_NAME,"pTodayData size is "+pTodayData.size()+",max is "+_max);
+//        Log.d(CommonConstants.LOGCAT_TAG_NAME,"pTodayData size is "+pTodayData.size()+",max is "+_max);
         int _y_value = (_max/1000)*1000+1000;
         mRenderer.setYAxisMax(_y_value);//y轴最大值600
         mRenderer.setYLabels(3);//设置Y轴刻度个数（貌似不太准确）

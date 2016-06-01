@@ -292,13 +292,14 @@ public class BindWatchActivity extends AppCompatActivity {
             public void run() {
 
                 running = true;//正在运行
-
+                int _seconds = 500;
                 //循环5次连接，若连接不成功给予用户提醒
                 for (int k = 0; k < 5; k++) {
                     try {
                         //暂时先沉睡2s
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(_seconds);
+                            _seconds+=500;
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -390,13 +391,14 @@ public class BindWatchActivity extends AppCompatActivity {
             @Override
             public void run() {
                 running = true;//正在运行
-
+                int _seconds = 500;
                 //循环5次连接，若连接不成功给予用户提醒
                 for (int k = 0; k < 5; k++) {
                     try {
                         //暂时先沉睡2s
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(_seconds);
+                            _seconds+=500;
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
