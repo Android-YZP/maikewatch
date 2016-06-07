@@ -183,7 +183,7 @@ public class HistoryDataActivity extends AppCompatActivity {
                 OneDayData _one_day_data = (OneDayData) pAllData.get(i);
 //                int hour = _one_day_data.getCompleteHour();
                 //小时，步数
-                series.add(i,_one_day_data.getCompletedSteps());
+                series.add(i,_one_day_data.getCompletedSteps()) ;
 
             }
         }
