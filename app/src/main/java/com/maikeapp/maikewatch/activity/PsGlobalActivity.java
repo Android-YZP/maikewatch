@@ -89,7 +89,10 @@ public class PsGlobalActivity extends AppCompatActivity {
 
         mUser = CommonUtil.getUserInfo(this);
         if (mUser!=null){
-            mTvSportsTarget.setText("" + (mUser.getSportsTarget()==0?2000:mUser.getSportsTarget()));
+            int _step = (mUser.getSportsTarget()==0)?2000:(mUser.getSportsTarget());
+            mTvSportsTarget.setText("" + _step);
+            int _progress = (_step-2000)/1000;
+            mSbSportsTarget.setProgress(_progress);
         }
 
     }
@@ -107,7 +110,7 @@ public class PsGlobalActivity extends AppCompatActivity {
         mSbSportsTarget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.d(CommonConstants.LOGCAT_TAG_NAME+"_progress",""+progress);
+                Log.d(CommonConstants.LOGCAT_TAG_NAME+"_progress",""+progress);//0~28
                 mTvSportsTarget.setText((2000 + progress*1000)+"");
             }
 
@@ -178,13 +181,14 @@ public class PsGlobalActivity extends AppCompatActivity {
             public void run() {
 
                 running = true;//正在运行
-
+                int _seconds = 500;
                 //循环5次连接，若连接不成功给予用户提醒
                 for (int k = 0; k < 5; k++) {
                     try {
                         //暂时先沉睡2s
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(_seconds);
+                            _seconds+=500;
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
