@@ -90,10 +90,10 @@ public class HomeFragment extends Fragment {
     private TextView mTvSumDistance;//里程数
 
     private LinearLayout mLinearChart;//图表
-    /**
-     * 业务层
-     */
-    private IUserBusiness mUserBusiness = new UserBusinessImp();
+        /**
+         * 业务层
+         */
+        private IUserBusiness mUserBusiness = new UserBusinessImp();
     private static ProgressDialog mProgressDialog = null;
     private User mUser;//用户信息
     //sdk

@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.handmark.pulltorefresh.library.BuildConfig;
 import com.loopj.android.image.SmartImageTask;
 import com.loopj.android.image.SmartImageView;
 import com.maikeapp.maikewatch.R;
@@ -40,6 +41,8 @@ import com.maikeapp.maikewatch.util.JsonUtils;
 public class UserRegPhoneActivity extends Activity {
     private static final int PIC_OK = 88;
     private static final int CHANGE_PICNUMBER = 89;
+    private static final int NO_TOKENID = 90;
+    private static final int TIP_TOKEN_ERROR = 91;
     private ImageView mIvBack;
     private TextView mTvTitle;
     private Button mBtnCommitPhone;
@@ -101,6 +104,7 @@ public class UserRegPhoneActivity extends Activity {
             mEtPicNumber.setVisibility(View.VISIBLE);
             isCheckPicNumber = true;
         }
+
         getToken();//拿到token保存本地
     }
 
@@ -125,6 +129,7 @@ public class UserRegPhoneActivity extends Activity {
                         mSP.edit().putString("mToken", _tokenID).apply();
 //                        mUser.setmToken(_tokenID);
                     } else { //显示图片验证,提交号码,图片验证码
+//                        mSP.edit().putString("mToken", "jfoijfojsojfosof").apply();
                         getPicNumber(mToken);//显示图片
                     }
                 } catch (Exception e) {
@@ -134,12 +139,47 @@ public class UserRegPhoneActivity extends Activity {
         }).start();
     }
 
-    //获取PICnumber
+    //TokenID
+
+    public void getTokenAndShowPic(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String _result = null;
+                try {
+                    _result = mUserBusiness.getTokenID();
+                    Log.e("tokenID", _result + "YZP");
+                    JSONObject _token = new JSONObject(_result);
+                    String datas = JsonUtils.getString(_token, "Datas");
+                    JSONObject _datas = new JSONObject(datas);
+                    String _tokenID = JsonUtils.getString(_datas, "TokenID");
+                    Log.e("_tokenID", _tokenID + "YZP12345678");
+                    //保存token信息
+                    mSP.edit().putString("mToken", _tokenID).apply();
+//                    getPicNumber(mToken);//显示图pian
+                    handler.sendEmptyMessage(TIP_TOKEN_ERROR);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
+
     public void getPicNumber(String token) {
         try {
             String _numberPicResult = mUserBusiness.getNumberPic(token);
+            Log.d(CommonConstants.LOGCAT_TAG_NAME, "_UserRegPhoneActivity="+_numberPicResult);
             JSONObject object = new JSONObject(_numberPicResult);
+            String _ErrorCode = JsonUtils.getString(object, "ErrorCode");
+            if (_ErrorCode.equals("1008")){
+                handler.sendEmptyMessage(NO_TOKENID);
+                if (BuildConfig.DEBUG) Log.d("UserRegPhoneActivity", "zoudaozheli");
+                return;
+            }
+
             String datas = JsonUtils.getString(object, "Datas");
+
             Log.e("haha", datas);
             if (datas != null) {
                 JSONObject _picLocation = new JSONObject(datas);
@@ -195,6 +235,15 @@ public class UserRegPhoneActivity extends Activity {
                 case CHANGE_PICNUMBER:
                     //显示图片验证码.
                     mSivPicNumber.setImageUrl(CommonConstants.PIC_LOCATION + mPicNextPath);
+                    break;
+                case NO_TOKENID:
+                    //显示图片验证码.
+                    //重新拉去tokenid保存数据
+                    getTokenAndShowPic();
+                    break;
+                case TIP_TOKEN_ERROR:
+                    //重新拉去tokenid保存数据
+                    Toast.makeText(UserRegPhoneActivity.this, "令牌失效,请重新切换图片验证码", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
@@ -358,7 +407,7 @@ public class UserRegPhoneActivity extends Activity {
                     CommonUtil.sendErrorMessage(e.getMessage(), handler);
                 } catch (Exception e) {
                     //what = 0;sendmsg 0;
-//                    CommonUtil.sendErrorMessage("服务器错误", handler);
+                    CommonUtil.sendErrorMessage("服务器数据异常", handler);
                 }
             }
         }).start();
