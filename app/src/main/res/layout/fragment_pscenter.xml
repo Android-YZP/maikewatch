@@ -92,7 +92,7 @@
                             android:id="@+id/tv_pscenter_global_step"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1000"
+                            android:text="2000"
                             android:textColor="@color/pscenter_userinfo_data_font_color"
                             android:textSize="@dimen/pscenter_userinfo_data_font_size"
                             android:layout_marginTop="@dimen/pscenter_userinfo_data_margin_top"
