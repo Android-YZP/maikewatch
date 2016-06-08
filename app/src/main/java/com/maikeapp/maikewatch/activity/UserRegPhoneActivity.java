@@ -43,6 +43,7 @@ public class UserRegPhoneActivity extends Activity {
     private static final int CHANGE_PICNUMBER = 89;
     private static final int NO_TOKENID = 90;
     private static final int TIP_TOKEN_ERROR = 91;
+    private static final int TOKEN_ERROR_COUNT = 92;
     private ImageView mIvBack;
     private TextView mTvTitle;
     private Button mBtnCommitPhone;
@@ -68,6 +69,7 @@ public class UserRegPhoneActivity extends Activity {
     private String mPicNextPath;
 
     private User mUser;
+    private int mTokenCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,9 +129,9 @@ public class UserRegPhoneActivity extends Activity {
                         Log.e("_tokenID", _tokenID + "YZP12345678");
                         //保存token信息
                         mSP.edit().putString("mToken", _tokenID).apply();
-//                        mUser.setmToken(_tokenID);
+
                     } else { //显示图片验证,提交号码,图片验证码
-//                        mSP.edit().putString("mToken", "jfoijfojsojfosof").apply();
+
                         getPicNumber(mToken);//显示图片
                     }
                 } catch (Exception e) {
@@ -156,8 +158,11 @@ public class UserRegPhoneActivity extends Activity {
                     Log.e("_tokenID", _tokenID + "YZP12345678");
                     //保存token信息
                     mSP.edit().putString("mToken", _tokenID).apply();
-//                    getPicNumber(mToken);//显示图pian
+
+                    mToken = mSP.getString("mToken", "");//重新拉去Token覆盖原先错误的token
+
                     handler.sendEmptyMessage(TIP_TOKEN_ERROR);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -173,6 +178,11 @@ public class UserRegPhoneActivity extends Activity {
             JSONObject object = new JSONObject(_numberPicResult);
             String _ErrorCode = JsonUtils.getString(object, "ErrorCode");
             if (_ErrorCode.equals("1008")){
+                mTokenCount++;
+                if (mTokenCount >= 5){
+                    handler.sendEmptyMessage(TOKEN_ERROR_COUNT);
+                    return;
+                }
                 handler.sendEmptyMessage(NO_TOKENID);
                 if (BuildConfig.DEBUG) Log.d("UserRegPhoneActivity", "zoudaozheli");
                 return;
@@ -243,7 +253,12 @@ public class UserRegPhoneActivity extends Activity {
                     break;
                 case TIP_TOKEN_ERROR:
                     //重新拉去tokenid保存数据
-                    Toast.makeText(UserRegPhoneActivity.this, "令牌失效,请重新切换图片验证码", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(UserRegPhoneActivity.this, "令牌失效,请重新切换图片验证码", Toast.LENGTH_SHORT).show();
+                    getPicNumber(mToken);
+                    break;
+                case TOKEN_ERROR_COUNT:
+                    //重新拉去tokenid保存数据
+                    Toast.makeText(UserRegPhoneActivity.this, "令牌数据异常,请重新进入本界面", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;

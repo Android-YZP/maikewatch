@@ -28,6 +28,7 @@ import com.google.gson.reflect.TypeToken;
 import com.gzgamut.sdk.global.Global;
 import com.gzgamut.sdk.helper.NoConnectException;
 import com.gzgamut.sdk.model.Maike;
+import com.handmark.pulltorefresh.library.BuildConfig;
 import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.activity.HistoryDataActivity;
 import com.maikeapp.maikewatch.bean.OneDayData;
@@ -275,6 +276,7 @@ public class HomeFragment extends Fragment {
                 mProgressDialog = ProgressDialog.show(getActivity(), null, "正在玩命同步中...", true, true);
                 //初始化日期
                 Date _today = new Date();
+                if (BuildConfig.DEBUG) Log.d("HomeFragment", "_today:" + _today);
                 setTodayDate(_today);
                 //同步手表数据
                 syncWatchData();
