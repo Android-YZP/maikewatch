@@ -67,6 +67,8 @@ public class MainActivity extends FragmentActivity {
     private String mApkPath;
     private String mSize;
     private String mVersionName;
+    private boolean isSync = false;
+
     /**
      * 声明一个handler来跟进进度条
      */
@@ -103,8 +105,14 @@ public class MainActivity extends FragmentActivity {
         //2-已登录用户：判断用户是否绑定过手表，未绑定过，跳转到手表绑定界面（绑定之后把绑定的手表mac地址，上传服务端），
         //3-若已绑定手表，在首页直接同步一次数据，并上传服务器
         checkBlueTooth();
-    }
 
+    }
+    public boolean getSync() {
+        return isSync;
+    }
+    public void setSync(boolean sync) {
+        isSync = sync;
+    }
     /**
      * 检查是否有新版本更新
      */

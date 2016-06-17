@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.maikeapp.maikewatch.DBOpenHelper.DBDao;
 import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.bean.OneDayData;
 import com.maikeapp.maikewatch.bean.User;
@@ -35,6 +36,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryDataActivity extends AppCompatActivity {
@@ -55,6 +57,8 @@ public class HistoryDataActivity extends AppCompatActivity {
 
     private List<OneDayData> m_day_datas_for_week;//一个周的总步数
     private List<OneDayData> m_day_datas_for_month;//一个月的总步数
+    private DBDao mDBDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +66,6 @@ public class HistoryDataActivity extends AppCompatActivity {
         initView();
         initData();
         setListener();
-
     }
 
     private void initView() {
@@ -80,13 +83,21 @@ public class HistoryDataActivity extends AppCompatActivity {
         //用户信息
         mUser = CommonUtil.getUserInfo(this);
 
-        //弹出加载进度条
-        mProgressDialog = ProgressDialog.show(HistoryDataActivity.this, null, "正在玩命加载中...",true,true);
         //查询最近7天的数据
-        queryRecentlySportDataForWeekFromNetWork();
-        //查询最近30天的数据
-        queryRecentlySportDataForMonthFromNetWork();
+        mDBDao = new DBDao(this);
 
+        if (CommonUtil.isnetWorkAvilable(this)){//有网络从网络获取数据并且显示
+            //弹出加载进度条
+            mProgressDialog = ProgressDialog.show(HistoryDataActivity.this, null, "正在玩命加载中...",true,true);
+            queryRecentlySportDataForWeekFromNetWork();
+            //查询最近30天的数据
+            queryRecentlySportDataForMonthFromNetWork();
+        }else {//没有网络就获取本地数据库所有的数据,进行显示
+            ArrayList<OneDayData> weekDatas = mDBDao.weekDatas(mUser.getLoginName());
+            ArrayList<OneDayData> oneDayDatas = mDBDao.monthDatas(mUser.getLoginName());
+            lineView(weekDatas,mLineChartWeek);//界面显示
+            lineView(oneDayDatas,mLineChartMonth);//界面显示
+        }
     }
 
     /**
@@ -406,13 +417,15 @@ public class HistoryDataActivity extends AppCompatActivity {
     private void updateUIAfterGetRecentDatasForWeek() {
         //显示折线图
         lineView(m_day_datas_for_week,mLineChartWeek);
+
     }
 
     /**
-     * 更新UI-更新一周的折线图
+     * 更新UI-更新一月的折线图
      */
     private void updateUIAfterGetRecentDatasForMonth() {
         //显示折线图
         lineView(m_day_datas_for_month,mLineChartMonth);
+        Log.d("m_day_datas_for_month", m_day_datas_for_month.toString());
     }
 }

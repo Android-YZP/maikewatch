@@ -1,6 +1,7 @@
 package com.maikeapp.maikewatch.util;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,9 +9,12 @@ import android.content.Intent.ShortcutIconResource;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -22,9 +26,41 @@ import com.maikeapp.maikewatch.bean.AppVersion;
 import com.maikeapp.maikewatch.bean.User;
 
 import java.text.NumberFormat;
+import java.util.List;
 
 
 public class CommonUtil {
+	/**
+	 * 判断一个服务是否在运行
+	 * @param mContext
+	 * @param className
+     * @return
+     */
+
+	public static boolean isServiceRunning(Context mContext,String className) {
+
+		boolean isRunning = false;
+		ActivityManager activityManager = (ActivityManager)
+				mContext.getSystemService(Context.ACTIVITY_SERVICE);
+		List<ActivityManager.RunningServiceInfo> serviceList
+				= activityManager.getRunningServices(30);
+
+		if (!(serviceList.size()>0)) {
+			return false;
+		}
+
+		for (int i=0; i<serviceList.size(); i++) {
+			if (serviceList.get(i).service.getClassName().equals(className) == true) {
+				isRunning = true;
+				break;
+			}
+		}
+		return isRunning;
+	}
+
+
+
+
 	/**
 	 * 保存用户信息
 	 * @param user
@@ -214,4 +250,29 @@ public class CommonUtil {
 		String result = numberFormat.format(d);
 		return result;
 	}
+
+	/**
+	 * 判断网络是否可用
+	 * @param context
+	 * @return
+	 */
+	public static boolean isnetWorkAvilable(Context context) {
+		ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if(connectivityManager == null) {
+			Log.e("FlyleafActivity", "couldn't get connectivity manager");
+		} else {
+			NetworkInfo [] networkInfos = connectivityManager.getAllNetworkInfo();
+			if(networkInfos != null){
+				for (int i = 0, count = networkInfos.length; i < count; i++) {
+					if(networkInfos[i].getState() == NetworkInfo.State.CONNECTED){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+
+
 }

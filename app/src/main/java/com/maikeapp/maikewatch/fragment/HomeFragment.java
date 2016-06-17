@@ -4,22 +4,19 @@ package com.maikeapp.maikewatch.fragment;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityManager;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +26,10 @@ import com.gzgamut.sdk.global.Global;
 import com.gzgamut.sdk.helper.NoConnectException;
 import com.gzgamut.sdk.model.Maike;
 import com.handmark.pulltorefresh.library.BuildConfig;
+import com.maikeapp.maikewatch.DBOpenHelper.DBDao;
 import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.activity.HistoryDataActivity;
+import com.maikeapp.maikewatch.activity.MainActivity;
 import com.maikeapp.maikewatch.bean.OneDayData;
 import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
@@ -52,14 +51,6 @@ import com.umeng.socialize.sso.QZoneSsoHandler;
 import com.umeng.socialize.sso.UMQQSsoHandler;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
 
-
-import org.achartengine.ChartFactory;
-import org.achartengine.GraphicalView;
-import org.achartengine.chart.PointStyle;
-import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
-import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.achartengine.renderer.XYSeriesRenderer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,6 +70,7 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
     private static final int SCREEN_SHOT_SUCCESS = 150;
+    private static final int UPLOAD_SUCCESS = 151;
     private CirclePercentView mCirclePercentView;//总进度
     private TextView mTvDate;//日期
 
@@ -91,10 +83,10 @@ public class HomeFragment extends Fragment {
     private TextView mTvSumDistance;//里程数
 
     private LinearLayout mLinearChart;//图表
-        /**
-         * 业务层
-         */
-        private IUserBusiness mUserBusiness = new UserBusinessImp();
+    /**
+     * 业务层
+     */
+    private IUserBusiness mUserBusiness = new UserBusinessImp();
     private static ProgressDialog mProgressDialog = null;
     private User mUser;//用户信息
     //sdk
@@ -114,11 +106,28 @@ public class HomeFragment extends Fragment {
      * 是否正在同步
      */
     private boolean running;
+    private DBDao mDbDao;
+    private int sum_step;
+    private ArrayList<OneDayData> todayOnDayDays;
+    private boolean isRunning = false;
+    private boolean isUpdataUI = false;
+    private String mPickTime;
+    private boolean isNetWorkAvilable;
+    private ImageView mLeftDay;
+    private ImageView mRightDay;
+    private int mCount = 0;
+    private int mCount1 = 0;
+
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isNetWorkAvilable = CommonUtil.isnetWorkAvilable(getContext());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,6 +135,7 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         findView(view);
+        mDbDao = new DBDao(getActivity());
         return view;
     }
 
@@ -133,14 +143,13 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //再次初始化界面数据
+        mCount = 0;
         initData();
-
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
+    public void onPause() {
+        super.onPause();
     }
 
     void findView(View view) {
@@ -149,9 +158,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void initView(View view) {
-
         mIvHistoryData = (ImageView) view.findViewById(R.id.iv_home_history_data);
         mIvShare = (ImageView) view.findViewById(R.id.iv_home_share);
+
+        mLeftDay = (ImageView) view.findViewById(R.id.iv_left_day);
+        mRightDay = (ImageView) view.findViewById(R.id.iv_right_day);
 
         mTvDate = (TextView) view.findViewById(R.id.tv_home_one_day_date);
         mCirclePercentView = (CirclePercentView) view.findViewById(R.id.circleView);
@@ -172,12 +183,41 @@ public class HomeFragment extends Fragment {
         mUser = CommonUtil.getUserInfo(getActivity());
         if (mUser != null) {
             mTvSportsTarget.setText("目标:" + mUser.getSportsTarget());
-            if (mUser.isBindWatch()){
-                //从服务端初始化当日同步前的数据
-                String _day_time = new SimpleDateFormat("yyyy-MM-dd").format(_today);
-                getOnedayDataFromNetWork(_day_time);
-            }else{
-                ToastUtil.showTipShort(getActivity(),"请先绑定手表");
+
+            if (mUser.isBindWatch()) {
+
+                //从服务端初始化当日同步前的数据(可以从数据库调用)
+                Date myDate = new Date();
+                int thisYear = myDate.getYear() + 1900;//thisYear = 2003
+                int thisMonth = myDate.getMonth() + 1;//thisMonth = 5
+                int thisDate = myDate.getDate();//thisDate = 30
+                String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
+                Log.d("thisDate的数据", String.valueOf(thisYear) + "-" + thisMonth + "-" + thisDate);
+
+                todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+                showUI(todayOnDayDays);
+
+                //显示本地数据之后,同步手表数据
+                if (!isRunning) {
+
+                    MainActivity mainUI = (MainActivity) getActivity();
+                    boolean sync = mainUI.getSync();
+                    if (!sync) {//保证只同步一次
+                        isRunning = true;//同步数据刷新界面开始运行
+                        mainUI.setSync(true);
+                         Log.d("在更新了", "在更新了" + mainUI.getSync() + "");
+                        syncWatchData();
+                    }
+                }
+
+                //传入用户名和时间,输出从数据库每小时的数据,界面显示
+//                if (todayOnDayDays != null && todayOnDayDays.size() > 0) {
+////                    Log.d("oneDayDatas的数据", "oneDayDatas:" + todayOnDayDays.toString());
+
+
+                Log.d("_todayOnDayDays的数据", "_todayOnDayDays:" + todayOnDayDays);
+            } else {
+                ToastUtil.showTipShort(getActivity(), "请先绑定手表");
                 //显示折线图
                 LineChartView _line_chart_view = new LineChartView(getActivity());
                 _line_chart_view.setmListDatas(null);
@@ -199,10 +239,7 @@ public class HomeFragment extends Fragment {
         }
         //社会化分享
         socialShare();
-
-
     }
-
 
 
     /**
@@ -220,6 +257,8 @@ public class HomeFragment extends Fragment {
      * 从网络获取某个日期的数据
      */
     private void getOnedayDataFromNetWork(final String _day_time) {
+        Log.d("_day_timed的格式", _day_time);
+
         //弹出加载进度条
         mProgressDialog = ProgressDialog.show(getActivity(), null, "正在获取数据中...", true, true);
         //开启副线程-从网络查询某个日期的数据
@@ -237,8 +276,10 @@ public class HomeFragment extends Fragment {
                         m_day_datas = new Gson().fromJson(_json_datas, new TypeToken<List<OneDayData>>() {
                         }.getType());
                         Log.d(CommonConstants.LOGCAT_TAG_NAME + "_day_datas", m_day_datas.toString());
-                        // 同步完成
+                        // 同步完成,更新获取的新界面显示的数据
+                        //
                         handler.sendEmptyMessage(CommonConstants.FLAG_HOME_GET_ONE_DAY_DATA_SUCCESS);
+
                     } else {
                         String _Message = JsonUtils.getString(_json_obj_result, "Message");
                         CommonUtil.sendErrorMessage(_Message, handler);
@@ -292,6 +333,13 @@ public class HomeFragment extends Fragment {
                     ToastUtil.showTipShort(getActivity(), "请先登录");
                     return;
                 }
+                if (!CommonUtil.isnetWorkAvilable(getContext())){//没有网络就会从数据库调用数据,并发修改数据库
+                    if (isRunning){
+                        Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
                 Log.d(CommonConstants.LOGCAT_TAG_NAME + "_onclick_history", "click_history");
                 Intent _intent = new Intent(getActivity(), HistoryDataActivity.class);
                 getActivity().startActivity(_intent);
@@ -317,13 +365,13 @@ public class HomeFragment extends Fragment {
         mIvShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             //子线程剪切图片
+                //子线程剪切图片
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Message msg = Message.obtain();
                         File file = new File(mPicPath);
-                        ScreenShotUtil.shoot(getActivity(),file);
+                        ScreenShotUtil.shoot(getActivity(), file);
                         msg.what = SCREEN_SHOT_SUCCESS;
                         handler.sendMessage(msg);
                     }
@@ -332,7 +380,169 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
+        //查看前一天的数据
+        mLeftDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCount--;
+                String _CurrentDate =  mTvDate.getText().toString();
+                SimpleDateFormat _SDF =  new SimpleDateFormat("MM月dd日");
+                try {
+                    Date date = new Date();//获得当前是哪一年
+                    Date parseDate = _SDF.parse(_CurrentDate);
+
+//                    Date _date1 = datePlus(date, mCount);
+//                    int thisYear = _date1.getYear() + 1900;//thisYear = 2003
+//                    int thisMonth = _date1.getMonth() + 1;//thisMonth = 5
+//                    int thisDate = _date1.getDate();//thisDate = 30
+
+                    int thisYear = datePlus(date, -1).getYear() + 1900;//thisYear = 2003
+                    int thisMonth = datePlus(parseDate, -1).getMonth() + 1;//thisMonth = 5
+                    int thisDate = datePlus(parseDate, -1).getDate();//thisDate = 30
+
+                    String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
+                    Log.d("_CurrentTime减掉的数据", _CurrentTime);
+
+                    //获取相应时间的全部数据并且显示
+                    if (!isRunning) {//防止并行更改数据库发生崩溃
+                        //先从本地获取数据显示界面没有则从网络获取
+                        int _userid = mDbDao.findUser(mUser.getLoginName());
+                        Log.d("_one_datetime的数据", _CurrentTime);
+                        int dataid = mDbDao.findData(_userid, _CurrentTime);
+                        if (dataid != 0) {//本地有数据从本地查找
+                            todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+                            showUI(todayOnDayDays);
+
+                            //解析时间并显示
+                            SimpleDateFormat _SDF2 =  new SimpleDateFormat("yyyy-MM-dd");
+                            Date _parse = _SDF2.parse(_CurrentTime);
+                            int _month = _parse.getMonth() + 1;
+                            int _date1 = _parse.getDate();
+                            mPickTime = _month+"月"+_date1+"日";
+
+                            mTvDate.setText(mPickTime);
+                        } else {
+
+                            //解析时间并显示
+                            SimpleDateFormat _SDF2 =  new SimpleDateFormat("yyyy-MM-dd");
+                            Date _parse = _SDF2.parse(_CurrentTime);
+                            int _month = _parse.getMonth() + 1;
+                            int _date1 = _parse.getDate();
+                            mPickTime = _month+"月"+_date1+"日";
+
+                            getOnedayDataFromNetWork(_CurrentTime);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        //查看后一天的数据
+        mRightDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {{
+                mCount--;
+                String _CurrentDate =  mTvDate.getText().toString();
+                SimpleDateFormat _SDF =  new SimpleDateFormat("MM月dd日");
+                try {
+                    Date date = new Date();//获得当前是哪一年
+                    Date parseDate = _SDF.parse(_CurrentDate);
+
+//                    Date _date1 = datePlus(date, mCount);
+//                    int thisYear = _date1.getYear() + 1900;//thisYear = 2003
+//                    int thisMonth = _date1.getMonth() + 1;//thisMonth = 5
+//                    int thisDate = _date1.getDate();//thisDate = 30
+
+                    int thisYear = datePlus(date, +1).getYear() + 1900;//thisYear = 2003
+                    int thisMonth = datePlus(parseDate, +1).getMonth() + 1;//thisMonth = 5
+                    int thisDate = datePlus(parseDate, +1).getDate();//thisDate = 30
+
+                    String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
+                    Log.d("_CurrentTime减掉的数据", _CurrentTime);
+
+                    //获取相应时间的全部数据并且显示
+                    if (!isRunning) {//防止并行更改数据库发生崩溃
+                        //先从本地获取数据显示界面没有则从网络获取
+                        int _userid = mDbDao.findUser(mUser.getLoginName());
+                        Log.d("_one_datetime的数据", _CurrentTime);
+                        int dataid = mDbDao.findData(_userid, _CurrentTime);
+                        if (dataid != 0) {//本地有数据从本地查找
+                            todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+                            showUI(todayOnDayDays);
+
+                            //解析时间并显示
+                            SimpleDateFormat _SDF2 =  new SimpleDateFormat("yyyy-MM-dd");
+                            Date _parse = _SDF2.parse(_CurrentTime);
+                            int _month = _parse.getMonth() + 1;
+                            int _date1 = _parse.getDate();
+                            mPickTime = _month+"月"+_date1+"日";
+
+                            mTvDate.setText(mPickTime);
+                        } else {
+
+                            //解析时间并显示
+                            SimpleDateFormat _SDF2 =  new SimpleDateFormat("yyyy-MM-dd");
+                            Date _parse = _SDF2.parse(_CurrentTime);
+                            int _month = _parse.getMonth() + 1;
+                            int _date1 = _parse.getDate();
+                            mPickTime = _month+"月"+_date1+"日";
+
+                            getOnedayDataFromNetWork(_CurrentTime);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            }
+        });
+
     }
+
+
+
+
+
+
+
+    /**
+     * 时间计算公式
+     *
+     * @param base 基础日期
+     * @param days 增加天数(减天数则用负数)
+     */
+    public Date datePlus(Date base, int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(base);
+        cal.add(Calendar.DATE, days);
+        return cal.getTime();
+    }
+
+    /**
+     * 将日期转换成指定格式的字符串。
+     *
+     * @param date   日期
+     * @param format 输出格式
+     * @return 日期字符串
+     */
+    public String convDate2Str(Date date, String format) {
+        if (date == null) {
+            return "";
+        }
+        SimpleDateFormat _sdf = new SimpleDateFormat(format);
+        String _TodayStr = _sdf.format(date);
+        return _TodayStr;
+    }
+
+
 
     /**
      * 查询某个日期的所有数据
@@ -345,13 +555,30 @@ public class HomeFragment extends Fragment {
         DatePickerDialog _data_picker_dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mTvDate.setText((monthOfYear + 1) + "月" + dayOfMonth + "日");
+//                mTvDate.setText((monthOfYear + 1) + "月" + dayOfMonth + "日");
+                mPickTime = (monthOfYear + 1) + "月" + dayOfMonth + "日";
                 String _one_datetime = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-                getOnedayDataFromNetWork(_one_datetime);
+
+                if (!isRunning) {//防止并行更改数据库发生崩溃
+                    //先从本地获取数据显示界面没有则从网络获取
+                    int _userid = mDbDao.findUser(mUser.getLoginName());
+                    Log.d("_one_datetime的数据", _one_datetime);
+                    int dataid = mDbDao.findData(_userid, _one_datetime);
+                    if (dataid != 0) {//本地有数据从本地查找
+                        todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _one_datetime);
+                        showUI(todayOnDayDays);
+                        mTvDate.setText(mPickTime);
+                    } else {
+                        getOnedayDataFromNetWork(_one_datetime);
+                    }
+                } else {
+                    Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
+                }
+
+
             }
         }, year, monthOfYear, dayOfMonth);
         _data_picker_dialog.show();
-
     }
 
     /**
@@ -381,6 +608,7 @@ public class HomeFragment extends Fragment {
                     try {
                         Success = _json_result.getBoolean("Success");
                     } catch (Exception e) {
+
                         e.printStackTrace();
                     }
 
@@ -417,7 +645,7 @@ public class HomeFragment extends Fragment {
                 //暂时先沉睡2s
                 try {
                     Thread.sleep(_seconds);
-                    _seconds+=500;
+                    _seconds += 500;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -504,10 +732,16 @@ public class HomeFragment extends Fragment {
 
                 // 设置手环同步完成
                 device.setFinishSync();
-//同步数据结束》》
+
+                //同步数据结束》》将数据加入数据库
+                Log.d("allDayData的数据", "allDayData:" + allDayData);
+
+                mDbDao.addallDayDatas(allDayData, mUser.getMobile(), mUser);
 
                 // 同步完成
-                handler.sendEmptyMessage(CommonConstants.FLAG_HOME_SYNC_SUCCESS);
+                if (allDayData != null && allDayData.size() > 0) {
+                    handler.sendEmptyMessage(CommonConstants.FLAG_HOME_SYNC_SUCCESS);//allData里面有数据界面再更新
+                }
                 //每次循环连接都断开设备
                 JSONObject object = device.disconnectDevice(false);        // 断开设备
                 Log.d(CommonConstants.LOGCAT_TAG_NAME + "_sync_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
@@ -521,9 +755,11 @@ public class HomeFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
                 CommonUtil.sendErrorMessage("同步失败，数据异常", handler);
+                isRunning = false;
             } catch (Exception e) {
                 e.printStackTrace();
                 CommonUtil.sendErrorMessage("同步失败，服务端异常", handler);
+                isRunning = false;
             }
         }
         //循环5次依然没连上，提示错误信息，并running未false
@@ -564,6 +800,7 @@ public class HomeFragment extends Fragment {
 //                        Log.i("sync", "data = " + object);
 //                        Log.i("sync", date + ", " + time + ", " + value + ", " + type);
                     }
+                    Log.d("allDayData的数据", allDayData.toString() + "YZP");
                 }
 
 
@@ -592,16 +829,22 @@ public class HomeFragment extends Fragment {
                     }
                     break;
                 case CommonConstants.FLAG_HOME_SYNC_SUCCESS:
+                    isRunning = false;
                     updateUIAfterSync();//更新界面信息
                     break;
                 case CommonConstants.FLAG_HOME_GET_ONE_DAY_DATA_SUCCESS:
                     if (isAdded()) {
                         //Return true if the fragment is currently added to its activity.
+                        // 刷新日期
+                        mTvDate.setText(mPickTime);
                         updateUIOfOneDayData();//更新界面上一天的数据
                     }
                     break;
                 case CommonConstants.FLAG_HOME_DATA_EXCEPTION_SUCCESS:
                     disableApp();//app不可用
+                    break;
+                case UPLOAD_SUCCESS:
+                    Toast.makeText(getContext(), "同步完成", Toast.LENGTH_SHORT).show();
                     break;
                 case SCREEN_SHOT_SUCCESS:
                     mController.openShare(getActivity(), false);
@@ -625,6 +868,8 @@ public class HomeFragment extends Fragment {
      * 更新UI-一天的数据
      */
     private void updateUIOfOneDayData() {
+        isUpdataUI = true;//正在跟新界面
+
         if (m_day_datas != null && m_day_datas.size() > 0) {
             OneDayData _head_one_day_data = m_day_datas.get(0);
 
@@ -659,7 +904,7 @@ public class HomeFragment extends Fragment {
             mLinearChart.removeAllViews();
             mLinearChart.addView(_line_chart_view);
         }
-
+        isUpdataUI = false;//跟新界面完成
 
     }
 
@@ -667,8 +912,10 @@ public class HomeFragment extends Fragment {
      * 更新UI数据-当天总步数、并计算出进度百分比、热量、里程数、当天每个小时的步数
      */
     private void updateUIAfterSync() {
+        isUpdataUI = true;//正在更更新界面
 
-        ToastUtil.showTipLong(getActivity(), "正在同步中...");
+
+//        ToastUtil.showTipLong(getActivity(), "正在同步中...");
 
         Collections.sort(allDayData, new Comparator<OneDayData>() {
             @Override
@@ -696,6 +943,7 @@ public class HomeFragment extends Fragment {
         int _sum_step = 0;//总步数
         List<OneDayData> _todayData = new ArrayList<OneDayData>();
         for (int i = 0; i < allDayData.size(); i++) {
+
             Log.d(CommonConstants.LOGCAT_TAG_NAME + "_oneDay", allDayData.get(i).getSportsTime() + "," + allDayData.get(i).getCompleteHour() + "," + allDayData.get(i).getSteps() + "," + allDayData.get(i).getType());
             try {
                 Date _the_date = _sdf.parse(allDayData.get(i).getSportsTime());
@@ -704,6 +952,7 @@ public class HomeFragment extends Fragment {
                 if (_TodayStr.equals(_the_date_str)) {
                     _sum_step += allDayData.get(i).getSteps();
                     _todayData.add(allDayData.get(i));
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -733,17 +982,59 @@ public class HomeFragment extends Fragment {
         mCirclePercentView.setPercent(_percent + 1);
 
         //显示折线图
-        LineChartView _line_chart_view = new LineChartView(getActivity());
+        LineChartView _line_chart_view = new LineChartView(getContext());
         _line_chart_view.setmListDatas(_todayData);
         mLinearChart.removeAllViews();
         mLinearChart.addView(_line_chart_view);
 
-        ToastUtil.showTipShort(getActivity(), "同步已完成");
 
         //上传当天以及最近7天的所有数据到服务端
-        uploadAllDataToServer(CommonUtil.formatData(Double.valueOf(_calories), 2), CommonUtil.formatData(Double.valueOf(_distance), 2));
-
+        if (CommonUtil.isnetWorkAvilable(getContext())) {
+            uploadAllDataToServer(CommonUtil.formatData(Double.valueOf(_calories), 2), CommonUtil.formatData(Double.valueOf(_distance), 2));
+        } else {
+            ToastUtil.showTipShort(getContext(), "同步已完成");
+            isRunning = false;//没网的情况下到这里结束,
+        }
     }
+
+    /**
+     * 传入一天的数据,计算并且显示界面
+     *
+     * @param oneDayDatas
+     */
+    private void showUI(ArrayList<OneDayData> oneDayDatas) {
+
+        isUpdataUI = true;//正在界面完成
+        //从新设置界面
+        sum_step = 0;
+        for (int i = 0; i < oneDayDatas.size(); i++) {
+            sum_step += oneDayDatas.get(i).getSteps();
+//            Log.d("sum_step的数据", "sum_step:" + sum_step);
+        }
+        int _height = mUser.getHeight() == 0 ? 175 : mUser.getHeight();
+        int _weight = mUser.getWeight() == 0 ? 70 : mUser.getWeight();
+        double _distance = ((0.45 * _height * sum_step) / 100) / 1000;//里程数
+        double _calories = sum_step * _weight * 0.0006564;//热量
+        String percent = CommonUtil.calcPercent(sum_step, mUser.getSportsTarget() == 0 ? 2000 : mUser.getSportsTarget());//百分比(个人目标没有，默认取2000)
+        //更新界面
+        mTvSumSteps.setText(sum_step + "步");
+
+        mTvSumCarolies.setText(CommonUtil.formatData(Double.valueOf(_calories), 2) + "千卡");
+        mTvSumDistance.setText(CommonUtil.formatData(Double.valueOf(_distance), 2) + "公里");
+        mTvSportsTarget.setText("目标:" + (mUser.getSportsTarget() == 0 ? 2000 : mUser.getSportsTarget()));
+        int _percent = Integer.parseInt(percent);//百分比
+        if (_percent > 100) {
+            _percent = 100;
+        }
+        mCirclePercentView.setPercent(_percent + 1);
+        //显示折线图
+        LineChartView _line_chart_view = new LineChartView(getContext());
+        _line_chart_view.setmListDatas(oneDayDatas);
+        mLinearChart.removeAllViews();
+        mLinearChart.addView(_line_chart_view);
+        isUpdataUI = false;//跟新界面完成
+    }
+
 
     /**
      * 上传当天以及最近7天的所有数据到服务端
@@ -774,27 +1065,42 @@ public class HomeFragment extends Fragment {
                             Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_today_data_r", "true");
                             //上传最近7天数据
                             if (allDayData != null && allDayData.size() > 0) {
+
                                 String _upload_recent_week_data_result = mUserBusiness.uploadRecentWeekData(allDayData);
                                 JSONObject _json_upload_recent_data_result = new JSONObject(_upload_recent_week_data_result);
                                 boolean _upload_recent_data_Success = JsonUtils.getBoolean(_json_upload_recent_data_result, "Success");
                                 if (_upload_recent_data_Success) {
+                                    //数据上传成功之后更新数据库的状态信息
+                                    for (int i = 0; i < allDayData.size(); i++) {
+//                                        Log.d("时间数据", allDayData.get(i).getSportsTime());
+                                        mDbDao.updataStatus(mUser, allDayData.get(i).getSportsTime());
+                                    }
+                                    //数据上传完成
+                                    handler.sendEmptyMessage(UPLOAD_SUCCESS);
+                                    Thread.sleep(50);
+                                    isRunning = false;//结束线程运行
                                     Log.d(CommonConstants.LOGCAT_TAG_NAME + "_upload_recent_r", "true");
                                 } else {
+                                    isRunning = false;//结束线程运行
                                     Log.d(CommonConstants.LOGCAT_TAG_NAME + "_upload_recent_r", "false");
                                 }
 
                             }
 
                         } else {
+                            isRunning = false;//结束线程运行
                             Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_today_data_r", "false");
                         }
                     } else {
+                        isRunning = false;//结束线程运行
                         Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_sports_target_r", "false");
                     }
                 } catch (ServiceException e) {
+                    isRunning = false;//结束线程运行
                     e.printStackTrace();
                     CommonUtil.sendErrorMessage(e.getMessage(), handler);
                 } catch (Exception e) {
+                    isRunning = false;//结束线程运行
                     e.printStackTrace();
                     Log.d(CommonConstants.LOGCAT_TAG_NAME + "_exception", "出现异常错误");
                 }
@@ -816,7 +1122,7 @@ public class HomeFragment extends Fragment {
         // 首先在您的Activity中添加如下成员变量
         mController = UMServiceFactory.getUMSocialService("com.umeng.share");
         // 设置分享图片, 参数2为图片的url地址
-        mController.setShareMedia(new UMImage(getActivity(),
+        mController.setShareMedia(new UMImage(getContext(),
                 mPicPath));
         mController.getConfig().removePlatform(SHARE_MEDIA.RENREN, SHARE_MEDIA.DOUBAN);
 

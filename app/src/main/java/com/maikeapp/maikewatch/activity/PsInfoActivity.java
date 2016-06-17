@@ -257,7 +257,9 @@ public class PsInfoActivity extends AppCompatActivity {
                 // 指定调用相机拍照后照片的储存路径
                 _cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(tempFile));
-                startActivityForResult(_cameraIntent, PHOTO_REQUEST_TAKEPHOTO);
+                if (Uri.fromFile(tempFile)!=null) {
+                    startActivityForResult(_cameraIntent, PHOTO_REQUEST_TAKEPHOTO);
+                }
                 alertDialog.dismiss();
             }
         });
@@ -294,7 +296,9 @@ public class PsInfoActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PHOTO_REQUEST_TAKEPHOTO:// 当选择拍照时调用
+
                 startPhotoZoom(Uri.fromFile(tempFile));
+
                 break;
             case PHOTO_REQUEST_GALLERY:// 当选择从本地获取图片时
                 // 做非空判断，当我们觉得不满意想重新剪裁的时候便不会报异常，下同

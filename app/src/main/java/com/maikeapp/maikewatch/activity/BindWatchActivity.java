@@ -15,15 +15,13 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.gzgamut.sdk.global.Global;
 import com.gzgamut.sdk.helper.NoConnectException;
 import com.gzgamut.sdk.model.Maike;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.maikeapp.maikewatch.DBOpenHelper.DBHelper;
 import com.maikeapp.maikewatch.R;
 import com.maikeapp.maikewatch.adapter.WatchMacListAdapter;
 import com.maikeapp.maikewatch.bean.OneDayData;
@@ -38,14 +36,13 @@ import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
 import com.maikeapp.maikewatch.util.ToastUtil;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -432,6 +429,8 @@ public class BindWatchActivity extends AppCompatActivity {
 
                                     //解绑成功
                                     handler.sendEmptyMessage(CommonConstants.FLAG_UNBIND_MAC_ADDRESS_SUCCESS);
+
+
                                     //连接成功后断开设备
                                     JSONObject object = device.disconnectDevice(false);        // 断开设备
                                     Log.d(CommonConstants.LOGCAT_TAG_NAME + "_unbind_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
@@ -499,6 +498,8 @@ public class BindWatchActivity extends AppCompatActivity {
                     break;
                 case CommonConstants.FLAG_UNBIND_MAC_ADDRESS_SUCCESS:
                     ((BindWatchActivity) mActivity.get()).updateUIForUnBindSuccess();
+                    //删除数据库
+                    File dbFile = new File("/data/data/com.maikeapp.maikewatch/databases/WatchData.db");dbFile.delete();
                     break;
                 default:
                     break;
