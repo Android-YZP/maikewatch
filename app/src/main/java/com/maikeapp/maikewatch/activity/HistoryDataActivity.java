@@ -36,7 +36,12 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class HistoryDataActivity extends AppCompatActivity {
@@ -185,6 +190,26 @@ public class HistoryDataActivity extends AppCompatActivity {
 
     //折线图
     public void lineView(List pAllData, LinearLayout pLineChart){
+
+        //根据集合中的时间日期来把集合重新排序
+        Collections.sort(pAllData, new Comparator<OneDayData>() {
+            @Override
+            public int compare(OneDayData lhs, OneDayData rhs) {
+                String _datetime_1 = lhs.getSportsTime();
+                String _datetime_2 = rhs.getSportsTime();
+                SimpleDateFormat _sdf = new SimpleDateFormat("yyyy/MM/dd");
+                Date _date_1 = null;
+                Date _date_2 = null;
+                try {
+                    _date_1 = _sdf.parse(_datetime_1);
+                    _date_2 = _sdf.parse(_datetime_2);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return _date_1.compareTo(_date_2);
+            }
+        });
+
         //同样是需要数据dataset和视图渲染器renderer
         XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
         XYSeries series = new XYSeries("步数");
@@ -200,7 +225,6 @@ public class HistoryDataActivity extends AppCompatActivity {
                     _max = _steps;
                 }
                 series.add(i,_steps);
-
             }
         }
         mDataset.addSeries(series);
@@ -258,12 +282,9 @@ public class HistoryDataActivity extends AppCompatActivity {
         mRenderer.setPanEnabled(true);//设置xy轴是否可以拖动
         mRenderer.setZoomEnabled(true);
 
-
         GraphicalView view = ChartFactory.getLineChartView(this, mDataset, mRenderer);
         view.setBackgroundColor(Color.WHITE);
         view.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, 500));
-
-
         pLineChart.removeAllViews();
         pLineChart.addView(view);
     }

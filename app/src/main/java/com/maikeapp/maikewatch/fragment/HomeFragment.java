@@ -71,6 +71,7 @@ import java.util.List;
 public class HomeFragment extends Fragment {
     private static final int SCREEN_SHOT_SUCCESS = 150;
     private static final int UPLOAD_SUCCESS = 151;
+    private static final int HIS_DATA_SUCCESS = 152;
     private CirclePercentView mCirclePercentView;//总进度
     private TextView mTvDate;//日期
 
@@ -193,10 +194,16 @@ public class HomeFragment extends Fragment {
                 int thisDate = myDate.getDate();//thisDate = 30
                 String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
                 Log.d("thisDate的数据", String.valueOf(thisYear) + "-" + thisMonth + "-" + thisDate);
-
                 todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
-                showUI(todayOnDayDays);
+               /*测试数据*/
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//                mDbDao.addHourStep(18,3000,2);
+//                mDbDao.addData("2016-6-19", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-6-21", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-6-20", 20, 2000, 2000, 25.5f, 123.3f, 1);
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                showUI(todayOnDayDays);
                 //显示本地数据之后,同步手表数据
                 if (!isRunning) {
 
@@ -205,7 +212,7 @@ public class HomeFragment extends Fragment {
                     if (!sync) {//保证只同步一次
                         isRunning = true;//同步数据刷新界面开始运行
                         mainUI.setSync(true);
-                         Log.d("在更新了", "在更新了" + mainUI.getSync() + "");
+                        Log.d("在更新了", "在更新了" + mainUI.getSync() + "");
                         syncWatchData();
                     }
                 }
@@ -284,7 +291,6 @@ public class HomeFragment extends Fragment {
                         String _Message = JsonUtils.getString(_json_obj_result, "Message");
                         CommonUtil.sendErrorMessage(_Message, handler);
                     }
-
                 } catch (ServiceException e) {
                     e.printStackTrace();
                     CommonUtil.sendErrorMessage(e.getMessage(), handler);
@@ -313,13 +319,22 @@ public class HomeFragment extends Fragment {
                     ToastUtil.showTipShort(getActivity(), "请先绑定手表");
                     return;
                 }
+
+                //如果后台正在同步数据,直接显示进度条
+                if (isRunning){
+                    mProgressDialog = ProgressDialog.show(getActivity(), null, "正在同步中，请稍后...", true, true);
+                    return;
+                }
+
                 //弹出加载进度条
-                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在玩命同步中...", true, true);
+                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在同步中，请稍后...", true, true);
                 //初始化日期
                 Date _today = new Date();
                 if (BuildConfig.DEBUG) Log.d("HomeFragment", "_today:" + _today);
                 setTodayDate(_today);
                 //同步手表数据
+
+                isRunning = true;
                 syncWatchData();
             }
         });
@@ -333,17 +348,25 @@ public class HomeFragment extends Fragment {
                     ToastUtil.showTipShort(getActivity(), "请先登录");
                     return;
                 }
-                if (!CommonUtil.isnetWorkAvilable(getContext())){//没有网络就会从数据库调用数据,并发修改数据库
-                    if (isRunning){
-                        Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
+                // 用子线程实时监测isRuning
+                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在加载中，请稍后...", true, true);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                Log.d(CommonConstants.LOGCAT_TAG_NAME + "_onclick_history", "click_history");
-                Intent _intent = new Intent(getActivity(), HistoryDataActivity.class);
-                getActivity().startActivity(_intent);
+                        while (isRunning) {
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        handler.sendEmptyMessage(HIS_DATA_SUCCESS);
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_onclick_history", "click_history");
+                    }
+                }).start();
             }
+
         });
 
         /**
@@ -386,8 +409,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mCount--;
-                String _CurrentDate =  mTvDate.getText().toString();
-                SimpleDateFormat _SDF =  new SimpleDateFormat("MM月dd日");
+                String _CurrentDate = mTvDate.getText().toString();
+                SimpleDateFormat _SDF = new SimpleDateFormat("MM月dd日");
                 try {
                     Date date = new Date();//获得当前是哪一年
                     Date parseDate = _SDF.parse(_CurrentDate);
@@ -415,21 +438,21 @@ public class HomeFragment extends Fragment {
                             showUI(todayOnDayDays);
 
                             //解析时间并显示
-                            SimpleDateFormat _SDF2 =  new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
                             Date _parse = _SDF2.parse(_CurrentTime);
                             int _month = _parse.getMonth() + 1;
                             int _date1 = _parse.getDate();
-                            mPickTime = _month+"月"+_date1+"日";
+                            mPickTime = _month + "月" + _date1 + "日";
 
                             mTvDate.setText(mPickTime);
                         } else {
 
                             //解析时间并显示
-                            SimpleDateFormat _SDF2 =  new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
                             Date _parse = _SDF2.parse(_CurrentTime);
                             int _month = _parse.getMonth() + 1;
                             int _date1 = _parse.getDate();
-                            mPickTime = _month+"月"+_date1+"日";
+                            mPickTime = _month + "月" + _date1 + "日";
 
                             getOnedayDataFromNetWork(_CurrentTime);
                         }
@@ -445,72 +468,66 @@ public class HomeFragment extends Fragment {
         //查看后一天的数据
         mRightDay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {{
-                mCount--;
-                String _CurrentDate =  mTvDate.getText().toString();
-                SimpleDateFormat _SDF =  new SimpleDateFormat("MM月dd日");
-                try {
-                    Date date = new Date();//获得当前是哪一年
-                    Date parseDate = _SDF.parse(_CurrentDate);
+            public void onClick(View v) {
+                {
+                    mCount--;
+                    String _CurrentDate = mTvDate.getText().toString();
+                    SimpleDateFormat _SDF = new SimpleDateFormat("MM月dd日");
+                    try {
+                        Date date = new Date();//获得当前是哪一年
+                        Date parseDate = _SDF.parse(_CurrentDate);
 
 //                    Date _date1 = datePlus(date, mCount);
 //                    int thisYear = _date1.getYear() + 1900;//thisYear = 2003
 //                    int thisMonth = _date1.getMonth() + 1;//thisMonth = 5
 //                    int thisDate = _date1.getDate();//thisDate = 30
 
-                    int thisYear = datePlus(date, +1).getYear() + 1900;//thisYear = 2003
-                    int thisMonth = datePlus(parseDate, +1).getMonth() + 1;//thisMonth = 5
-                    int thisDate = datePlus(parseDate, +1).getDate();//thisDate = 30
+                        int thisYear = datePlus(date, +1).getYear() + 1900;//thisYear = 2003
+                        int thisMonth = datePlus(parseDate, +1).getMonth() + 1;//thisMonth = 5
+                        int thisDate = datePlus(parseDate, +1).getDate();//thisDate = 30
 
-                    String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
-                    Log.d("_CurrentTime减掉的数据", _CurrentTime);
+                        String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
+                        Log.d("_CurrentTime减掉的数据", _CurrentTime);
 
-                    //获取相应时间的全部数据并且显示
-                    if (!isRunning) {//防止并行更改数据库发生崩溃
-                        //先从本地获取数据显示界面没有则从网络获取
-                        int _userid = mDbDao.findUser(mUser.getLoginName());
-                        Log.d("_one_datetime的数据", _CurrentTime);
-                        int dataid = mDbDao.findData(_userid, _CurrentTime);
-                        if (dataid != 0) {//本地有数据从本地查找
-                            todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
-                            showUI(todayOnDayDays);
+                        //获取相应时间的全部数据并且显示
+                        if (!isRunning) {//防止并行更改数据库发生崩溃
+                            //先从本地获取数据显示界面没有则从网络获取
+                            int _userid = mDbDao.findUser(mUser.getLoginName());
+                            Log.d("_one_datetime的数据", _CurrentTime);
+                            int dataid = mDbDao.findData(_userid, _CurrentTime);
+                            if (dataid != 0) {//本地有数据从本地查找
+                                todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+                                showUI(todayOnDayDays);
 
-                            //解析时间并显示
-                            SimpleDateFormat _SDF2 =  new SimpleDateFormat("yyyy-MM-dd");
-                            Date _parse = _SDF2.parse(_CurrentTime);
-                            int _month = _parse.getMonth() + 1;
-                            int _date1 = _parse.getDate();
-                            mPickTime = _month+"月"+_date1+"日";
+                                //解析时间并显示
+                                SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
+                                Date _parse = _SDF2.parse(_CurrentTime);
+                                int _month = _parse.getMonth() + 1;
+                                int _date1 = _parse.getDate();
+                                mPickTime = _month + "月" + _date1 + "日";
 
-                            mTvDate.setText(mPickTime);
+                                mTvDate.setText(mPickTime);
+                            } else {
+
+                                //解析时间并显示
+                                SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
+                                Date _parse = _SDF2.parse(_CurrentTime);
+                                int _month = _parse.getMonth() + 1;
+                                int _date1 = _parse.getDate();
+                                mPickTime = _month + "月" + _date1 + "日";
+
+                                getOnedayDataFromNetWork(_CurrentTime);
+                            }
                         } else {
-
-                            //解析时间并显示
-                            SimpleDateFormat _SDF2 =  new SimpleDateFormat("yyyy-MM-dd");
-                            Date _parse = _SDF2.parse(_CurrentTime);
-                            int _month = _parse.getMonth() + 1;
-                            int _date1 = _parse.getDate();
-                            mPickTime = _month+"月"+_date1+"日";
-
-                            getOnedayDataFromNetWork(_CurrentTime);
+                            Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                } catch (ParseException e) {
-                    e.printStackTrace();
                 }
             }
-
-            }
         });
-
     }
-
-
-
-
-
 
 
     /**
@@ -541,7 +558,6 @@ public class HomeFragment extends Fragment {
         String _TodayStr = _sdf.format(date);
         return _TodayStr;
     }
-
 
 
     /**
@@ -849,6 +865,10 @@ public class HomeFragment extends Fragment {
                 case SCREEN_SHOT_SUCCESS:
                     mController.openShare(getActivity(), false);
                     break;
+                case HIS_DATA_SUCCESS:
+                    Intent _intent = new Intent(getActivity(), HistoryDataActivity.class);
+                    getActivity().startActivity(_intent);
+                    break;
                 default:
                     break;
             }
@@ -984,9 +1004,10 @@ public class HomeFragment extends Fragment {
         //显示折线图
         LineChartView _line_chart_view = new LineChartView(getContext());
         _line_chart_view.setmListDatas(_todayData);
+
+
         mLinearChart.removeAllViews();
         mLinearChart.addView(_line_chart_view);
-
 
         //上传当天以及最近7天的所有数据到服务端
         if (CommonUtil.isnetWorkAvilable(getContext())) {

@@ -1,72 +1,76 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/common_white_color"
     tools:context="com.maikeapp.maikewatch.fragment.HomeFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        >
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/home_line_date_and_progress_height"
-                android:orientation="vertical"
-                android:background="@drawable/home_dategloble_bg">
+                android:background="@drawable/home_dategloble_bg"
+                android:orientation="vertical">
+
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/common_topbar_height"
-                    >
+                    android:layout_height="@dimen/common_topbar_height">
 
                     <ImageView
                         android:id="@+id/iv_home_history_data"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_alignParentLeft="true"
-                        android:src="@drawable/go_history_data"
-                        android:paddingRight="@dimen/home_topbar_nav_share_padding"
                         android:paddingLeft="@dimen/home_topbar_nav_share_padding"
-                        />
+                        android:paddingRight="@dimen/home_topbar_nav_share_padding"
+                        android:src="@drawable/go_history_data" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_centerHorizontal="true"
-                        android:gravity="center_vertical"
-                        >
+                        android:gravity="center_vertical">
+
                         <ImageView
                             android:id="@+id/iv_left_day"
                             android:layout_width="@dimen/home_topbar_nav_left_width"
                             android:layout_height="@dimen/home_topbar_nav_left_height"
-                            android:background="@drawable/nav_left_move"/>
+                            android:background="@drawable/nav_left_move"
+                            android:padding="5dp" />
+
                         <ImageView
                             android:layout_width="@dimen/home_topbar_nav_date_width_or_height"
                             android:layout_height="@dimen/home_topbar_nav_date_width_or_height"
+                            android:layout_marginLeft="@dimen/home_topbar_nav_date_margin_left"
                             android:background="@drawable/nav_date"
-                            android:layout_marginLeft="@dimen/home_topbar_nav_date_margin_left"/>
+                            android:padding="9dp" />
+
                         <TextView
                             android:id="@+id/tv_home_one_day_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/topbar_date_text_margin_left"
                             android:text="4月16日"
                             android:textColor="@color/common_white_color"
-                            android:textSize="@dimen/common_topbar_text_font_size"
-                            android:layout_marginLeft="@dimen/topbar_date_text_margin_left"
-                            />
+                            android:textSize="@dimen/common_topbar_text_font_size" />
+
                         <ImageView
                             android:id="@+id/iv_right_day"
                             android:layout_width="@dimen/home_topbar_nav_left_width"
                             android:layout_height="@dimen/home_topbar_nav_left_height"
+                            android:layout_marginLeft="@dimen/home_topbar_nav_date_margin_left"
                             android:background="@drawable/nav_right_move"
-                            android:layout_marginLeft="@dimen/home_topbar_nav_date_margin_left"/>
+                            android:padding="9dp" />
                     </LinearLayout>
 
                     <ImageView
@@ -74,34 +78,34 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_alignParentRight="true"
-                        android:src="@drawable/nav_share"
-                        android:paddingRight="@dimen/home_topbar_nav_share_padding"
                         android:paddingLeft="@dimen/home_topbar_nav_share_padding"
-                        />
+                        android:paddingRight="@dimen/home_topbar_nav_share_padding"
+                        android:src="@drawable/nav_share" />
 
                 </RelativeLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="vertical">
+
                     <com.maikeapp.maikewatch.view.CirclePercentView
                         android:id="@+id/circleView"
-                        app:stripeWidth="15dp"
-                        app:centerTextSize="16sp"
-                        app:percent="0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        />
+                        app:centerTextSize="16sp"
+                        app:percent="0"
+                        app:stripeWidth="15dp" />
+
                     <TextView
                         android:id="@+id/tv_home_one_day_sports_target"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/common_white_color"
-                        android:textSize="@dimen/common_content_text_font_size"
                         android:layout_marginTop="@dimen/home_globle_margin_top"
-                        />
+                        android:textColor="@color/common_white_color"
+                        android:textSize="@dimen/common_content_text_font_size" />
                     <!--
                     <Button
                         android:id="@+id/button"
@@ -113,138 +117,136 @@
                 </LinearLayout>
 
             </LinearLayout>
-            
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/home_line_oneday_datas_height"
-                android:orientation="horizontal"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                >
+                android:orientation="horizontal">
                 <!--步数 start-->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    >
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="@dimen/home_line_oneday_onedata_img_width_or_height"
                         android:layout_height="@dimen/home_line_oneday_onedata_img_width_or_height"
-                        android:background="@drawable/home_bushu"/>
+                        android:background="@drawable/home_bushu" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
                         android:text="@string/home_line_onedata_bushu"
                         android:textColor="@color/common_content_gray_text_font_color"
-                        android:textSize="@dimen/common_content_text_font_size"
-                        android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
-                        />
+                        android:textSize="@dimen/common_content_text_font_size" />
+
                     <TextView
                         android:id="@+id/tv_home_one_day_sum_steps"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
                         android:text="0步"
                         android:textColor="@color/common_content_dark_text_font_color"
-                        android:textSize="@dimen/common_content_text_font_size"
-                        android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
-                        />
+                        android:textSize="@dimen/common_content_text_font_size" />
                 </LinearLayout>
                 <!--步数 end-->
 
                 <!--热量 start-->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
                     android:layout_marginLeft="@dimen/home_line_oneday_onedata_margin_left_or_right"
                     android:layout_marginRight="@dimen/home_line_oneday_onedata_margin_left_or_right"
-                    >
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="@dimen/home_line_oneday_onedata_img_width_or_height"
                         android:layout_height="@dimen/home_line_oneday_onedata_img_width_or_height"
-                        android:background="@drawable/home_reliang"/>
+                        android:background="@drawable/home_reliang" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
                         android:text="@string/home_line_onedata_reliang"
                         android:textColor="@color/common_content_gray_text_font_color"
-                        android:textSize="@dimen/common_content_text_font_size"
-                        android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
-                        />
+                        android:textSize="@dimen/common_content_text_font_size" />
+
                     <TextView
                         android:id="@+id/tv_home_one_day_sum_calories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
                         android:text="0千卡"
                         android:textColor="@color/common_content_dark_text_font_color"
-                        android:textSize="@dimen/common_content_text_font_size"
-                        android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
-                        />
+                        android:textSize="@dimen/common_content_text_font_size" />
                 </LinearLayout>
                 <!--热量 end-->
 
                 <!--里程 start-->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    >
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="@dimen/home_line_oneday_onedata_img_width_or_height"
                         android:layout_height="@dimen/home_line_oneday_onedata_img_width_or_height"
-                        android:background="@drawable/home_bushu"/>
+                        android:background="@drawable/home_bushu" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
                         android:text="@string/home_line_onedata_licheng"
                         android:textColor="@color/common_content_gray_text_font_color"
-                        android:textSize="@dimen/common_content_text_font_size"
-                        android:layout_marginTop="@dimen/home_line_oneday_onedata_intro_tv_margin_top"
-                        />
+                        android:textSize="@dimen/common_content_text_font_size" />
+
                     <TextView
                         android:id="@+id/tv_home_one_day_sum_distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
                         android:text="0公里"
                         android:textColor="@color/common_content_dark_text_font_color"
-                        android:textSize="@dimen/common_content_text_font_size"
-                        android:layout_marginTop="@dimen/home_line_oneday_onedata_data_margin_top"
-                        />
+                        android:textSize="@dimen/common_content_text_font_size" />
                 </LinearLayout>
                 <!--里程 end-->
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="@color/home_line_oneday_bg_border"
-                />
+                android:background="@color/home_line_oneday_bg_border" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/home_today_data_str"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/home_today_data_str_margin_top"
-                />
+                android:text="@string/home_today_data_str" />
+
             <LinearLayout
                 android:id="@+id/line_other_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center_horizontal"
-                >
+                android:orientation="vertical">
 
 
             </LinearLayout>
         </LinearLayout>
 
-        
+
     </ScrollView>
 
 </LinearLayout>

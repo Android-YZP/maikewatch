@@ -27,7 +27,7 @@ public class DBDao {
 
     private ArrayList<TodayDatas> mTodayList = new ArrayList<TodayDatas>();
     private ArrayList<OneDayData> mTodayList2 = new ArrayList<OneDayData>();
-    private int mCount = -30;
+
     private TodayDatas.HourStemp mHourStemp;
     private int userid;
     private int mDataid;
@@ -37,6 +37,8 @@ public class DBDao {
     private boolean isHourStep = true;
     private ArrayList<OneDayData> mTodayList7;
     private ArrayList<OneDayData> mTodayList30;
+    private boolean isHave = true;
+    private int  mCount = -30;
 
     public DBDao(Context context) {
         helper = new DBHelper(context);
@@ -83,7 +85,7 @@ public class DBDao {
 //                Log.d("YZP的数据", completeHour + "completeHour" + steps + "steps" + mDataid + "YZP");
 //                addHourStep(completeHour, steps, mDataid);//添加新的7天的步数
 //            }
-            boolean isHave = true;
+//            检查30天以前的数据并删除
             while (isHave) {
                 mCount--;
                 //删除掉30天以前的数据
@@ -92,7 +94,6 @@ public class DBDao {
                 int thisMonth = datePlus(myDate, mCount).getMonth() + 1;//thisMonth = 5
                 int thisDate = datePlus(myDate, mCount).getDate();//thisDate = 30
                 String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
-
                 isHave = deleteDatas(userid, _CurrentTime);//返回是否有数据/并且删除数据
             }
         }

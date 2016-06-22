@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 
@@ -24,9 +25,11 @@ import java.util.List;
 /**
  * Created by SunnyJiang on 2016/5/31.
  */
-public class LineChartView extends LinearLayout{
+public class LineChartView extends LinearLayout {
     private Context mContext;
     private List<OneDayData> mListDatas;
+    private int startX;
+    private int startY;
 
     public LineChartView(Context context) {
         super(context);
@@ -60,7 +63,7 @@ public class LineChartView extends LinearLayout{
                 int hour = _one_day_data.getCompleteHour();
                 //小时，步数
                 int _steps = _one_day_data.getSteps();
-                if (_steps>_max){
+                if (_steps > _max) {
                     _max = _steps;
                 }
                 series.add(hour, _steps);
@@ -82,7 +85,7 @@ public class LineChartView extends LinearLayout{
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
 //        Log.d(CommonConstants.LOGCAT_TAG_NAME,"pTodayData size is "+pTodayData.size()+",max is "+_max);
-        int _y_value = (_max/1000)*1000+1000;
+        int _y_value = (_max / 1000) * 1000 + 1000;
         mRenderer.setYAxisMax(_y_value);//y轴最大值600
         mRenderer.setYLabels(3);//设置Y轴刻度个数（貌似不太准确）
         mRenderer.setXAxisMax(23);
@@ -132,4 +135,30 @@ public class LineChartView extends LinearLayout{
     }
 
 
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                getParent().requestDisallowInterceptTouchEvent(true);// 不要拦截,
+                // 这样是为了保证ACTION_MOVE调用
+                startX = (int) ev.getRawX();
+                startY = (int) ev.getRawY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                int endX = (int) ev.getRawX();
+                int endY = (int) ev.getRawY();
+
+                if (Math.abs(endX - startX) > Math.abs(endY - startY)) {// 左右滑动
+                    getParent().requestDisallowInterceptTouchEvent(true);// 不要拦截,
+                }else {//上下滑动
+                    getParent().requestDisallowInterceptTouchEvent(false);//拦截
+                }
+                break;
+            default:
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
 }
