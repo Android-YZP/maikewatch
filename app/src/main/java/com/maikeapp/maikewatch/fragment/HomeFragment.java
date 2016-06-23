@@ -118,6 +118,7 @@ public class HomeFragment extends Fragment {
     private ImageView mRightDay;
     private int mCount = 0;
     private int mCount1 = 0;
+    private boolean isShow = true;
 
 
     public HomeFragment() {
@@ -137,7 +138,14 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         findView(view);
         mDbDao = new DBDao(getActivity());
+        isShow = true;
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        isShow = false;
     }
 
     @Override
@@ -332,8 +340,8 @@ public class HomeFragment extends Fragment {
                 Date _today = new Date();
                 if (BuildConfig.DEBUG) Log.d("HomeFragment", "_today:" + _today);
                 setTodayDate(_today);
-                //同步手表数据
 
+                //同步手表数据
                 isRunning = true;
                 syncWatchData();
             }
@@ -784,6 +792,7 @@ public class HomeFragment extends Fragment {
             String errorMsg = "同步失败，请重试";
             CommonUtil.sendErrorMessage(errorMsg, handler);
             running = false;//结束运行
+
         }
 
 
@@ -846,7 +855,9 @@ public class HomeFragment extends Fragment {
                     break;
                 case CommonConstants.FLAG_HOME_SYNC_SUCCESS:
                     isRunning = false;
-                    updateUIAfterSync();//更新界面信息
+                    if (isShow){//可以显示则显示
+                        updateUIAfterSync();//更新界面信息
+                    }
                     break;
                 case CommonConstants.FLAG_HOME_GET_ONE_DAY_DATA_SUCCESS:
                     if (isAdded()) {
@@ -860,7 +871,9 @@ public class HomeFragment extends Fragment {
                     disableApp();//app不可用
                     break;
                 case UPLOAD_SUCCESS:
-                    Toast.makeText(getContext(), "同步完成", Toast.LENGTH_SHORT).show();
+                    if (isShow){//可以显示则显示
+                        Toast.makeText(getContext(), "同步完成", Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case SCREEN_SHOT_SUCCESS:
                     mController.openShare(getActivity(), false);
