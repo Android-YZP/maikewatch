@@ -77,25 +77,12 @@ public class DBDao {
             }
             deleteHourStep1(mDataid,completeHour);//删除7天的步数数据
             addHourStep(completeHour, steps, mDataid);//添加新的7天的步数
-
-//            isHourStep = findHourStep(completeHour, mDataid);
-//            if (isHourStep) {
-//                upDateHourStep(completeHour, steps, mDataid);
-//            } else {
-//                Log.d("YZP的数据", completeHour + "completeHour" + steps + "steps" + mDataid + "YZP");
-//                addHourStep(completeHour, steps, mDataid);//添加新的7天的步数
-//            }
-//            检查30天以前的数据并删除
-            while (isHave) {
-                mCount--;
-                //删除掉30天以前的数据
                 Date myDate = new Date();
                 int thisYear = datePlus(myDate, mCount).getYear() + 1900;//thisYear = 2003
                 int thisMonth = datePlus(myDate, mCount).getMonth() + 1;//thisMonth = 5
                 int thisDate = datePlus(myDate, mCount).getDate();//thisDate = 30
                 String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
                 isHave = deleteDatas(userid, _CurrentTime);//返回是否有数据/并且删除数据
-            }
         }
         //上传目标步数(以上传的状态为准,以当前目标覆盖标记为0的目标数据,)
         changeDataTarStep(String.valueOf(user.getSportsTarget()), userid);
@@ -532,7 +519,7 @@ public class DBDao {
         int _dataid = 0;
         // 获取到可读的数据库
         SQLiteDatabase db = helper.getWritableDatabase();
-        int rownumber = db.delete("datainfo", "userid=? AND date=?", new String[]{userid + "", Date});
+        int rownumber = db.delete("datainfo", "userid=? AND date<=?", new String[]{userid + "", Date});
         return rownumber != 0;
     }
 

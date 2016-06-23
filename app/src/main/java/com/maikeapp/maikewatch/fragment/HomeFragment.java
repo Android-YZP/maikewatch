@@ -206,9 +206,13 @@ public class HomeFragment extends Fragment {
                /*测试数据*/
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //                mDbDao.addHourStep(18,3000,2);
-//                mDbDao.addData("2016-6-19", 20, 2000, 2000, 25.5f, 123.3f, 1);
-//                mDbDao.addData("2016-6-21", 20, 2000, 2000, 25.5f, 123.3f, 1);
-//                mDbDao.addData("2016-6-20", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-5-19", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-5-21", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-5-20", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-5-02", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-5-11", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-5-09", 20, 2000, 2000, 25.5f, 123.3f, 1);
+//                mDbDao.addData("2016-5-07", 20, 2000, 2000, 25.5f, 123.3f, 1);
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 showUI(todayOnDayDays);
@@ -224,12 +228,6 @@ public class HomeFragment extends Fragment {
                         syncWatchData();
                     }
                 }
-
-                //传入用户名和时间,输出从数据库每小时的数据,界面显示
-//                if (todayOnDayDays != null && todayOnDayDays.size() > 0) {
-////                    Log.d("oneDayDatas的数据", "oneDayDatas:" + todayOnDayDays.toString());
-
-
                 Log.d("_todayOnDayDays的数据", "_todayOnDayDays:" + todayOnDayDays);
             } else {
                 ToastUtil.showTipShort(getActivity(), "请先绑定手表");
@@ -308,7 +306,6 @@ public class HomeFragment extends Fragment {
                 }
             }
         }).start();
-
     }
 
 
@@ -886,8 +883,6 @@ public class HomeFragment extends Fragment {
                     break;
             }
         }
-
-
     };
 
     /**
@@ -898,23 +893,42 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * 更新UI-一天的数据
+     * 更新UI-一天的数据```````````````````````````````````````````````````````````````````````````````````````````````````````````
      */
     private void updateUIOfOneDayData() {
         isUpdataUI = true;//正在跟新界面
 
-        if (m_day_datas != null && m_day_datas.size() > 0) {
-            OneDayData _head_one_day_data = m_day_datas.get(0);
+        //总步数
+         int steps = 0;
+        for (int i = 0; i < m_day_datas.size(); i++) {
+            steps += m_day_datas.get(i).getSteps();
+//            Log.d("sum_step的数据", "sum_step:" + sum_step);
+        }
+        int _height = mUser.getHeight() == 0 ? 175 : mUser.getHeight();
+        int _weight = mUser.getWeight() == 0 ? 70 : mUser.getWeight();
+        Log.d("jlj_height_and_weight", _height + "," + _weight);
+        double _distance = ((0.45 * _height * steps) / 100) / 1000;//里程数
+//        double _calories = 0.53*_height+0.58*_weight+0.04*_sum_step-135;//热量
+//        double _calories2 = _weight*_distance*1.036;//热量
+        double _calories = steps * _weight * 0.0006564;//热量
+        String percent = CommonUtil.calcPercent(steps, mUser.getSportsTarget() == 0 ? 2000 : mUser.getSportsTarget());//百分比(个人目标没有，默认取2000)
+        Log.d(CommonConstants.LOGCAT_TAG_NAME + "_result", "总步数：" + steps + ",百分比：" + percent + ",热量：" + _calories + ",里程数：" + _distance);
 
-            int _percent = _head_one_day_data.getCompletedPercent();
+        if (m_day_datas != null && m_day_datas.size() > 0) {
+
+            //更新界面
+            mTvSumSteps.setText(steps + "步");
+            mTvSumCarolies.setText(CommonUtil.formatData(Double.valueOf(_calories), 2) + "千卡");
+            mTvSumDistance.setText(CommonUtil.formatData(Double.valueOf(_distance), 2) + "公里");
+
+            int _percent = Integer.parseInt(percent);
             if (_percent > 100) {
                 _percent = 100;
             }
             mCirclePercentView.setPercent(_percent + 1);
+//
+            OneDayData _head_one_day_data = m_day_datas.get(0);
             mTvSportsTarget.setText("目标:" + (_head_one_day_data.getTargetSteps() == 0 ? mUser.getSportsTarget() : _head_one_day_data.getTargetSteps()));
-            mTvSumSteps.setText(_head_one_day_data.getCompletedSteps() + "步");
-            mTvSumCarolies.setText(_head_one_day_data.getKcal() + "千卡");
-            mTvSumDistance.setText(_head_one_day_data.getiKils() + "公里");
 
             //显示折线图
             LineChartView _line_chart_view = new LineChartView(getActivity());
@@ -924,12 +938,10 @@ public class HomeFragment extends Fragment {
 //            lineView(m_day_datas);
         } else {
             mCirclePercentView.setPercent(0 + 1);
-
             mTvSportsTarget.setText("目标:" + (mUser.getSportsTarget() == 0 ? 2000 : mUser.getSportsTarget()));
             mTvSumSteps.setText("0步");
             mTvSumCarolies.setText("0千卡");
             mTvSumDistance.setText("0公里");
-
 //            lineView(null);
             //显示折线图
             LineChartView _line_chart_view = new LineChartView(getActivity());

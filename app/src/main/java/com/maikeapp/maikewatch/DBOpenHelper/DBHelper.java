@@ -22,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 ",height int" +
                 ",weight int" +
                 ",age int)");
-        db.execSQL("create table datainfo (_id integer primary key autoincrement,date varchar(30)" +
+        db.execSQL("create table datainfo (_id integer primary key autoincrement,date date" +
                 ",percent int" +
                 ",targetstep int" +
                 ",totalstep int" +
