@@ -89,7 +89,7 @@ public class HistoryDataActivity extends AppCompatActivity {
         mUser = CommonUtil.getUserInfo(this);
 
         //查询最近7天的数据
-        mDBDao = new DBDao(this);
+        mDBDao = new DBDao(HistoryDataActivity.this);
 
         if (CommonUtil.isnetWorkAvilable(this)){//有网络从网络获取数据并且显示
             //弹出加载进度条
@@ -97,6 +97,8 @@ public class HistoryDataActivity extends AppCompatActivity {
             queryRecentlySportDataForWeekFromNetWork();
             //查询最近30天的数据
             queryRecentlySportDataForMonthFromNetWork();
+
+
         }else {//没有网络就获取本地数据库所有的数据,进行显示
             ArrayList<OneDayData> weekDatas = mDBDao.weekDatas(mUser.getLoginName());
             ArrayList<OneDayData> oneDayDatas = mDBDao.monthDatas(mUser.getLoginName());
@@ -420,6 +422,10 @@ public class HistoryDataActivity extends AppCompatActivity {
                     updateUIAfterGetRecentDatasForWeek();
                     break;
                 case CommonConstants.FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS:
+                    /////////////////////////////////////////////////////////////////////////////储存一份到本地的数据库中
+                    //传入user,List<OneDayData>.加入Data数据库中
+                    Log.d("HistoryDataActivity的数据", mUser.getLoginName()+"YZP");
+                    mDBDao.addHistoryData(m_day_datas_for_month,  mUser.getLoginName());
                     updateUIAfterGetRecentDatasForMonth();
                     break;
                 default:

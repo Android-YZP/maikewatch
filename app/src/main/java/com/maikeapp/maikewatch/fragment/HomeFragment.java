@@ -202,7 +202,7 @@ public class HomeFragment extends Fragment {
                 int thisDate = myDate.getDate();//thisDate = 30
                 String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
                 Log.d("thisDate的数据", String.valueOf(thisYear) + "-" + thisMonth + "-" + thisDate);
-                todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+
                /*测试数据*/
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //                mDbDao.addHourStep(18,3000,2);
@@ -214,19 +214,26 @@ public class HomeFragment extends Fragment {
 //                mDbDao.addData("2016-5-09", 20, 2000, 2000, 25.5f, 123.3f, 1);
 //                mDbDao.addData("2016-5-07", 20, 2000, 2000, 25.5f, 123.3f, 1);
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                showUI(todayOnDayDays);
+//                if (!isRunning){
+//                    todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+//                }
+//                todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+//                showUI(todayOnDayDays);
                 //显示本地数据之后,同步手表数据
-                if (!isRunning) {
 
+                if (!isRunning) {//不在同步的时候.查找数据显示界面
+                    todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+                    showUI(todayOnDayDays);//只查找一次,存在内存中
                     MainActivity mainUI = (MainActivity) getActivity();
                     boolean sync = mainUI.getSync();
-                    if (!sync) {//保证只同步一次
+                    if (!sync) {//保证每次进入APP只同步一次
                         isRunning = true;//同步数据刷新界面开始运行
                         mainUI.setSync(true);
                         Log.d("在更新了", "在更新了" + mainUI.getSync() + "");
                         syncWatchData();
                     }
+                }else {//在同步的时候,只显示界面,不做任何操作
+                    showUI(todayOnDayDays);//不在同步的时候,只显示界面
                 }
                 Log.d("_todayOnDayDays的数据", "_todayOnDayDays:" + todayOnDayDays);
             } else {
@@ -237,7 +244,6 @@ public class HomeFragment extends Fragment {
                 mLinearChart.removeAllViews();
                 mLinearChart.addView(_line_chart_view);
             }
-
         } else {
             mTvSportsTarget.setText("");
             mTvSumSteps.setText("0步");
@@ -435,10 +441,17 @@ public class HomeFragment extends Fragment {
                     //获取相应时间的全部数据并且显示
                     if (!isRunning) {//防止并行更改数据库发生崩溃
                         //先从本地获取数据显示界面没有则从网络获取
+                        int id = 0;
                         int _userid = mDbDao.findUser(mUser.getLoginName());
                         Log.d("_one_datetime的数据", _CurrentTime);
                         int dataid = mDbDao.findData(_userid, _CurrentTime);
-                        if (dataid != 0) {//本地有数据从本地查找
+                        for (int i = 0; i < 23; i++) {//判断数据库中是否存在当天的数据
+                            int _hourStepID = mDbDao.findHourStep(i, dataid);
+                            if (_hourStepID != 0){
+                                id = _hourStepID;
+                            }
+                        }
+                        if (id != 0) {//本地有数据从本地查找
                             todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
                             showUI(todayOnDayDays);
 
@@ -496,11 +509,18 @@ public class HomeFragment extends Fragment {
 
                         //获取相应时间的全部数据并且显示
                         if (!isRunning) {//防止并行更改数据库发生崩溃
-                            //先从本地获取数据显示界面没有则从网络获取
+                            int id = 0;
                             int _userid = mDbDao.findUser(mUser.getLoginName());
                             Log.d("_one_datetime的数据", _CurrentTime);
                             int dataid = mDbDao.findData(_userid, _CurrentTime);
-                            if (dataid != 0) {//本地有数据从本地查找
+                            for (int i = 0; i < 23; i++) {//判断数据库中是否存在当天的数据
+                                int _hourStepID = mDbDao.findHourStep(i, dataid);
+                                if (_hourStepID != 0){
+                                    id = _hourStepID;
+                                }
+                            }
+
+                            if (id != 0) {//本地有数据从本地查找
                                 todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
                                 showUI(todayOnDayDays);
 
@@ -582,10 +602,20 @@ public class HomeFragment extends Fragment {
 
                 if (!isRunning) {//防止并行更改数据库发生崩溃
                     //先从本地获取数据显示界面没有则从网络获取
+                    int id = 0;
                     int _userid = mDbDao.findUser(mUser.getLoginName());
                     Log.d("_one_datetime的数据", _one_datetime);
-                    int dataid = mDbDao.findData(_userid, _one_datetime);
-                    if (dataid != 0) {//本地有数据从本地查找
+                    //dataid有很多的数据,在hourStep中是没有的.以hourStep表中的数据为主
+                    int dataid = mDbDao.findData(_userid, _one_datetime);//需要修改的地方
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    for (int i = 0; i < 23; i++) {
+                        int _hourStepID = mDbDao.findHourStep(i, dataid);
+                        if (_hourStepID != 0){
+                            id = _hourStepID;
+                        }
+                    }
+
+                    if (id != 0) {//本地有数据从本地查找
                         todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _one_datetime);
                         showUI(todayOnDayDays);
                         mTvDate.setText(mPickTime);
@@ -779,7 +809,7 @@ public class HomeFragment extends Fragment {
                 isRunning = false;
             } catch (Exception e) {
                 e.printStackTrace();
-                CommonUtil.sendErrorMessage("同步失败，服务端异常", handler);
+                CommonUtil.sendErrorMessage("同步失败", handler);
                 isRunning = false;
             }
         }
@@ -869,15 +899,17 @@ public class HomeFragment extends Fragment {
                     break;
                 case UPLOAD_SUCCESS:
                     if (isShow){//可以显示则显示
-                        Toast.makeText(getContext(), "同步完成", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "同步完成", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case SCREEN_SHOT_SUCCESS:
                     mController.openShare(getActivity(), false);
                     break;
                 case HIS_DATA_SUCCESS:
-                    Intent _intent = new Intent(getActivity(), HistoryDataActivity.class);
-                    getActivity().startActivity(_intent);
+                    if (isShow){
+                        Intent _intent = new Intent(getActivity(), HistoryDataActivity.class);
+                        getActivity().startActivity(_intent);
+                    }
                     break;
                 default:
                     break;

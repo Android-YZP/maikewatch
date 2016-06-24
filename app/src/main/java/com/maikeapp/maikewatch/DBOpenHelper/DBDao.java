@@ -68,10 +68,10 @@ public class DBDao {
             }
             mDataid = findData(userid, sportsTime);
             if (mDataid != 0) {//这天的数据在数据库里面是存在的,才用updata更新操作
-                changeDataInfo(sportsTime, completedPercent, 0, kcal, v, userid, sportsTime);
+                changeDataInfo(sportsTime, completedPercent, 0, kcal, v, userid, sportsTime,0);
                 UpdataTotalStep(loginName, sportsTime);
             } else {
-                addData(sportsTime, completedPercent, targetSteps, steps, kcal, v, userid);//添加当前的目标数
+                addData(sportsTime, completedPercent, targetSteps, steps, kcal, v, userid,0);//添加当前的目标数
                 UpdataTotalStep(loginName, sportsTime);//更新总数
                 mDataid = findData(userid, sportsTime);
             }
@@ -87,6 +87,42 @@ public class DBDao {
         //上传目标步数(以上传的状态为准,以当前目标覆盖标记为0的目标数据,)
         changeDataTarStep(String.valueOf(user.getSportsTarget()), userid);
     }
+
+    /**
+     * 添加历史数据到数据库中
+     * @param oneDayDatas
+     * @param user
+     */
+    public void addHistoryData(List<OneDayData> oneDayDatas , String user){
+        int _userID = findUser(user);
+        String _Date;
+        for (int i = 0; i < oneDayDatas.size(); i++) {
+            OneDayData oneDayData = oneDayDatas.get(i);
+            //时间数据格式的转换
+            SimpleDateFormat S_D_F = new SimpleDateFormat("yyyy/MM/dd") ;
+            try {
+                Date _parseTime = S_D_F.parse(oneDayData.getSportsTime());
+                int thisYear = _parseTime.getYear() + 1900;//thisYear = 2003
+                int thisMonth = _parseTime.getMonth() + 1;//thisMonth = 5
+                int thisDate =_parseTime.getDate();//thisDate = 30
+                _Date = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
+                mDataid = findData(_userID, _Date);//确认数据库中是否有这天的数据
+                if (mDataid != 0) {//这天的数据在数据库里面是存在的,才用updata更新操作
+                    changeDataInfo(_Date, 0, oneDayData.getCompletedSteps(), 0, 0, _userID, _Date,1);//从网路上拉去的数据标记为1
+                } else {
+                    addData(_Date,0,oneDayData.getTargetSteps(),oneDayData.getCompletedSteps(),0,0,_userID,1);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+
+        }
+
+
+    }
+
 
 
     /**
@@ -264,7 +300,7 @@ public class DBDao {
     /**
      * 更新datainfo数据库
      */
-    public boolean changeDataInfo(String date, int percent, int totalstep, double calorie, double mile, int userid, String Date) {
+    public boolean changeDataInfo(String date, int percent, int totalstep, double calorie, double mile, int userid, String Date,int status) {
 
 //        mCompletedSteps = totalstep + mCompletedSteps;//累加数据算出总步数
 
@@ -277,6 +313,7 @@ public class DBDao {
         values.put("totalstep", totalstep);
         values.put("calorie", calorie);
         values.put("mile", mile);
+        values.put("status", status);
 
         int rownumber = db.update("datainfo", values, "date=? And userid=?", new String[]{Date, String.valueOf(userid)});
         if (rownumber == 0) {
@@ -355,7 +392,7 @@ public class DBDao {
     /**
      * datainfo 表的增加数据
      */
-    public boolean addData(String date, int percent, int targetstep, int totalstep, double calorie, double mile, int userid) {
+    public boolean addData(String date, int percent, int targetstep, int totalstep, double calorie, double mile, int userid,int status) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("date", date);
@@ -365,7 +402,7 @@ public class DBDao {
         values.put("calorie", calorie);
         values.put("mile", mile);
         values.put("userid", userid);
-        values.put("status", 0);
+        values.put("status", status);
         long rowid = db.insert("datainfo", null, values);
         if (rowid == -1) {
             return false;
@@ -623,19 +660,17 @@ public class DBDao {
      *
      * @return
      */
-    public boolean findHourStep(int hour, int dataid) {
+    public int findHourStep(int hour, int dataid) {
         int id = 0;
         // 获取到可读的数据库
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query("hourstepinfo", new String[]{"hour", "dataid"}, "hour=? And dataid=?", new String[]{hour + "", String.valueOf(dataid)}, null, null, null);
         while (cursor.moveToNext()) {
             id = cursor.getInt(0);
-//            Log.d("_id的数据", "dataid:" + id);
         }
-
         cursor.close();
         db.close();
-        return id != 0;
+        return id ;
     }
 
     /**
