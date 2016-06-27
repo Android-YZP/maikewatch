@@ -195,7 +195,6 @@ public class MainActivity extends FragmentActivity {
 //        Log.e("12345567","124324523");
         builder.create().show();
         //下载apk
-
         downloadApk();
     }
 
@@ -284,6 +283,7 @@ public class MainActivity extends FragmentActivity {
         i.setDataAndType(Uri.fromFile(new File(apkfile.getAbsolutePath())), "application/vnd.android.package-archive");
         MainActivity.this.startActivity(i);
     }
+
     /**
      * 判断蓝牙是否开启
      * @return

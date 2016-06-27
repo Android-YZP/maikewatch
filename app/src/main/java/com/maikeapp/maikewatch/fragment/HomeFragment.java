@@ -540,7 +540,6 @@ public class HomeFragment extends Fragment {
                                 int _month = _parse.getMonth() + 1;
                                 int _date1 = _parse.getDate();
                                 mPickTime = _month + "月" + _date1 + "日";
-
                                 getOnedayDataFromNetWork(_CurrentTime);
                             }
                         } else {
