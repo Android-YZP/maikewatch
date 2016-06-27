@@ -53,7 +53,7 @@
     <dimen name="home_topbar_nav_date_margin_left">19dp</dimen>
     <dimen name="topbar_date_text_margin_left">10dp</dimen>
     <dimen name="home_topbar_nav_share_width">28dp</dimen>
-    <dimen name="home_topbar_nav_share_padding">24dp</dimen>
+    <dimen name="home_topbar_nav_share_padding">12dp</dimen>
     <dimen name="home_line_oneday_datas_height">104dp</dimen>
     <dimen name="home_line_oneday_datas_margin_left">65dp</dimen>
     <dimen name="home_line_oneday_onedata_img_width_or_height">33dp</dimen>
@@ -144,4 +144,5 @@
     <dimen name="user_login_text_line_height">30dp</dimen>
     <dimen name="user_login_text_font_size">20sp</dimen>
     <dimen name="user_login_creative_live_margin_top">10dp</dimen>
+    <dimen name="home_topbar_nav_histor_padding">12dp</dimen>
 </resources>

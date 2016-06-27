@@ -237,32 +237,15 @@ public class PsGlobalActivity extends AppCompatActivity {
                             // 表示同步成功
                             mUser.setSportsTarget(_target);
                             CommonUtil.saveUserInfo(mUser, PsGlobalActivity.this);//覆盖用户个人目标信息/覆盖用户电量/用户固件版本号
+                            // 同步完成
+                            handler.sendEmptyMessage(CommonConstants.FLAG_SET_TARGET_SUCCESS);
+                            //连接成功后断开设备
+                            JSONObject object = device.disconnectDevice(false);        // 断开设备
+                            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
 
+                            running = false;//提前结束运行，不提示错误信息
+                            break;//结束循环
 
-                            //上传信息到服务端
-                            String _set_result = mUserBusiness.setSportsTarget(mUser);
-                            Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_result", "set_result="+_set_result);
-                            JSONObject _json_result = new JSONObject(_set_result);
-                            boolean _success = JsonUtils.getBoolean(_json_result, "Success");
-                            if (_success) {
-                                // 同步完成
-                                handler.sendEmptyMessage(CommonConstants.FLAG_SET_TARGET_SUCCESS);
-
-                                //连接成功后断开设备
-                                JSONObject object = device.disconnectDevice(false);        // 断开设备
-                                Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_disconnect", "disconncet = " + object);        // 如果为result = 0，则成功，否则失败
-
-                                running = false;//提前结束运行，不提示错误信息
-                                break;//结束循环
-
-                            } else {
-                                //提示服务端给出的错误信息
-                                String _errorMsg = JsonUtils.getString(_json_result,"Message");
-                                if (_errorMsg==null||_errorMsg.equals("")){
-                                    _errorMsg = "设置个人目标失败，请检查网络";
-                                }
-                                CommonUtil.sendErrorMessage(_errorMsg, handler);
-                            }
 
 
                         } else {
@@ -278,10 +261,6 @@ public class PsGlobalActivity extends AppCompatActivity {
                         e.printStackTrace();
                         //发现连接异常，结束本次循环，进入下一次连接
                         continue;
-                    } catch (ServiceException e) {
-                        e.printStackTrace();
-                        CommonUtil.sendErrorMessage(e.getMessage(), handler);
-                        return;
                     } catch (Exception e) {
                         e.printStackTrace();
                         CommonUtil.sendErrorMessage("同步失败，数据异常，请重试", handler);
@@ -335,6 +314,45 @@ public class PsGlobalActivity extends AppCompatActivity {
      */
     private void setTargetCompleted() {
         Toast.makeText(PsGlobalActivity.this,"设置成功",Toast.LENGTH_SHORT).show();
+
+        /**
+         * 开启副线称-上传运动目标到服务端
+         */
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    //上传信息到服务端
+                    String _set_result = mUserBusiness.setSportsTarget(mUser);
+                    Log.d(CommonConstants.LOGCAT_TAG_NAME + "_set_result", "set_result="+_set_result);
+                    JSONObject _json_result = new JSONObject(_set_result);
+                    boolean _success = JsonUtils.getBoolean(_json_result, "Success");
+                    if (_success) {
+                        Log.d(CommonConstants.LOGCAT_TAG_NAME, "upSportsTargetToServer Success");
+
+
+
+                    } else {
+                        //提示服务端给出的错误信息
+                        String _errorMsg = JsonUtils.getString(_json_result,"Message");
+                        if (_errorMsg==null||_errorMsg.equals("")){
+                            _errorMsg = "设置个人目标失败，请检查网络";
+                        }
+                        CommonUtil.sendErrorMessage(_errorMsg, handler);
+                    }
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                    //CommonUtil.sendErrorMessage(e.getMessage(), handler);
+//                return;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    //CommonUtil.sendErrorMessage("同步失败，数据异常，请重试", handler);
+//                return;
+                }
+            }
+        }).start();
+
         PsGlobalActivity.this.finish();
     }
 
