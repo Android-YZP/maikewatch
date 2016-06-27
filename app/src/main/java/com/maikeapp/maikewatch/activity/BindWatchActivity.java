@@ -585,10 +585,10 @@ public class BindWatchActivity extends AppCompatActivity {
 
                 }catch (ServiceException e){
                     e.printStackTrace();
-                    CommonUtil.sendErrorMessage(e.getMessage(),handler);
+                    //CommonUtil.sendErrorMessage(e.getMessage(),handler);
                 }catch(Exception e){
                     e.printStackTrace();
-                    CommonUtil.sendErrorMessage(CommonConstants.MSG_GET_ERROR,handler);
+                    //CommonUtil.sendErrorMessage(CommonConstants.MSG_GET_ERROR,handler);
                 }
             }
         }).start();

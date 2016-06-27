@@ -456,9 +456,12 @@ public class PsInfoActivity extends AppCompatActivity {
                             // 同步完成
                             handler.sendEmptyMessage(CommonConstants.FLAG_SET_TARGET_SUCCESS);
                         }
-                    } catch (Exception e) {
+                    } catch (ServiceException e) {
                         e.printStackTrace();
-                        CommonUtil.sendErrorMessage("设置个人信息失败，请检查网络", handler);
+                        CommonUtil.sendErrorMessage(e.getMessage(),handler);
+                    } catch (Exception e) {
+                        //what = 0;sendmsg 0;
+                        CommonUtil.sendErrorMessage("设置个人信息："+CommonConstants.MSG_GET_ERROR,handler);
                     }
                 } else {
                     CommonUtil.sendErrorMessage("请先登录", handler);
@@ -472,6 +475,9 @@ public class PsInfoActivity extends AppCompatActivity {
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            if(mProgressDialog!=null){
+                mProgressDialog.dismiss();
+            }
             int flag = msg.what;
             switch (flag) {
                 case 0:

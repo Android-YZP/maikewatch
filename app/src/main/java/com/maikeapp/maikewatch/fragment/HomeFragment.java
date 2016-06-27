@@ -359,6 +359,11 @@ public class HomeFragment extends Fragment {
                     ToastUtil.showTipShort(getActivity(), "请先登录");
                     return;
                 }
+
+                if (!mUser.isBindWatch()) {
+                    ToastUtil.showTipShort(getActivity(), "请先绑定手表");
+                    return;
+                }
                 // 用子线程实时监测isRuning
                 mProgressDialog = ProgressDialog.show(getActivity(), null, "正在加载中，请稍后...", true, true);
                 new Thread(new Runnable() {
@@ -388,6 +393,10 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 if (mUser == null) {
                     ToastUtil.showTipShort(getActivity(), "请先登录");
+                    return;
+                }
+                if (!mUser.isBindWatch()) {
+                    ToastUtil.showTipShort(getActivity(), "请先绑定手表");
                     return;
                 }
                 showDatePickerDialogToQueryOneDayData();

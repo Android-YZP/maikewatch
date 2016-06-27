@@ -20,6 +20,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -151,6 +152,9 @@ public class NetWorkUtil {
             in = new BufferedInputStream(urlConnection.getInputStream());
             result = getStrFromInputSteam(in);
 
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            throw new ServiceException("网络不给力，请稍后重试");
         } catch (ConnectException e) {
             e.printStackTrace();
             throw new ServiceException("连接出错，请检查您的网络");
@@ -213,6 +217,9 @@ public class NetWorkUtil {
             in = new BufferedInputStream(urlConnection.getInputStream());
             result = getStrFromInputSteam(in);
 
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            throw new ServiceException("网络不给力，请稍后重试");
         } catch (ConnectException e) {
             e.printStackTrace();
             throw new ServiceException("连接出错，请检查您的网络");
@@ -294,6 +301,9 @@ public class NetWorkUtil {
             result = getStrFromInputSteam(in);
             resultMap.put("result", result);
 
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            throw new ServiceException("网络不给力，请稍后重试");
         } catch (ConnectException e) {
             e.printStackTrace();
             throw new ServiceException("连接出错，请检查您的网络");
