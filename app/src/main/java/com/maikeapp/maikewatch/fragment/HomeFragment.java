@@ -428,7 +428,6 @@ public class HomeFragment extends Fragment {
         mLeftDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCount--;
                 String _CurrentDate = mTvDate.getText().toString();
                 SimpleDateFormat _SDF = new SimpleDateFormat("MM月dd日");
                 try {
@@ -481,7 +480,11 @@ public class HomeFragment extends Fragment {
                             int _date1 = _parse.getDate();
                             mPickTime = _month + "月" + _date1 + "日";
 
-                            getOnedayDataFromNetWork(_CurrentTime);
+                            if(CommonUtil.isnetWorkAvilable(getContext())){//判断当前有没有网络,
+                                getOnedayDataFromNetWork(_CurrentTime);
+                            }else {
+                                Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     } else {
                         Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
@@ -497,7 +500,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 {
-                    mCount--;
                     String _CurrentDate = mTvDate.getText().toString();
                     SimpleDateFormat _SDF = new SimpleDateFormat("MM月dd日");
                     try {
@@ -549,7 +551,12 @@ public class HomeFragment extends Fragment {
                                 int _month = _parse.getMonth() + 1;
                                 int _date1 = _parse.getDate();
                                 mPickTime = _month + "月" + _date1 + "日";
-                                getOnedayDataFromNetWork(_CurrentTime);
+
+                                if(CommonUtil.isnetWorkAvilable(getContext())){//判断当前有没有网络,
+                                    getOnedayDataFromNetWork(_CurrentTime);
+                                }else {
+                                    Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         } else {
                             Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
@@ -624,11 +631,16 @@ public class HomeFragment extends Fragment {
                     }
 
                     if (id != 0) {//本地有数据从本地查找
-                        todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _one_datetime);
-                        showUI(todayOnDayDays);
-                        mTvDate.setText(mPickTime);
+                            todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _one_datetime);
+                            showUI(todayOnDayDays);
+                            mTvDate.setText(mPickTime);
                     } else {
-                        getOnedayDataFromNetWork(_one_datetime);
+                        if(CommonUtil.isnetWorkAvilable(getContext())){//判断当前有没有网络,
+                            getOnedayDataFromNetWork(_one_datetime);
+                        }else {
+                            Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 } else {
                     Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
@@ -639,6 +651,11 @@ public class HomeFragment extends Fragment {
         }, year, monthOfYear, dayOfMonth);
         _data_picker_dialog.show();
     }
+
+
+
+
+
 
     /**
      * 同步手表数据（获取手表端数据，并上传到服务端，并在当前界面展示）

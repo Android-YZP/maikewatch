@@ -39,6 +39,8 @@ public class DBDao {
     private ArrayList<OneDayData> mTodayList30;
     private boolean isHave = true;
     private int  mCount = -30;
+    private String loginName;
+    private String sportsTime;
 
     public DBDao(Context context) {
         helper = new DBHelper(context);
@@ -55,11 +57,11 @@ public class DBDao {
             int completeHour = oneDayDatas.get(i).getCompleteHour();
             double v = oneDayDatas.get(i).getiKils();
             double kcal = oneDayDatas.get(i).getKcal();
-            String loginName = oneDayDatas.get(i).getLoginName();
+            loginName = oneDayDatas.get(i).getLoginName();
             int steps = oneDayDatas.get(i).getSteps();
             int targetSteps = user.getSportsTarget();
             String macAddress = oneDayDatas.get(i).getMacAddress();
-            String sportsTime = oneDayDatas.get(i).getSportsTime();
+            sportsTime = oneDayDatas.get(i).getSportsTime();
             //需要找出datainfo中所有的时间的集合
             userid = findUser(loginName);
             if (userid == 0) {
@@ -84,8 +86,10 @@ public class DBDao {
                 String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
                 isHave = deleteDatas(userid, _CurrentTime);//返回是否有数据/并且删除数据
         }
+        UpdataTotalStep(loginName, sportsTime);
         //上传目标步数(以上传的状态为准,以当前目标覆盖标记为0的目标数据,)
         changeDataTarStep(String.valueOf(user.getSportsTarget()), userid);
+
     }
 
     /**

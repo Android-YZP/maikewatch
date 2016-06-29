@@ -28,6 +28,7 @@ import com.maikeapp.maikewatch.bean.User;
 import com.maikeapp.maikewatch.business.IUserBusiness;
 import com.maikeapp.maikewatch.business.imp.UserBusinessImp;
 import com.maikeapp.maikewatch.config.CommonConstants;
+import com.maikeapp.maikewatch.exception.ServiceException;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.DownUtil;
 import com.maikeapp.maikewatch.util.JsonUtils;
@@ -81,8 +82,19 @@ public class AboutUsActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            mProgressDialog.dismiss();
+            if (mProgressDialog!=null){
+                mProgressDialog.dismiss();
+            }
             int flag = msg.what;
+            if (flag == 0) {
+                String errorMsg = (String) msg.getData().getSerializable("ErrorMsg");
+                try {
+                    Toast.makeText(AboutUsActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
             if (flag == UPDATE_APP) {
                 showUpDateDialog();
             } else if (flag == NO_UPDATA_APP) {
@@ -343,6 +355,9 @@ public class AboutUsActivity extends AppCompatActivity {
                     } else {
                         handler.sendEmptyMessage(NO_UPDATA_APP);
                     }
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                    CommonUtil.sendErrorMessage(e.getMessage(), handler);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -47,7 +47,7 @@
                             android:layout_width="@dimen/home_topbar_nav_left_width"
                             android:layout_height="@dimen/home_topbar_nav_left_height"
                             android:background="@drawable/nav_left_move"
-                            android:padding="5dp" />
+                            android:paddingLeft="20dp" />
 
                         <ImageView
                             android:layout_width="@dimen/home_topbar_nav_date_width_or_height"
@@ -71,7 +71,7 @@
                             android:layout_height="@dimen/home_topbar_nav_left_height"
                             android:layout_marginLeft="@dimen/home_topbar_nav_date_margin_left"
                             android:background="@drawable/nav_right_move"
-                            android:padding="9dp" />
+                            android:paddingRight="20dp" />
                     </LinearLayout>
 
                     <ImageView
