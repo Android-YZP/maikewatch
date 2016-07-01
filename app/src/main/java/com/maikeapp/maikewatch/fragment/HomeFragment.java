@@ -446,49 +446,52 @@ public class HomeFragment extends Fragment {
                     String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
                     Log.d("_CurrentTime减掉的数据", _CurrentTime);
 
-                    //获取相应时间的全部数据并且显示
-                    if (!isRunning) {//防止并行更改数据库发生崩溃
-                        //先从本地获取数据显示界面没有则从网络获取
-                        int id = 0;
-                        int _userid = mDbDao.findUser(mUser.getLoginName());
-                        Log.d("_one_datetime的数据", _CurrentTime);
-                        int dataid = mDbDao.findData(_userid, _CurrentTime);
-                        for (int i = 0; i < 23; i++) {//判断数据库中是否存在当天的数据
-                            int _hourStepID = mDbDao.findHourStep(i, dataid);
-                            if (_hourStepID != 0){
-                                id = _hourStepID;
-                            }
-                        }
-                        if (id != 0) {//本地有数据从本地查找
-                            todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
-                            showUI(todayOnDayDays);
+                    oneDayShow(_CurrentTime);
 
-                            //解析时间并显示
-                            SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
-                            Date _parse = _SDF2.parse(_CurrentTime);
-                            int _month = _parse.getMonth() + 1;
-                            int _date1 = _parse.getDate();
-                            mPickTime = _month + "月" + _date1 + "日";
 
-                            mTvDate.setText(mPickTime);
-                        } else {
-
-                            //解析时间并显示
-                            SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
-                            Date _parse = _SDF2.parse(_CurrentTime);
-                            int _month = _parse.getMonth() + 1;
-                            int _date1 = _parse.getDate();
-                            mPickTime = _month + "月" + _date1 + "日";
-
-                            if(CommonUtil.isnetWorkAvilable(getContext())){//判断当前有没有网络,
-                                getOnedayDataFromNetWork(_CurrentTime);
-                            }else {
-                                Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    } else {
-                        Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
-                    }
+//                    //获取相应时间的全部数据并且显示
+//                    if (!isRunning) {//防止并行更改数据库发生崩溃
+//                        //先从本地获取数据显示界面没有则从网络获取
+//                        int id = 0;
+//                        int _userid = mDbDao.findUser(mUser.getLoginName());
+//                        Log.d("_one_datetime的数据", _CurrentTime);
+//                        int dataid = mDbDao.findData(_userid, _CurrentTime);
+//                        for (int i = 0; i < 23; i++) {//判断数据库中是否存在当天的数据
+//                            int _hourStepID = mDbDao.findHourStep(i, dataid);
+//                            if (_hourStepID != 0){
+//                                id = _hourStepID;
+//                            }
+//                        }
+//                        if (id != 0) {//本地有数据从本地查找
+//                            todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+//                            showUI(todayOnDayDays);
+//
+//                            //解析时间并显示
+//                            SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
+//                            Date _parse = _SDF2.parse(_CurrentTime);
+//                            int _month = _parse.getMonth() + 1;
+//                            int _date1 = _parse.getDate();
+//                            mPickTime = _month + "月" + _date1 + "日";
+//
+//                            mTvDate.setText(mPickTime);
+//                        } else {
+//
+//                            //解析时间并显示
+//                            SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
+//                            Date _parse = _SDF2.parse(_CurrentTime);
+//                            int _month = _parse.getMonth() + 1;
+//                            int _date1 = _parse.getDate();
+//                            mPickTime = _month + "月" + _date1 + "日";
+//
+//                            if(CommonUtil.isnetWorkAvilable(getContext())){//判断当前有没有网络,
+//                                getOnedayDataFromNetWork(_CurrentTime);
+//                            }else {
+//                                Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    } else {
+//                        Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
+//                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -518,49 +521,52 @@ public class HomeFragment extends Fragment {
                         String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
                         Log.d("_CurrentTime减掉的数据", _CurrentTime);
 
+                        oneDayShow(_CurrentTime);
+
+
                         //获取相应时间的全部数据并且显示
-                        if (!isRunning) {//防止并行更改数据库发生崩溃
-                            int id = 0;
-                            int _userid = mDbDao.findUser(mUser.getLoginName());
-                            Log.d("_one_datetime的数据", _CurrentTime);
-                            int dataid = mDbDao.findData(_userid, _CurrentTime);
-                            for (int i = 0; i < 23; i++) {//判断数据库中是否存在当天的数据
-                                int _hourStepID = mDbDao.findHourStep(i, dataid);
-                                if (_hourStepID != 0){
-                                    id = _hourStepID;
-                                }
-                            }
-
-                            if (id != 0) {//本地有数据从本地查找
-                                todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
-                                showUI(todayOnDayDays);
-
-                                //解析时间并显示
-                                SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
-                                Date _parse = _SDF2.parse(_CurrentTime);
-                                int _month = _parse.getMonth() + 1;
-                                int _date1 = _parse.getDate();
-                                mPickTime = _month + "月" + _date1 + "日";
-
-                                mTvDate.setText(mPickTime);
-                            } else {
-
-                                //解析时间并显示
-                                SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
-                                Date _parse = _SDF2.parse(_CurrentTime);
-                                int _month = _parse.getMonth() + 1;
-                                int _date1 = _parse.getDate();
-                                mPickTime = _month + "月" + _date1 + "日";
-
-                                if(CommonUtil.isnetWorkAvilable(getContext())){//判断当前有没有网络,
-                                    getOnedayDataFromNetWork(_CurrentTime);
-                                }else {
-                                    Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        } else {
-                            Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
-                        }
+//                        if (!isRunning) {//防止并行更改数据库发生崩溃
+//                            int id = 0;
+//                            int _userid = mDbDao.findUser(mUser.getLoginName());
+//                            Log.d("_one_datetime的数据", _CurrentTime);
+//                            int dataid = mDbDao.findData(_userid, _CurrentTime);
+//                            for (int i = 0; i < 23; i++) {//判断数据库中是否存在当天的数据
+//                                int _hourStepID = mDbDao.findHourStep(i, dataid);
+//                                if (_hourStepID != 0){
+//                                    id = _hourStepID;
+//                                }
+//                            }
+//
+//                            if (id != 0) {//本地有数据从本地查找
+//                                todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _CurrentTime);
+//                                showUI(todayOnDayDays);
+//
+//                                //解析时间并显示
+//                                SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
+//                                Date _parse = _SDF2.parse(_CurrentTime);
+//                                int _month = _parse.getMonth() + 1;
+//                                int _date1 = _parse.getDate();
+//                                mPickTime = _month + "月" + _date1 + "日";
+//
+//                                mTvDate.setText(mPickTime);
+//                            } else {
+//
+//                                //解析时间并显示
+//                                SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
+//                                Date _parse = _SDF2.parse(_CurrentTime);
+//                                int _month = _parse.getMonth() + 1;
+//                                int _date1 = _parse.getDate();
+//                                mPickTime = _month + "月" + _date1 + "日";
+//
+//                                if(CommonUtil.isnetWorkAvilable(getContext())){//判断当前有没有网络,
+//                                    getOnedayDataFromNetWork(_CurrentTime);
+//                                }else {
+//                                    Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        } else {
+//                            Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
+//                        }
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -568,6 +574,55 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+    private void oneDayShow(String time) throws ParseException {
+        if (!isRunning) {//防止并行更改数据库发生崩溃
+            int id = 0;
+            int _userid = mDbDao.findUser(mUser.getLoginName());
+            Log.d("_one_datetime的数据", time);
+            int dataid = mDbDao.findData(_userid, time);
+            for (int i = 0; i < 23; i++) {//判断数据库中是否存在当天的数据
+                int _hourStepID = mDbDao.findHourStep(i, dataid);
+                if (_hourStepID != 0){
+                    id = _hourStepID;
+                }
+            }
+
+            if (id != 0) {//本地有数据从本地查找
+                todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), time);
+                showUI(todayOnDayDays);
+
+                //解析时间并显示
+                SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
+                Date _parse = _SDF2.parse(time);
+                int _month = _parse.getMonth() + 1;
+                int _date1 = _parse.getDate();
+                mPickTime = _month + "月" + _date1 + "日";
+
+                mTvDate.setText(mPickTime);
+            } else {
+
+                //解析时间并显示
+                SimpleDateFormat _SDF2 = new SimpleDateFormat("yyyy-MM-dd");
+                Date _parse = _SDF2.parse(time);
+                int _month = _parse.getMonth() + 1;
+                int _date1 = _parse.getDate();
+                mPickTime = _month + "月" + _date1 + "日";
+
+                if(CommonUtil.isnetWorkAvilable(getContext())){//判断当前有没有网络,
+                    getOnedayDataFromNetWork(time);
+                }else {
+                    Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else {
+            Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
 
 
     /**
@@ -684,7 +739,7 @@ public class HomeFragment extends Fragment {
                     try {
                         Success = _json_result.getBoolean("Success");
                     } catch (Exception e) {
-
+                        isRunning = false;
                         e.printStackTrace();
                     }
 
@@ -696,6 +751,7 @@ public class HomeFragment extends Fragment {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    isRunning = false;
                 }
                 //通过
                 if (Success) {
@@ -724,6 +780,7 @@ public class HomeFragment extends Fragment {
                     _seconds += 500;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    isRunning = false;
                 }
                 Log.i(CommonConstants.LOGCAT_TAG_NAME + "_sync_connect_no", "--------no = " + k);
                 //连接手表mac
@@ -742,6 +799,7 @@ public class HomeFragment extends Fragment {
                 } catch (InterruptedException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
+                    isRunning = false;
                 }
 
                 //同步数据开始》》
@@ -883,6 +941,7 @@ public class HomeFragment extends Fragment {
 
             } catch (JSONException e) {
                 e.printStackTrace();
+                isRunning = false;
             }
         }
     }
@@ -900,6 +959,7 @@ public class HomeFragment extends Fragment {
                 case 0:
                     String errorMsg = (String) msg.getData().getSerializable("ErrorMsg");
                     try {
+                        isRunning = false;
                         Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         e.printStackTrace();

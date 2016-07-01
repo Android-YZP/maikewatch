@@ -87,7 +87,9 @@ public class PsInfoActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     private NumberPicker mNpselect;
     private String mUserimagePath;
-
+    private Uri fileUri;
+    private File mFile;
+    Uri imageUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -253,13 +255,11 @@ public class PsInfoActivity extends AppCompatActivity {
         _camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent _cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                // 指定调用相机拍照后照片的储存路径
-                _cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(tempFile));
-                if (Uri.fromFile(tempFile)!=null) {
-                    startActivityForResult(_cameraIntent, PHOTO_REQUEST_TAKEPHOTO);
-                }
+                mFile = new File(mPicPath,mpicName);
+                imageUri = Uri.fromFile(mFile);
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
                 alertDialog.dismiss();
             }
         });
@@ -268,11 +268,13 @@ public class PsInfoActivity extends AppCompatActivity {
         _photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); // "Android.intent.action.GET_CONTENT"
-                innerIntent.setType("image/*"); // 查看类型
-                // StringIMAGE_UNSPECIFIED="image/*";详细的类型在com.google.android.mms.ContentType中
-                Intent wrapperIntent = Intent.createChooser(innerIntent, null);
-                startActivityForResult(wrapperIntent, PHOTO_REQUEST_GALLERY);
+                mFile = new File(mPicPath,mpicName);
+                imageUri = Uri.fromFile(mFile);
+
+                Intent intent = new Intent(Intent.ACTION_PICK, null);
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
                 alertDialog.dismiss();
             }
         });
@@ -296,9 +298,7 @@ public class PsInfoActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PHOTO_REQUEST_TAKEPHOTO:// 当选择拍照时调用
-
-                startPhotoZoom(Uri.fromFile(tempFile));
-
+                startPhotoZoom(imageUri);
                 break;
             case PHOTO_REQUEST_GALLERY:// 当选择从本地获取图片时
                 // 做非空判断，当我们觉得不满意想重新剪裁的时候便不会报异常，下同
@@ -306,9 +306,11 @@ public class PsInfoActivity extends AppCompatActivity {
                     startPhotoZoom(data.getData());
                 break;
             case PHOTO_REQUEST_CUT:// 返回的结果
-                if (data != null)
-                    // setPicToView(data);
-                    sentPicToNext(data);
+                try {
+                    sentPicToNext();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -325,16 +327,18 @@ public class PsInfoActivity extends AppCompatActivity {
         // outputX,outputY 是剪裁图片的宽高
         intent.putExtra("outputX", 100);
         intent.putExtra("outputY", 100);
-        intent.putExtra("return-data", true);
-        intent.putExtra("noFaceDetection", true);
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);//將剪切的文件输入到imageUri中
+//
         startActivityForResult(intent, PHOTO_REQUEST_CUT);
     }
 
     // 将进行剪裁后的图片传递到下一个界面上
-    private void sentPicToNext(Intent picdata) {
-        Bundle bundle = picdata.getExtras();
-        if (bundle != null) {
-            Bitmap photo = bundle.getParcelable("data");
+    private void sentPicToNext() throws FileNotFoundException {
+//        Bundle bundle = picdata.getExtras();
+//        if (bundle != null) {
+        Bitmap photo = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+//            Bitmap photo = bundle.getParcelable("data");
             saveBitmap(photo);  //保存BitMap到本地
             //上传图片到服务器
             sendPicToServer();
@@ -361,7 +365,7 @@ public class PsInfoActivity extends AppCompatActivity {
                     }
                 }
             }
-        }
+//        }
     }
 
     /**
