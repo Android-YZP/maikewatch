@@ -38,7 +38,7 @@ public class DBDao {
     private ArrayList<OneDayData> mTodayList7;
     private ArrayList<OneDayData> mTodayList30;
     private boolean isHave = true;
-    private int  mCount = -30;
+    private int mCount = -30;
     private String loginName;
     private String sportsTime;
 
@@ -70,21 +70,21 @@ public class DBDao {
             }
             mDataid = findData(userid, sportsTime);
             if (mDataid != 0) {//这天的数据在数据库里面是存在的,才用updata更新操作
-                changeDataInfo(sportsTime, completedPercent, 0, kcal, v, userid, sportsTime,0);
+                changeDataInfo(sportsTime, completedPercent, 0, kcal, v, userid, sportsTime, 0);
                 UpdataTotalStep(loginName, sportsTime);
             } else {
-                addData(sportsTime, completedPercent, targetSteps, steps, kcal, v, userid,0);//添加当前的目标数
+                addData(sportsTime, completedPercent, targetSteps, steps, kcal, v, userid, 0);//添加当前的目标数
                 UpdataTotalStep(loginName, sportsTime);//更新总数
                 mDataid = findData(userid, sportsTime);
             }
-            deleteHourStep1(mDataid,completeHour);//删除7天的步数数据
+            deleteHourStep1(mDataid, completeHour);//删除7天的步数数据
             addHourStep(completeHour, steps, mDataid);//添加新的7天的步数
-                Date myDate = new Date();
-                int thisYear = datePlus(myDate, mCount).getYear() + 1900;//thisYear = 2003
-                int thisMonth = datePlus(myDate, mCount).getMonth() + 1;//thisMonth = 5
-                int thisDate = datePlus(myDate, mCount).getDate();//thisDate = 30
-                String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
-                isHave = deleteDatas(userid, _CurrentTime);//返回是否有数据/并且删除数据
+            Date myDate = new Date();
+            int thisYear = myDate.getYear() + 1900;//thisYear = 2003
+            int thisMonth = myDate.getMonth() + 1;//thisMonth = 5
+            int thisDate = myDate.getDate();//thisDate = 30
+            String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
+            isHave = deleteDatas(userid, _CurrentTime);//返回是否有数据/并且删除数据
         }
         UpdataTotalStep(loginName, sportsTime);
         //上传目标步数(以上传的状态为准,以当前目标覆盖标记为0的目标数据,)
@@ -94,39 +94,38 @@ public class DBDao {
 
     /**
      * 添加历史数据到数据库中
+     *
      * @param oneDayDatas
      * @param user
      */
-    public void addHistoryData(List<OneDayData> oneDayDatas , String user){
+    public void addHistoryData(List<OneDayData> oneDayDatas, String user) {
         int _userID = findUser(user);
         String _Date;
         for (int i = 0; i < oneDayDatas.size(); i++) {
             OneDayData oneDayData = oneDayDatas.get(i);
             //时间数据格式的转换
-            SimpleDateFormat S_D_F = new SimpleDateFormat("yyyy/MM/dd") ;
+            SimpleDateFormat S_D_F = new SimpleDateFormat("yyyy/MM/dd");
             try {
                 Date _parseTime = S_D_F.parse(oneDayData.getSportsTime());
                 int thisYear = _parseTime.getYear() + 1900;//thisYear = 2003
                 int thisMonth = _parseTime.getMonth() + 1;//thisMonth = 5
-                int thisDate =_parseTime.getDate();//thisDate = 30
+                int thisDate = _parseTime.getDate();//thisDate = 30
                 _Date = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
                 mDataid = findData(_userID, _Date);//确认数据库中是否有这天的数据
                 if (mDataid != 0) {//这天的数据在数据库里面是存在的,才用updata更新操作
-                    changeDataInfo(_Date, 0, oneDayData.getCompletedSteps(), 0, 0, _userID, _Date,1);//从网路上拉去的数据标记为1
+                    changeDataInfo(_Date, 0, oneDayData.getCompletedSteps(), 0, 0, _userID, _Date, 1);//从网路上拉去的数据标记为1
                 } else {
-                    addData(_Date,0,oneDayData.getTargetSteps(),oneDayData.getCompletedSteps(),0,0,_userID,1);
+                    addData(_Date, 0, oneDayData.getTargetSteps(), oneDayData.getCompletedSteps(), 0, 0, _userID, 1);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
 
-
         }
 
 
     }
-
 
 
     /**
@@ -152,6 +151,7 @@ public class DBDao {
 
         return TodayList2;
     }
+
     /**
      * 传入用户名和时间,输出数据库一周的运动数据
      *
@@ -163,7 +163,7 @@ public class DBDao {
         mTodayList7 = new ArrayList<OneDayData>();
         int userid = findUser(user);
         //获取7天的数据集合
-        for (int i = 0; i >-7; i--) {
+        for (int i = 0; i > -7; i--) {
             Log.d("i的数据", "i:" + i);
             Date myDate = new Date();
             int thisYear = datePlus(myDate, i).getYear() + 1900;//thisYear = 2003
@@ -176,6 +176,7 @@ public class DBDao {
         Log.d("mTodayList7的数据", "mTodayList7:" + mTodayList7);
         return mTodayList7;
     }
+
     /**
      * 传入用户名和时间,输出数据库30天的运动数据
      *
@@ -187,7 +188,7 @@ public class DBDao {
         mTodayList30 = new ArrayList<OneDayData>();
         int userid = findUser(user);
         //获取7天的数据集合
-        for (int i = 0; i >-30; i--) {
+        for (int i = 0; i > -30; i--) {
             Log.d("i的数据", "i:" + i);
             Date myDate = new Date();
             int thisYear = datePlus(myDate, i).getYear() + 1900;//thisYear = 2003
@@ -200,6 +201,7 @@ public class DBDao {
         Log.d("mTodayList7的数据", "mTodayList7:" + mTodayList30);
         return mTodayList30;
     }
+
     /**
      * 更新数据库的总步数
      *
@@ -225,11 +227,12 @@ public class DBDao {
      */
     public boolean deleteDatas(int userid, String date) {
         int dataid = findData(userid, date);
-        deleteData(userid, date);
-        deleteHourStep(dataid);
+        int _dataId30 = dataid-30;//小于_dataId30的数据全部删除
+
+        deleteData(userid, _dataId30 + "");
+        deleteHourStep(_dataId30);
         return dataid != 0;
     }
-
 
     /**
      * 传入Userid,和时间删除相应的数据
@@ -304,7 +307,7 @@ public class DBDao {
     /**
      * 更新datainfo数据库
      */
-    public boolean changeDataInfo(String date, int percent, int totalstep, double calorie, double mile, int userid, String Date,int status) {
+    public boolean changeDataInfo(String date, int percent, int totalstep, double calorie, double mile, int userid, String Date, int status) {
 
 //        mCompletedSteps = totalstep + mCompletedSteps;//累加数据算出总步数
 
@@ -325,7 +328,6 @@ public class DBDao {
         } else {
             return true;
         }
-
 
 
     }
@@ -396,7 +398,7 @@ public class DBDao {
     /**
      * datainfo 表的增加数据
      */
-    public boolean addData(String date, int percent, int targetstep, int totalstep, double calorie, double mile, int userid,int status) {
+    public boolean addData(String date, int percent, int targetstep, int totalstep, double calorie, double mile, int userid, int status) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("date", date);
@@ -494,8 +496,8 @@ public class DBDao {
             try {
                 java.util.Date parseDate = _SDF.parse(Date);
 
-                int thisYear = datePlus(parseDate,0).getYear() + 1900;//thisYear = 2003
-                int thisMonth = datePlus(parseDate,0).getMonth() + 1;//thisMonth = 5
+                int thisYear = datePlus(parseDate, 0).getYear() + 1900;//thisYear = 2003
+                int thisMonth = datePlus(parseDate, 0).getMonth() + 1;//thisMonth = 5
                 int thisDate = datePlus(parseDate, 0).getDate();//thisDate = 30
                 String _CurrentTime = String.valueOf(thisYear) + "/" + String.valueOf(thisMonth) + "/" + String.valueOf(thisDate);
                 _oneDayData.setSportsTime(_CurrentTime);//时间
@@ -533,8 +535,8 @@ public class DBDao {
             try {
                 java.util.Date parseDate = _SDF.parse(Date);
 
-                int thisYear = datePlus(parseDate,0).getYear() + 1900;//thisYear = 2003
-                int thisMonth = datePlus(parseDate,0).getMonth() + 1;//thisMonth = 5
+                int thisYear = datePlus(parseDate, 0).getYear() + 1900;//thisYear = 2003
+                int thisMonth = datePlus(parseDate, 0).getMonth() + 1;//thisMonth = 5
                 int thisDate = datePlus(parseDate, 0).getDate();//thisDate = 30
                 String _CurrentTime = String.valueOf(thisYear) + "/" + String.valueOf(thisMonth) + "/" + String.valueOf(thisDate);
                 _oneDayData.setSportsTime(_CurrentTime);//时间
@@ -551,16 +553,15 @@ public class DBDao {
     }
 
 
-
     /**
      * 删除用户的某天数据
      */
-    public boolean deleteData(int userid, String Date) {
-
+    public boolean deleteData(int userid, String id) {
+//        Log.d("Date的数据", Date);
         int _dataid = 0;
         // 获取到可读的数据库
         SQLiteDatabase db = helper.getWritableDatabase();
-        int rownumber = db.delete("datainfo", "userid=? AND date<=?", new String[]{userid + "", Date});
+        int rownumber = db.delete("datainfo", "userid=? AND _id<?", new String[]{userid + "", id});
         return rownumber != 0;
     }
 
@@ -573,7 +574,7 @@ public class DBDao {
         int _id = 0;
         // 获取到可读的数据库
         SQLiteDatabase db = helper.getWritableDatabase();
-        int cursor = db.delete("hourstepinfo", "dataid=? ", new String[]{String.valueOf(dataid)});
+        int cursor = db.delete("hourstepinfo", "dataid<? ", new String[]{String.valueOf(dataid)});
         return cursor != 0;
     }
 
@@ -583,11 +584,11 @@ public class DBDao {
      *
      * @return
      */
-    public boolean deleteHourStep1(int dataid,int hour) {
+    public boolean deleteHourStep1(int dataid, int hour) {
         int _id = 0;
         // 获取到可读的数据库
         SQLiteDatabase db = helper.getWritableDatabase();
-        int cursor = db.delete("hourstepinfo", "dataid=? And hour=?", new String[]{String.valueOf(dataid),String.valueOf(hour)});
+        int cursor = db.delete("hourstepinfo", "dataid=? And hour=?", new String[]{String.valueOf(dataid), String.valueOf(hour)});
         return cursor != 0;
     }
 
@@ -674,7 +675,7 @@ public class DBDao {
         }
         cursor.close();
         db.close();
-        return id ;
+        return id;
     }
 
     /**
