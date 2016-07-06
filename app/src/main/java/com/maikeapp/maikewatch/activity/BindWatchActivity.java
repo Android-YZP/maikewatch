@@ -140,10 +140,8 @@ public class BindWatchActivity extends AppCompatActivity {
                     //弹出加载进度条
                     mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命扫描中...",true,false);
                     initVisibleWatchMacList();//初始化mac列表
-
                 }
             }
-
         }
     }
 

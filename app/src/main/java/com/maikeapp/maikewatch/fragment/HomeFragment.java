@@ -428,6 +428,15 @@ public class HomeFragment extends Fragment {
         mLeftDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mUser == null) {
+                    ToastUtil.showTipShort(getActivity(), "请先登录");
+                    return;
+                }
+
+                if (!mUser.isBindWatch()) {
+                    ToastUtil.showTipShort(getActivity(), "请先绑定手表");
+                    return;
+                }
                 String _CurrentDate = mTvDate.getText().toString();
                 SimpleDateFormat _SDF = new SimpleDateFormat("MM月dd日");
                 try {
@@ -451,6 +460,15 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 {
+                    if (mUser == null) {
+                        ToastUtil.showTipShort(getActivity(), "请先登录");
+                        return;
+                    }
+
+                    if (!mUser.isBindWatch()) {
+                        ToastUtil.showTipShort(getActivity(), "请先绑定手表");
+                        return;
+                    }
                     String _CurrentDate = mTvDate.getText().toString();
                     SimpleDateFormat _SDF = new SimpleDateFormat("MM月dd日");
                     try {
@@ -472,7 +490,7 @@ public class HomeFragment extends Fragment {
 
                         String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
                         Log.d("_CurrentTime减掉的数据", _CurrentTime);
-                        oneDayShow(_CurrentTime);
+                        oneDayShow(_CurrentTime);//通过时间显示当日数据
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -481,6 +499,11 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /**
+     * /通过时间显示当日数据
+     * @param time
+     * @throws ParseException
+     */
     private void oneDayShow(String time) throws ParseException {
 
 
