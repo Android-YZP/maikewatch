@@ -138,7 +138,7 @@ public class BindWatchActivity extends AppCompatActivity {
 
                 if (device != null) {
                     //弹出加载进度条
-                    mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命扫描中...",true,true);
+                    mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命扫描中...",true,false);
                     initVisibleWatchMacList();//初始化mac列表
 
                 }
@@ -192,7 +192,7 @@ public class BindWatchActivity extends AppCompatActivity {
                     return;
                 }
                 //弹出加载进度条
-                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命绑定中,手表灯亮时,请双击表盘进行绑定...",true,true);
+                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命绑定中,手表灯亮时,请双击表盘进行绑定...",true,false);
                 //绑定某只手表
                 WatchMac _watch_mac = mWatchMacs.get(position - 1);
                 Log.d(CommonConstants.LOGCAT_TAG_NAME + "_watch_mac", _watch_mac.getMac());
@@ -219,7 +219,7 @@ public class BindWatchActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
 
                                 //弹出加载进度条
-                                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命解绑中...",true,true);
+                                mProgressDialog = ProgressDialog.show(BindWatchActivity.this, null, "正在玩命解绑中...",true,false);
                                 String _macAddress = mUser.getMacAddress();
                                 //进行解绑
                                 unBindWatch(_macAddress);

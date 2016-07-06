@@ -198,6 +198,7 @@ public class PsInfoActivity extends AppCompatActivity {
         mEtHeight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 showSelectDialog(170, 250, 80, "厘米");
             }
         });
@@ -495,7 +496,7 @@ public class PsInfoActivity extends AppCompatActivity {
                 case CommonConstants.FLAG_SET_TARGET_SUCCESS:
                     //   setTargetCompleted();//操作完成
                     mProgressDialog.dismiss();
-                    Toast.makeText(PsInfoActivity.this, "操作完成", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PsInfoActivity.this, "同步完成", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;

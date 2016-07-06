@@ -137,7 +137,7 @@ public class PsGlobalActivity extends AppCompatActivity {
                 if (mUser!=null){
                     String _sportsTarget = mTvSportsTarget.getText().toString();
                     //弹出加载进度条
-                    mProgressDialog = ProgressDialog.show(PsGlobalActivity.this, null, "正在玩命设置中...",true,true);
+                    mProgressDialog = ProgressDialog.show(PsGlobalActivity.this, null, "正在玩命设置中...",true,false);
                     //设置个人目标信息
                     setWatchPsTarget(_sportsTarget);
                 }else{

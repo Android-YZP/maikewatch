@@ -333,12 +333,12 @@ public class HomeFragment extends Fragment {
 
                 //如果后台正在同步数据,直接显示进度条
                 if (isRunning) {
-                    mProgressDialog = ProgressDialog.show(getActivity(), null, "正在同步中，请稍后...", true, true);
+                    mProgressDialog = ProgressDialog.show(getActivity(), null, "正在同步中，请稍后...", true, false);
                     return;
                 }
 
                 //弹出加载进度条
-                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在同步中，请稍后...", true, true);
+                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在同步中，请稍后...", true, false);
                 //初始化日期
                 Date _today = new Date();
                 if (BuildConfig.DEBUG) Log.d("HomeFragment", "_today:" + _today);
@@ -365,7 +365,7 @@ public class HomeFragment extends Fragment {
                     return;
                 }
                 // 用子线程实时监测isRuning
-                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在加载中，请稍后...", true, true);
+                mProgressDialog = ProgressDialog.show(getActivity(), null, "正在同步中，请稍后...", true, false);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -896,9 +896,9 @@ public class HomeFragment extends Fragment {
                     disableApp();//app不可用
                     break;
                 case UPLOAD_SUCCESS:
-                    if (isShow) {//可以显示则显示
-                        Toast.makeText(getActivity(), "同步完成", Toast.LENGTH_SHORT).show();
-                    }
+//                    if (isShow) {//可以显示则显示
+//                        Toast.makeText(getActivity(), "同步完成", Toast.LENGTH_SHORT).show();
+//                    }
                     break;
                 case SCREEN_SHOT_SUCCESS:
                     mController.openShare(getActivity(), false);
@@ -1063,12 +1063,11 @@ public class HomeFragment extends Fragment {
 
         mLinearChart.removeAllViews();
         mLinearChart.addView(_line_chart_view);
-
+        ToastUtil.showTipShort(getContext(), "同步完成");
         //上传当天以及最近7天的所有数据到服务端
         if (CommonUtil.isnetWorkAvilable(getContext())) {
             uploadAllDataToServer(CommonUtil.formatData(Double.valueOf(_calories), 2), CommonUtil.formatData(Double.valueOf(_distance), 2));
         } else {
-            ToastUtil.showTipShort(getContext(), "同步已完成");
             isRunning = false;//没网的情况下到这里结束,
         }
     }
@@ -1152,7 +1151,7 @@ public class HomeFragment extends Fragment {
                                         mDbDao.updataStatus(mUser, allDayData.get(i).getSportsTime());
                                     }
                                     //数据上传完成
-                                    handler.sendEmptyMessage(UPLOAD_SUCCESS);
+//                                    handler.sendEmptyMessage(UPLOAD_SUCCESS);
                                     Thread.sleep(50);
                                     isRunning = false;//结束线程运行
                                     Log.d(CommonConstants.LOGCAT_TAG_NAME + "_upload_recent_r", "true");
@@ -1174,7 +1173,7 @@ public class HomeFragment extends Fragment {
                 } catch (ServiceException e) {
                     isRunning = false;//结束线程运行
                     e.printStackTrace();
-                    CommonUtil.sendErrorMessage(e.getMessage(), handler);
+//                    CommonUtil.sendErrorMessage(e.getMessage(), handler);
                 } catch (Exception e) {
                     isRunning = false;//结束线程运行
                     e.printStackTrace();
