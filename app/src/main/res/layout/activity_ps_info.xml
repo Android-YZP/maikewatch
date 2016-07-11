@@ -46,8 +46,7 @@
                 android:id="@+id/iv_ps_info_userhead"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
-                />
+                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left" />
             <!--android:background="@drawable/pscenter_userinfo_headpic"-->
 
         </LinearLayout>
@@ -131,8 +130,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/pscenter_funclist_list_item_img_margin_left"
-                    android:text="男"
-                    android:checked="false" />
+                    android:checked="false"
+                    android:text="男" />
 
                 <RadioButton
                     android:id="@+id/rb_ps_info_woman"
@@ -169,14 +168,14 @@
                 android:textSize="@dimen/common_content_text_font_size" />
 
 
-
             <TextView
                 android:id="@+id/et_ps_info_age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:background="@null"
                 android:inputType="number"
+                android:paddingLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:paddingRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:text="30"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />
@@ -210,9 +209,10 @@
                 android:id="@+id/et_ps_info_height"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:background="@null"
                 android:inputType="number"
+                android:paddingLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:paddingRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:text="175"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />
@@ -247,9 +247,10 @@
                 android:id="@+id/et_ps_info_weight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:background="@null"
                 android:inputType="number"
+                android:paddingLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
+                android:paddingRight="@dimen/pscenter_funclist_list_item_img_margin_left"
                 android:text="70"
                 android:textColor="@color/common_content_dark_text_font_color"
                 android:textSize="@dimen/common_content_text_font_size" />

@@ -116,7 +116,7 @@ public class NetWorkUtil {
     /**
      * 以post方式发送url请求
      */
-    public static String getResultFromUrlConnection(String urlconn, String jsonargs, String sVerifyCode) throws Exception {
+    public static String  getResultFromUrlConnection(String urlconn, String jsonargs, String sVerifyCode) throws Exception {
         String result = null;
 
         InputStream in = null;
@@ -170,11 +170,9 @@ public class NetWorkUtil {
             if (out != null) {
                 out.close();
             }
-
             if (in != null) {
                 in.close();
             }
-
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }

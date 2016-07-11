@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -63,6 +64,7 @@ public class HistoryDataActivity extends AppCompatActivity {
     private List<OneDayData> m_day_datas_for_week;//一个周的总步数
     private List<OneDayData> m_day_datas_for_month;//一个月的总步数
     private DBDao mDBDao;
+    private ArrayList<String> mDateListMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,13 +99,11 @@ public class HistoryDataActivity extends AppCompatActivity {
             queryRecentlySportDataForWeekFromNetWork();
             //查询最近30天的数据
             queryRecentlySportDataForMonthFromNetWork();
-
-
         }else {//没有网络就获取本地数据库所有的数据,进行显示
             ArrayList<OneDayData> weekDatas = mDBDao.weekDatas(mUser.getLoginName());
             ArrayList<OneDayData> oneDayDatas = mDBDao.monthDatas(mUser.getLoginName());
-            lineView(weekDatas,mLineChartWeek);//界面显示
-            lineView(oneDayDatas,mLineChartMonth);//界面显示
+            lineView(weekDatas,mLineChartWeek,7);//界面显示
+            lineView(oneDayDatas,mLineChartMonth,30);//界面显示
         }
     }
 
@@ -190,8 +190,37 @@ public class HistoryDataActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 时间计算公式
+     *
+     * @param base 基础日期
+     * @param days 增加天数(减天数则用负数)
+     */
+    public Date datePlus(Date base, int days) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(base);
+        cal.add(Calendar.DATE, days);
+        return cal.getTime();
+    }
+
     //折线图
-    public void lineView(List pAllData, LinearLayout pLineChart){
+    public void lineView(List pAllData, LinearLayout pLineChart,int days){
+        //前30天的hashMap集合
+        mDateListMonth = new ArrayList<>();
+        int _day = 0;//判断7天或者30天
+        if (days == 30){
+            _day = 30;
+        }else {
+            _day = 7;
+        }
+        for (int j =-_day; j <0 ; j++) {
+            Date myDate = new Date();
+//            int thisYear = datePlus(myDate, i).getYear() + 1900;//thisYear = 2003
+            int thisMonth = datePlus(myDate, j).getMonth() + 1;//thisMonth = 5
+            int thisDate = datePlus(myDate, j).getDate();//thisDate = 30
+            String _CurrentTime =String.valueOf(thisMonth) + "/" + String.valueOf(thisDate);
+            mDateListMonth.add(_CurrentTime);
+        }
 
         //根据集合中的时间日期来把集合重新排序
         Collections.sort(pAllData, new Comparator<OneDayData>() {
@@ -211,27 +240,16 @@ public class HistoryDataActivity extends AppCompatActivity {
                 return _date_1.compareTo(_date_2);
             }
         });
-
+        Log.d("pAllData排序后的数据", pAllData.toString());
         //同样是需要数据dataset和视图渲染器renderer
         XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
         XYSeries series = new XYSeries("步数");
         int _max = 0;
-        //再画每个时刻的步数
-        if (pAllData!=null&&pAllData.size()>0){
-            for (int i = 0; i <pAllData.size() ; i++) {
-                OneDayData _one_day_data = (OneDayData) pAllData.get(i);
-//                int hour = _one_day_data.getCompleteHour();
-                //小时，步数
-                int _steps = _one_day_data.getCompletedSteps();
-                if (_max<_steps){
-                    _max = _steps;
-                }
-                series.add(i,_steps);
-            }
+//        //画出每天的步数
+        for (int i = 0; i < mDateListMonth.size() ; i++) {
+            series.add(i, 0);
         }
         mDataset.addSeries(series);
-
-
         XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
         //设置图表的X轴的当前方向
         mRenderer.setOrientation(XYMultipleSeriesRenderer.Orientation.HORIZONTAL);
@@ -247,16 +265,29 @@ public class HistoryDataActivity extends AppCompatActivity {
         int _y_value = (_max/1000)*1000+1000;
         mRenderer.setYAxisMax(_y_value);//y轴最大值600
         mRenderer.setYLabels(5);//设置Y轴刻度个数（貌似不太准确）
-        mRenderer.setXAxisMax(pAllData.size());//x轴刻度的个数
+        if (days == 30){
+            mRenderer.setXAxisMax(18);//x轴刻度的个数
+        }else {
+            mRenderer.setXAxisMax(7);//x轴刻度的个数
+        }
         mRenderer.setShowGrid(true);//显示网格
 
-
+        for (int i = 0; i < mDateListMonth.size(); i++) {//先写入30天的横坐标
+            String _date = mDateListMonth.get(i);
+            mRenderer.addXTextLabel(i, _date);
+        }
         //将x标签栏目显示如：1,2,3,4替换为显示1月，2月，3月，4月
         for (int i = 0; i < pAllData.size(); i++) {
             OneDayData _one_day_data = (OneDayData) pAllData.get(i);
+            int _steps = _one_day_data.getCompletedSteps();
             String _sprots_time = _one_day_data.getSportsTime();
             String _x_name = _sprots_time.substring(_sprots_time.indexOf("/")+1);
-            mRenderer.addXTextLabel(i, _x_name);
+            if (_max<_steps){
+                _max = _steps;
+            }
+            int x = mDateListMonth.indexOf(_x_name);
+            series.remove(x);//移除原有的数据
+            series.add(x,x,_steps);//添加查找出来的数据
         }
 
         mRenderer.setXLabels(0);//设置只显示如1月，2月等替换后的东西，不显示1,2,3等
@@ -443,7 +474,7 @@ public class HistoryDataActivity extends AppCompatActivity {
      */
     private void updateUIAfterGetRecentDatasForWeek() {
         //显示折线图
-        lineView(m_day_datas_for_week,mLineChartWeek);
+        lineView(m_day_datas_for_week,mLineChartWeek,7);
 
     }
 
@@ -452,7 +483,7 @@ public class HistoryDataActivity extends AppCompatActivity {
      */
     private void updateUIAfterGetRecentDatasForMonth() {
         //显示折线图
-        lineView(m_day_datas_for_month,mLineChartMonth);
+        lineView(m_day_datas_for_month,mLineChartMonth,30);
         Log.d("m_day_datas_for_month", m_day_datas_for_month.toString());
     }
 }

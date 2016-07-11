@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <ProgressBar
+        android:layout_marginTop="20sp"
         android:id="@+id/pb_update_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="fill_parent"

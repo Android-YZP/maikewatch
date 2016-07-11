@@ -194,6 +194,7 @@ public class AboutUsActivity extends AppCompatActivity {
 
     private void showUpDateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(AboutUsActivity.this);
+
         builder.setTitle("版本更新");
         builder.setMessage("新版本:"+mVersionName1+" , 文件大小:"+mSize);
         builder.setPositiveButton("下载", new DialogInterface.OnClickListener() {
@@ -218,6 +219,7 @@ public class AboutUsActivity extends AppCompatActivity {
      */
     private void showDownloadDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(AboutUsActivity.this);
+        builder.setCancelable(false);//设置点击外部不消失
         builder.setTitle("版本更新中...");
         final LayoutInflater inflater = LayoutInflater.from(AboutUsActivity.this);
         View v = inflater.inflate(R.layout.progress_dialog, null);

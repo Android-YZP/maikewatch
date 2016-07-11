@@ -181,6 +181,7 @@ public class MainActivity extends FragmentActivity {
     private void showDownloadDialog() {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
         builder.setTitle("版本更新中...");
+        builder.setCancelable(false);//设置点击外部不消失
         final LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
         View v = inflater.inflate(R.layout.progress_dialog, null);
         mProgressBar = (ProgressBar) v.findViewById(R.id.pb_update_progress);

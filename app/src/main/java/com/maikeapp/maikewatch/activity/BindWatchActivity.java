@@ -527,7 +527,7 @@ public class BindWatchActivity extends AppCompatActivity {
      * 搜索失败-提醒用户未搜索到手表
      */
     private void notifyUIForMacAddress() {
-        ToastUtil.showTipShort(BindWatchActivity.this,"未搜索到手表");
+        ToastUtil.showTipShort(BindWatchActivity.this,"未搜索到手表，请下拉刷新");
         updateUIForMacAddress();
 
     }

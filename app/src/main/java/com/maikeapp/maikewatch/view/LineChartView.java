@@ -19,6 +19,7 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+import org.achartengine.util.MathHelper;
 
 import java.util.List;
 
@@ -52,9 +53,9 @@ public class LineChartView extends LinearLayout {
         XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
         XYSeries series = new XYSeries("步数");
 //        //先画所有的数据为0
-//        for (int i = 0; i <24 ; i++) {
-//            series.add(i, MathHelper.NULL_VALUE);
-//        }
+        for (int i = 0; i <24 ; i++) {
+            series.add(i, 0);
+        }
         int _max = 0;
         //再画每个时刻的步数
         if (pTodayData != null && pTodayData.size() > 0) {
@@ -66,8 +67,9 @@ public class LineChartView extends LinearLayout {
                 if (_steps > _max) {
                     _max = _steps;
                 }
-                series.add(hour, _steps);
-
+                series.remove(hour);
+//                    series.add();
+                series.add(hour,hour, _steps);
             }
         }
         mDataset.addSeries(series);

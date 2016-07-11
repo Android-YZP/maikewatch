@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -58,7 +59,7 @@ public class PsInfoActivity extends AppCompatActivity {
     private static final int PERSON_WOMAN = 0;
     //头像选择相关变量
     private String mpicName = "touxiang.jpg";
-    private String mPicPath = Environment.getExternalStorageDirectory().getPath()+"/";
+    private String mPicPath = Environment.getExternalStorageDirectory().getPath() + "/";
     private File tempFile = new File(Environment.getExternalStorageDirectory(),
             getPhotoFileName());
     private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
@@ -73,7 +74,7 @@ public class PsInfoActivity extends AppCompatActivity {
     private CustomSmartImageView mUserHead;//用户头像
     private TextView mTvLoginName;//用户名
     private String m_title = "个人信息";
-    private String m_action = "完成";
+    private String m_action = "编辑";
     private SharedPreferences sp;
     private User mUser;
     //用户信息
@@ -90,6 +91,8 @@ public class PsInfoActivity extends AppCompatActivity {
     private Uri fileUri;
     private File mFile;
     Uri imageUri;
+    private boolean isEdit = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,12 +128,12 @@ public class PsInfoActivity extends AppCompatActivity {
         mTvCommonTitle.setText(m_title);
         mTvCommonAction.setText(m_action);
         mUser = CommonUtil.getUserInfo(this);
-            //设置头像,本地没有就用默认头像
-            if (mUser != null) {
-                mUserHead.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
-            } else {
-                mUserHead.setImageResource(R.drawable.pscenter_userinfo_headpic);
-            }
+        //设置头像,本地没有就用默认头像
+        if (mUser != null) {
+            mUserHead.setImageUrl(mUser.getPortraits(), R.drawable.pscenter_userinfo_headpic);
+        } else {
+            mUserHead.setImageResource(R.drawable.pscenter_userinfo_headpic);
+        }
 
         if (mUser != null) {
             mTvLoginName.setText(mUser.getLoginName());
@@ -142,6 +145,20 @@ public class PsInfoActivity extends AppCompatActivity {
                 mRbWoman.setChecked(true);
                 mSax = PERSON_WOMAN;
             }
+            //初始化性别是否可以编辑
+                mRbMan.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return !isEdit;
+                    }
+                });
+                mRbWoman.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return !isEdit;
+                    }
+                });
+
             //填充其他信息
             mEtAge.setText("" + mUser.getBirthday());
             mEtHeight.setText("" + mUser.getHeight());
@@ -161,9 +178,17 @@ public class PsInfoActivity extends AppCompatActivity {
         mTvCommonAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isEdit) {
+                    isEdit = false;//变成不可以可以编辑的状态
+                    mTvCommonAction.setText("编辑");
+                    setPersonUserData();
+                    mProgressDialog = ProgressDialog.show(PsInfoActivity.this, null, "正在玩命设置中...", true, true);
 
-                setPersonUserData();
-                mProgressDialog = ProgressDialog.show(PsInfoActivity.this, null, "正在玩命设置中...", true, true);
+                } else {
+                    isEdit = true;//变成可以编辑的状态
+                    mTvCommonAction.setText("完成");
+
+                }
             }
         });
         //男女选择事件
@@ -184,29 +209,39 @@ public class PsInfoActivity extends AppCompatActivity {
         mUserHead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showOptionDialog();
+                if (isEdit) {
+                    showOptionDialog();
+                }
             }
         });
         //选择年龄
         mEtAge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSelectDialog(18, 120, 8, "岁");
+                if (isEdit) {
+                    String _CurrentAge = mEtAge.getText().toString();
+                    showSelectDialog(Integer.parseInt(_CurrentAge), 120, 0, "岁");
+                }
             }
         });
         //选择身高
         mEtHeight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                showSelectDialog(170, 250, 80, "厘米");
+                if (isEdit) {
+                    String _CurrentHight = mEtHeight.getText().toString();
+                    showSelectDialog(Integer.parseInt(_CurrentHight), 250, 80, "厘米");
+                }
             }
         });
         //选择体重吧
         mEtWeight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSelectDialog(50, 150, 30, "千克");
+                if (isEdit) {
+                    String _CurrentWeight = mEtWeight.getText().toString();
+                    showSelectDialog(Integer.parseInt(_CurrentWeight), 150, 30, "千克");
+                }
             }
         });
     }
@@ -233,11 +268,11 @@ public class PsInfoActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 int value = mNpselect.getValue();
                 if (unit.contains("厘米")) {
-                    mEtHeight.setText(value+"");
-                }else if (unit.contains("岁")){
-                    mEtAge.setText(value+"");
-                }else if (unit.contains("千克")){
-                    mEtWeight.setText(value+"");
+                    mEtHeight.setText(value + "");
+                } else if (unit.contains("岁")) {
+                    mEtAge.setText(value + "");
+                } else if (unit.contains("千克")) {
+                    mEtWeight.setText(value + "");
                 }
             }
         });
@@ -245,6 +280,7 @@ public class PsInfoActivity extends AppCompatActivity {
     }
 
     Dialog alertDialog;
+
     private void showOptionDialog() {
         // 取得自定义View
         LayoutInflater layoutInflater = LayoutInflater.from(this);
@@ -256,7 +292,7 @@ public class PsInfoActivity extends AppCompatActivity {
         _camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFile = new File(mPicPath,mpicName);
+                mFile = new File(mPicPath, mpicName);
                 imageUri = Uri.fromFile(mFile);
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -269,7 +305,7 @@ public class PsInfoActivity extends AppCompatActivity {
         _photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFile = new File(mPicPath,mpicName);
+                mFile = new File(mPicPath, mpicName);
                 imageUri = Uri.fromFile(mFile);
 
                 Intent intent = new Intent(Intent.ACTION_PICK, null);
@@ -293,7 +329,7 @@ public class PsInfoActivity extends AppCompatActivity {
     }
 
     /**
-     *  处理图片的剪辑
+     * 处理图片的剪辑
      */
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -340,32 +376,32 @@ public class PsInfoActivity extends AppCompatActivity {
 //        if (bundle != null) {
         Bitmap photo = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
 //            Bitmap photo = bundle.getParcelable("data");
-            saveBitmap(photo);  //保存BitMap到本地
-            //上传图片到服务器
-            sendPicToServer();
-            if (photo == null) {
-                mUserHead.setImageResource(R.drawable.pscenter_userinfo_headpic);
-            } else {
-                mUserHead.setImageBitmap(photo);
-            }
+        saveBitmap(photo);  //保存BitMap到本地
+        //上传图片到服务器
+        sendPicToServer();
+        if (photo == null) {
+            mUserHead.setImageResource(R.drawable.pscenter_userinfo_headpic);
+        } else {
+            mUserHead.setImageBitmap(photo);
+        }
 
-            ByteArrayOutputStream baos = null;
-            try {
-                baos = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] photodata = baos.toByteArray();
-                System.out.println(photodata.toString());
-            } catch (Exception e) {
-                e.getStackTrace();
-            } finally {
-                if (baos != null) {
-                    try {
-                        baos.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        ByteArrayOutputStream baos = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] photodata = baos.toByteArray();
+            System.out.println(photodata.toString());
+        } catch (Exception e) {
+            e.getStackTrace();
+        } finally {
+            if (baos != null) {
+                try {
+                    baos.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
+        }
 //        }
     }
 
@@ -379,20 +415,20 @@ public class PsInfoActivity extends AppCompatActivity {
                 try {
                     File file = new File(mPicPath + mpicName);
                     String _withPhoto = NetWorkUtil.getResultFromUrlConnectionWithPhoto(CommonConstants.UPLOAD_IMAGE, null, mpicName, mUser.getLoginVerifyCode(), file);
-                   //解析出上传图片的地址
-                    JSONObject _result =new JSONObject(_withPhoto);
+                    //解析出上传图片的地址
+                    JSONObject _result = new JSONObject(_withPhoto);
                     String _datas = JsonUtils.getString(_result, "Datas");
                     String _message = JsonUtils.getString(_result, "Message");
                     JSONObject _userimage = new JSONObject(_datas);
-                    String _userimagePath =  JsonUtils.getString(_userimage, "userimage");
+                    String _userimagePath = JsonUtils.getString(_userimage, "userimage");
                     mUser.setPortraits(_userimagePath);
-                    CommonUtil.saveUserInfo(mUser,PsInfoActivity.this);//更新本地信息
+                    CommonUtil.saveUserInfo(mUser, PsInfoActivity.this);//更新本地信息
                     CommonUtil.sendErrorMessage(_message, handler);
 
                 } catch (ServiceException e) {
                     e.printStackTrace();
                     CommonUtil.sendErrorMessage(e.getMessage(), handler);
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     CommonUtil.sendErrorMessage("上传图片失败，数据异常", handler);
                 }
@@ -463,10 +499,10 @@ public class PsInfoActivity extends AppCompatActivity {
                         }
                     } catch (ServiceException e) {
                         e.printStackTrace();
-                        CommonUtil.sendErrorMessage(e.getMessage(),handler);
+                        CommonUtil.sendErrorMessage(e.getMessage(), handler);
                     } catch (Exception e) {
                         //what = 0;sendmsg 0;
-                        CommonUtil.sendErrorMessage("设置个人信息："+CommonConstants.MSG_GET_ERROR,handler);
+                        CommonUtil.sendErrorMessage("设置个人信息：" + CommonConstants.MSG_GET_ERROR, handler);
                     }
                 } else {
                     CommonUtil.sendErrorMessage("请先登录", handler);
@@ -480,7 +516,7 @@ public class PsInfoActivity extends AppCompatActivity {
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if(mProgressDialog!=null){
+            if (mProgressDialog != null) {
                 mProgressDialog.dismiss();
             }
             int flag = msg.what;
@@ -488,6 +524,9 @@ public class PsInfoActivity extends AppCompatActivity {
                 case 0:
                     String errorMsg = (String) msg.getData().getSerializable("ErrorMsg");
                     try {
+                        if (errorMsg != null && errorMsg.equals("执行成功!")) {
+                            errorMsg = "上传成功";
+                        }
                         Toast.makeText(PsInfoActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -502,7 +541,5 @@ public class PsInfoActivity extends AppCompatActivity {
                     break;
             }
         }
-
-
     };
 }
