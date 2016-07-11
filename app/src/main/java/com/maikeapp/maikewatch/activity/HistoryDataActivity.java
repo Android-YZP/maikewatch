@@ -213,7 +213,7 @@ public class HistoryDataActivity extends AppCompatActivity {
         }else {
             _day = 7;
         }
-        for (int j =-_day; j <0 ; j++) {
+        for (int j =-_day; j <=0 ; j++) {
             Date myDate = new Date();
 //            int thisYear = datePlus(myDate, i).getYear() + 1900;//thisYear = 2003
             int thisMonth = datePlus(myDate, j).getMonth() + 1;//thisMonth = 5
