@@ -202,7 +202,7 @@
                     <ImageView
                         android:layout_width="@dimen/home_line_oneday_onedata_img_width_or_height"
                         android:layout_height="@dimen/home_line_oneday_onedata_img_width_or_height"
-                        android:background="@drawable/home_bushu" />
+                        android:background="@drawable/home_licheng" />
 
                     <TextView
                         android:layout_width="wrap_content"

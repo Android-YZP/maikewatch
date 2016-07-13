@@ -80,9 +80,9 @@ public class BindWatchActivity extends AppCompatActivity {
 
     private User mUser;//用户信息
 
-    //加载进度条
     private static ProgressDialog mProgressDialog = null;
     //sdk
+    //加载进度条
     private Maike device = null;
     /**
      * 是否正在同步

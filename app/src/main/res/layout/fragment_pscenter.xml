@@ -179,7 +179,7 @@
                     <ImageView
                         android:layout_width="@dimen/pscenter_funclist_list_item_img_width_or_height"
                         android:layout_height="@dimen/pscenter_funclist_list_item_img_width_or_height"
-                        android:background="@drawable/bangding_watch"
+                        android:background="@drawable/gerenxinxi"
                         android:layout_marginLeft="@dimen/pscenter_funclist_list_item_img_margin_left"
                         />
                     <TextView
