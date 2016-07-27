@@ -14,7 +14,7 @@
     <TextView
         android:id="@+id/tv_unit"
         android:textSize="25dp"
-        android:textColor="#00f"
+        android:textColor="#000"
         android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="match_parent"

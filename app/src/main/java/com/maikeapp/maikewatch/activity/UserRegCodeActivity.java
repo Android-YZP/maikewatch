@@ -121,7 +121,7 @@ public class UserRegCodeActivity extends Activity {
         Bundle _bundle = getIntent().getExtras();
         if (_bundle != null) {
             mPhone = _bundle.getString("_phone");
-            mTvPhoneInfo.setText(Html.fromHtml("您的手机<font color='#d81759'>" + mPhone + "</font>会收到一条含有4位数字验证码的短信"));
+            mTvPhoneInfo.setText(Html.fromHtml("您的手机<font color='#d81759'>" + mPhone + "</font>会收到一条含有6位数字验证码的短信"));
         }
         //60s后重新获取验证码
         canGetSmsCodeAgain();

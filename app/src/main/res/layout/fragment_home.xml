@@ -236,15 +236,13 @@
                 android:layout_marginTop="@dimen/home_today_data_str_margin_top"
                 android:text="@string/home_today_data_str" />
 
-            <LinearLayout
+            <com.maikeapp.maikewatch.view.NoTouchLinearLayout
                 android:id="@+id/line_other_chart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
-
-
-            </LinearLayout>
+            </com.maikeapp.maikewatch.view.NoTouchLinearLayout>
         </LinearLayout>
 
 

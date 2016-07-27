@@ -385,8 +385,8 @@ public class UserForgotPhoneActivity extends Activity {
                             handler.sendEmptyMessage(CHANGE_PICNUMBER);
                         }
                     } else {
-                        //手机号码已经存在
-                        CommonUtil.sendErrorMessage("手号码已经注册过了", handler);
+                        //手机号码不存在
+                        CommonUtil.sendErrorMessage("手机号码不存在,请先注册", handler);
                     }
                 } catch (ConnectTimeoutException e) {
                     e.printStackTrace();

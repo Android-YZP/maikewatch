@@ -220,7 +220,7 @@ public class PsInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isEdit) {
                     String _CurrentAge = mEtAge.getText().toString();
-                    showSelectDialog(Integer.parseInt(_CurrentAge), 120, 0, "岁");
+                    showSelectDialog(Integer.parseInt(_CurrentAge), 99, 0, "岁");
                 }
             }
         });
@@ -230,7 +230,7 @@ public class PsInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isEdit) {
                     String _CurrentHight = mEtHeight.getText().toString();
-                    showSelectDialog(Integer.parseInt(_CurrentHight), 250, 80, "厘米");
+                    showSelectDialog(Integer.parseInt(_CurrentHight), 200, 0, "厘米");
                 }
             }
         });
@@ -240,7 +240,7 @@ public class PsInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isEdit) {
                     String _CurrentWeight = mEtWeight.getText().toString();
-                    showSelectDialog(Integer.parseInt(_CurrentWeight), 150, 30, "千克");
+                    showSelectDialog(Integer.parseInt(_CurrentWeight), 200, 0, "公斤");
                 }
             }
         });
@@ -271,7 +271,7 @@ public class PsInfoActivity extends AppCompatActivity {
                     mEtHeight.setText(value + "");
                 } else if (unit.contains("岁")) {
                     mEtAge.setText(value + "");
-                } else if (unit.contains("千克")) {
+                } else if (unit.contains("公斤")) {
                     mEtWeight.setText(value + "");
                 }
             }
