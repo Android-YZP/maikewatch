@@ -44,10 +44,14 @@
 
                         <ImageView
                             android:id="@+id/iv_left_day"
-                            android:layout_width="@dimen/home_topbar_nav_left_width"
-                            android:layout_height="@dimen/home_topbar_nav_left_height"
-                            android:background="@drawable/nav_left_move"
-                            android:paddingLeft="20dp" />
+                            android:layout_width="27dp"
+                            android:layout_height="44dp"
+                            android:src="@drawable/nav_left_move"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            />
 
                         <ImageView
                             android:layout_width="@dimen/home_topbar_nav_date_width_or_height"
@@ -67,11 +71,14 @@
 
                         <ImageView
                             android:id="@+id/iv_right_day"
-                            android:layout_width="@dimen/home_topbar_nav_left_width"
-                            android:layout_height="@dimen/home_topbar_nav_left_height"
+                            android:layout_width="27dp"
+                            android:layout_height="44dp"
                             android:layout_marginLeft="@dimen/home_topbar_nav_date_margin_left"
-                            android:background="@drawable/nav_right_move"
-                            android:paddingRight="20dp" />
+                            android:src="@drawable/nav_right_move"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp" />
                     </LinearLayout>
 
                     <ImageView
