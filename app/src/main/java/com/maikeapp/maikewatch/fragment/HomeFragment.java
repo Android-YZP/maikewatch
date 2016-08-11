@@ -281,7 +281,7 @@ public class HomeFragment extends Fragment {
         Log.d("_day_timed的格式", _day_time);
 
         //弹出加载进度条
-        mProgressDialog = ProgressDialog.show(getActivity(), null, "正在获取数据中...", true, true);
+//        mProgressDialog = ProgressDialog.show(getActivity(), null, "正在获取数据中...", true, true);
         //开启副线程-从网络查询某个日期的数据
         new Thread(new Runnable() {
             @Override
@@ -476,9 +476,11 @@ public class HomeFragment extends Fragment {
                     try {
                         Date date = new Date();//获得当前是哪一年
                         Date parseDate = _SDF.parse(_CurrentDate);
-                        if (date.getDate() <= parseDate.getDate()) {
-                            Toast.makeText(getContext(), "超出当前日期，没有数据", Toast.LENGTH_SHORT).show();
-                            return;
+                        if (date.getMonth() == parseDate.getMonth()) {
+                            if (date.getDate() <= parseDate.getDate()) {
+                                Toast.makeText(getContext(), "超出当前日期，没有数据", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                         }
 
 //                    Date _date1 = datePlus(date, mCount);
@@ -619,14 +621,12 @@ public class HomeFragment extends Fragment {
                     Log.d("_one_datetime的数据", _one_datetime);
                     //dataid有很多的数据,在hourStep中是没有的.以hourStep表中的数据为主
                     int dataid = mDbDao.findData(_userid, _one_datetime);//需要修改的地方
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     for (int i = 0; i < 23; i++) {
                         int _hourStepID = mDbDao.findHourStep(i, dataid);
                         if (_hourStepID != 0) {
                             id = _hourStepID;
                         }
                     }
-
                     if (id != 0) {//本地有数据从本地查找
                         todayOnDayDays = mDbDao.findTodayHourStep2(mUser.getLoginName(), _one_datetime);
                         showUI(todayOnDayDays);
@@ -637,7 +637,6 @@ public class HomeFragment extends Fragment {
                         } else {
                             Toast.makeText(getContext(), "网络不给力，请稍后重试", Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 } else {
                     Toast.makeText(getContext(), "正在同步中请稍后...", Toast.LENGTH_SHORT).show();
