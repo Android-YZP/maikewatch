@@ -262,6 +262,15 @@ public class HistoryDataActivity extends AppCompatActivity {
         mRenderer.setLegendTextSize(20);//设置图例文本大小
         mRenderer.setPointSize(10f);//设置点的大小
         mRenderer.setYAxisMin(0);//设置y轴最小值是0
+        for (int i = 0; i < pAllData.size(); i++) {
+            OneDayData _one_day_data = (OneDayData) pAllData.get(i);
+            int _steps = _one_day_data.getCompletedSteps();
+            if (_max<_steps){
+                _max = _steps;
+            }
+        }
+
+
         int _y_value = (_max/1000)*1000+1000;
         mRenderer.setYAxisMax(_y_value);//y轴最大值600
         mRenderer.setYLabels(5);//设置Y轴刻度个数（貌似不太准确）
@@ -453,7 +462,7 @@ public class HistoryDataActivity extends AppCompatActivity {
                     updateUIAfterGetRecentDatasForWeek();
                     break;
                 case CommonConstants.FLAG_GET_RECENT_DATAS_FOR_MONTH_SUCCESS:
-                    /////////////////////////////////////////////////////////////////////////////储存一份到本地的数据库中
+                    //储存一份到本地的数据库中
                     //传入user,List<OneDayData>.加入Data数据库中
                     Log.d("HistoryDataActivity的数据", mUser.getLoginName()+"YZP");
                     mDBDao.addHistoryData(m_day_datas_for_month,  mUser.getLoginName());

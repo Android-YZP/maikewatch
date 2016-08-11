@@ -28,6 +28,7 @@ import com.gzgamut.sdk.model.Maike;
 import com.handmark.pulltorefresh.library.BuildConfig;
 import com.maikeapp.maikewatch.DBOpenHelper.DBDao;
 import com.maikeapp.maikewatch.R;
+import com.maikeapp.maikewatch.activity.BindWatchActivity;
 import com.maikeapp.maikewatch.activity.HistoryDataActivity;
 import com.maikeapp.maikewatch.activity.MainActivity;
 import com.maikeapp.maikewatch.bean.OneDayData;
@@ -72,6 +73,7 @@ public class HomeFragment extends Fragment {
     private static final int SCREEN_SHOT_SUCCESS = 150;
     private static final int UPLOAD_SUCCESS = 151;
     private static final int HIS_DATA_SUCCESS = 152;
+    private static final int BOUND_RESULT_ERROR = 153;
     private CirclePercentView mCirclePercentView;//总进度
     private TextView mTvDate;//日期
 
@@ -742,6 +744,14 @@ public class HomeFragment extends Fragment {
                 JSONObject boundInfoResult = device.getBoundInfo();    // 获取手环的绑定信息
                 Log.d("sync", "boundInfoResult = " + boundInfoResult);        // 如果result = 0，则未绑定，如果result = 1，则已绑定
 
+                //判断是否要重新绑定
+                int _bound_info_result_int = JsonUtils.getInt(boundInfoResult, "result", -1);
+                if(_bound_info_result_int == 0){
+                    handler.sendEmptyMessage(BOUND_RESULT_ERROR);
+                    isRunning = false;
+                    return;
+                }
+
                 JSONObject datetimeResult = device.setDateTime(Calendar.getInstance());    // 设置手环的日期和时间
                 Log.d("sync", "datetimeResult = " + datetimeResult);        // 如果为result = 0，则成功，否则失败
 
@@ -932,11 +942,40 @@ public class HomeFragment extends Fragment {
                         getActivity().startActivity(_intent);
                     }
                     break;
+                case BOUND_RESULT_ERROR:
+                    updateBoundStatusAndGoBind();
+                    break;
                 default:
                     break;
             }
         }
     };
+
+    /**
+     * 修改绑定状态，跳转绑定界面
+     */
+    private void updateBoundStatusAndGoBind() {
+        if (getActivity()!=null){
+            User _Userinfo = CommonUtil.getUserInfo(getActivity());
+            _Userinfo.setBindWatch(false);
+            CommonUtil.saveUserInfo(_Userinfo,getActivity());
+            Toast.makeText(getActivity(),"手表未绑定，请重新绑定",Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getActivity(), BindWatchActivity.class));
+            //删除全部数据
+            File dbFile = new File("/data/data/com.maikeapp.maikewatch/databases/WatchData.db");dbFile.delete();
+//            getActivity().finish();
+            //删除当天的数据
+//            Date myDate = new Date();
+//            int thisYear = myDate.getYear() + 1900;//thisYear = 2003
+//            int thisMonth = myDate.getMonth() + 1;//thisMonth = 5
+//            int thisDate = myDate.getDate();//thisDate = 30
+//            String _CurrentTime = String.valueOf(thisYear) + "-" + String.valueOf(thisMonth) + "-" + String.valueOf(thisDate);
+//            int user = mDbDao.findUser(_Userinfo.getLoginName());
+//            mDbDao.deleteHourStemp2(user,_CurrentTime);
+
+
+        }
+    }
 
     /**
      * app不可用

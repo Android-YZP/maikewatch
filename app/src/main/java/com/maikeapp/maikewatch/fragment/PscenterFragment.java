@@ -35,6 +35,7 @@ import com.maikeapp.maikewatch.receiver.PhoneStatReceiver;
 import com.maikeapp.maikewatch.util.CommonUtil;
 import com.maikeapp.maikewatch.util.ToastUtil;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -248,6 +249,8 @@ public class PscenterFragment extends Fragment {
                     //绑定手表
                     _intent = new Intent(getActivity(), BindWatchActivity.class);
                     startActivity(_intent);
+                    //测试
+//                    File dbFile = new File("/data/data/com.maikeapp.maikewatch/databases/WatchData.db");dbFile.delete();
                     break;
                 case R.id.line_pscenter_psinfo:
                     if (mUser==null){
