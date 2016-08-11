@@ -308,6 +308,7 @@ public class PscenterFragment extends Fragment {
                         mTvUsername.setText("未登录");//更改未登录头像和文字
                         mIvUserLogin.setImageUrl(null, R.drawable.pscenter_userinfo_headpic);
                         mIvUserLogin.setOnClickListener(new PsCenterOnClickListener());//用户登录设置监听事件
+                        File dbFile = new File("/data/data/com.maikeapp.maikewatch/databases/WatchData.db");dbFile.delete();
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 
